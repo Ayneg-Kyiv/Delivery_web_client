@@ -1,0 +1,6 @@
+# this file just used to store list of all packages used in the project
+# it is not used by any tool, just for reference
+
+next-auth
+axios
+react-redux
