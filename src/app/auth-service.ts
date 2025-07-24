@@ -14,14 +14,8 @@ export const AuthService = {
     try {
       const data = await ApiClient.post('/auth/signup', { email, password });
       
-      if (data.success) {
-        // Auto login after successful registration
-        return this.login(email, password);
-      }
-      
-      throw new Error(data.message || 'Registration failed');
-    } catch (error) {
-      
+      return data;
+    } catch (error) {  
       throw error;
     }
   },
@@ -29,9 +23,20 @@ export const AuthService = {
   async logout() {
   try {
     await ApiClient.post('/auth/signout');
+
     } catch (e) {
       // Optionally handle/log error, but proceed to signOut anyway
     }
     return await signOut({ redirect: false });
+  },
+
+  async resetPassword(email: string, token: string, newPassword: string) {
+    try {
+      const response = await ApiClient.post('/auth/reset-password', { email, token, newPassword });
+    
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 };
