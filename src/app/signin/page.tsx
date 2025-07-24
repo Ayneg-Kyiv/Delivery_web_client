@@ -3,6 +3,7 @@
 import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
+import { ApiClient } from '../api-client';
 
 class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     constructor(props: SignInPageProps) {
@@ -13,6 +14,14 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             showPassword: false,
             error: undefined
         };
+    }
+
+    async componentDidMount() {
+        try {
+            await ApiClient.get<any>('/csrf');
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
     }
 
     handleEmailChange = (email: string) => {
@@ -83,6 +92,11 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                         className='flex-1 mt-6 px-4 py-2 bg-blue-500 text-white text-2xl rounded-lg hover:bg-gray-600 transition-colors duration-300 active:opacity-75'
                     >
                         Sign In
+                    </button>
+
+                    <button onClick={() => this.props.router?.push('/forgot-password')}
+                        className='flex-1 mt-6 px-4 py-2 bg-blue-500 text-white text-2xl rounded-lg hover:bg-gray-600 transition-colors duration-300 active:opacity-75'>
+                        Forgot Password?
                     </button>
                 
                 </form>

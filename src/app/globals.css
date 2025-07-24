@@ -2,25 +2,181 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+
+  --foreground: #111111;
+  --foreground-secondary: #292929;
+
+  --foreground-disabled: #555555;
+
+  /* icon colors same at both color schemes */
+  --icon-light-blue: #0057B8;
+  --icon-dark-blue: #01438D;
+
+  --icon-light-yellow: #FFD700;
+  --icon-dark-yellow: #A88E02;
+
+  --icon-foreground-active: #FFFFFF;
+  --icon-foreground-disabled: #C5C3C3;
+
+  --font-inter: 'Inter';
+  --font-bahnschrift: 'Bahnschrift', 'helvetica';
+  /*  */
 }
 
+/* instruction for tailwind */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --font-inter: var(--font-inter);
+  --font-bahnschrift: var(--font-bahnschrift);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* background colors scheme */
+    --background: #130C1F;
+    --background-lighter: #2C1B48;
+    --background-darker: #0E1010;
+
+    /* text colors scheme */
+    --foreground: #ffffff;
+    --foreground-secondary: #E5E5E5;
+
+    /* type 1 button */
+    --button-type-1-background: #94569F;
+    --button-type-1-background-hover: #DB6BEF;
+    --button-type-1-background-active: #A359B0;
+    --button-type-1-background-disabled: #73487B;
+
+    /* type 2 button */
+    --button-type-2-background: #724C9D;
+    --button-type-2-background-hover: #9655DF;
+    --button-type-2-background-active: #7F51B3;
+    --button-type-2-background-disabled: #664788;
+
+    /* type 3 button */
+    --button-type-3-background: #111111;
+    --button-type-3-background-hover: #94569F;
+    --button-type-3-background-active: #050505;
+    --button-type-3-background-disabled: #292929;
   }
 }
 
+/* Global styles */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+nav {
+  background: var(--background-lighter);
+}
+
+footer {
+  background: var(--background-darker);
+}
+
+button{
+  border-radius: 8px;
+}
+/*  */
+
+/* icon colors */
+.icon-light-blue {
+  background: var(--icon-light-blue);
+}
+
+.icon-dark-blue {
+  background: var(--icon-dark-blue);
+}
+
+.icon-light-yellow {
+  background : var(--icon-light-yellow);
+}
+
+.icon-dark-yellow {
+  background: var(--icon-dark-yellow);
+}
+/*  */
+
+/* background colors */
+.bg-lighter{
+  background: var(--background-lighter);
+}
+
+.bg-darker{
+  background: var(--background-darker);
+}
+/*  */
+
+/* foreground colors */
+.fg-secondary {
+  color: var(--foreground-secondary);
+}
+
+.fg-disabled {
+  color: var(--foreground-disabled);
+}
+/*  */
+
+/* button type 1 */
+.button-type-1 {
+  background: var(--button-type-1-background);
+}
+
+.button-type-1:hover {
+  background: var(--button-type-1-background-hover);
+}
+
+.button-type-1:active {
+  background: var(--button-type-1-background-active);
+}
+
+.button-type-1:disabled {
+  background: var(--button-type-1-background-disabled);
+  color: var(--foreground-disabled);
+}
+/*  */
+
+/* button type 2 */
+.button-type-2 {
+  background: var(--button-type-2-background);
+}
+
+.button-type-2:hover {
+  background: var(--button-type-2-background-hover);
+}
+
+.button-type-2:active {
+  background: var(--button-type-2-background-active);
+}
+
+.button-type-2:disabled {
+  background: var(--button-type-2-background-disabled);
+  color: var(--foreground-disabled);
+}
+/*  */
+
+/* button type 3 */
+.button-type-3 {
+  background: var(--button-type-3-background);
+}
+
+.button-type-3:hover {
+  background: var(--button-type-3-background-hover);
+}
+
+.button-type-3:active {
+  background: var(--button-type-3-background-active);
+}
+
+.button-type-3:disabled {
+  background: var(--button-type-3-background-disabled);
+  color: var(--foreground-disabled);
+}
+/*  */

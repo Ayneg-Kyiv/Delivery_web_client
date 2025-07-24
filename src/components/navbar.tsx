@@ -17,7 +17,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="h-[6vh] bg-blue-600 p-4 min-w-screen max-w-screen">
+    <nav className="h-[6vh] bg-blue-600 p-4 max-w-screen w-full">
       
       <div className="container mx-auto flex items-center justify-between">
         

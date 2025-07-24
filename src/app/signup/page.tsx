@@ -3,6 +3,7 @@
 import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
+import { ApiClient } from '../api-client';
 
 class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     constructor(props: SignupPageProps) {
@@ -15,6 +16,14 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
             showConfirmPassword: false,
             error: undefined
         };
+    }
+
+    async componentDidMount() {
+        try{
+            await ApiClient.get<any>('/csrf');
+        }catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
     }
 
     handleEmailChange = (email: string) => {
@@ -94,14 +103,6 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
                             onChange={(e) => this.handlePasswordChange(e.target.value)}
                             className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
                         />
-                        
-                        {/* show-hide password */}
-                        <button
-                            onClick={() => this.setState({ showPassword: !this.state.showPassword })}
-                            className='w-[80px] mb-4 px-2 ml-5 py-1 bg-gray-200 text-black rounded-lg'
-                        >
-                            {this.state.showPassword ? 'Hide' : 'Show'}
-                        </button>
 
                     </div>
                     
@@ -115,14 +116,6 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
                             onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
                             className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
                         />
-
-                        {/* show-hide password */}
-                        <button
-                            onClick={() => this.setState({ showConfirmPassword: !this.state.showConfirmPassword })}
-                            className='w-[80px] mb-4 px-2 ml-5 py-1 bg-gray-200 text-black rounded-lg'
-                        >
-                            {this.state.showConfirmPassword ? 'Hide' : 'Show'}
-                        </button>
                     
                     </div>
                     
