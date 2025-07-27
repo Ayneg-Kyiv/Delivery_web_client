@@ -32,7 +32,7 @@ export const AuthService = {
 
   async resetPassword(email: string, token: string, newPassword: string) {
     try {
-      const response = await ApiClient.post('/auth/reset-password', { email, token, newPassword });
+      const response = await ApiClient.post('/account/reset-password', { email, token, newPassword });
     
       return response;
     } catch (error) {

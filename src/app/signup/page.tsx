@@ -66,7 +66,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
             this.state.password
         );
 
-        if (response?.ok) 
+        if (response?.success) 
             this.props.router?.push('/');
         else 
             this.setState({ error: 'Sign up failed. Please try again.' });

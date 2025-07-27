@@ -34,7 +34,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
         if (password.length < 8) {
             this.setState({ error: 'Password must be at least 8 characters long' });
         } else {
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
             if (!passwordRegex.test(password)) {
                 this.setState({
                     error:
@@ -67,7 +67,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
                 this.props.token,
                 this.state.password
             );
-            if (response?.ok) {
+            if (response?.success) {
                 this.setState({ success: 'Password reset successful. You can now log in.', error: undefined });
                 setTimeout(() => {
                     this.props.router?.push('/login');
