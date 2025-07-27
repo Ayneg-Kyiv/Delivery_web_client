@@ -4,8 +4,11 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import { AuthService } from '../app/auth-service';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+  const router = useRouter();
+
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -14,6 +17,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     await AuthService.logout();
+    router.push('/');
   }
 
   return (

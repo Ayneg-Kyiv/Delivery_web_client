@@ -49,9 +49,9 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         this.setState({ loading: true, error: undefined, success: undefined });
         
         try {
-            const response = await ApiClient.post('/forgot-password', { email });
+            const response = await ApiClient.post('/account/forgot-password', { email });
 
-            if (response?.ok) {
+            if (response?.success) {
                 this.setState({
                     success: 'If an account with that email exists, a password reset link has been sent.',
                     error: undefined,

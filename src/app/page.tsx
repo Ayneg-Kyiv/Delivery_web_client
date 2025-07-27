@@ -4,9 +4,10 @@ import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import CardContent from "@/components/ui/card-content";
 import React, { Component } from "react";
-import { ArrowLeft, ArrowRight, Menu } from "lucide-react";
+import { ArrowLeft, ArrowRight} from "lucide-react";
 
 class PageTemplate extends Component {
+  
   heroData = {
     tagline: "Доставка від людей для людей",
     title: "Відправляй куди та як завгодно",

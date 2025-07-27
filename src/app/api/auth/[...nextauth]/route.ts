@@ -173,6 +173,11 @@ const handler = NextAuth({
             "Authorization": `Bearer ${token.accessToken}`
           },
         });
+
+        sessionStorage.removeItem("next-auth.session-token");
+        sessionStorage.removeItem("next-auth.csrf-token"); 
+        sessionStorage.removeItem("next-auth.callback-url");
+        
       } catch (error) {
         console.error("Sign out error:", error);
       }
