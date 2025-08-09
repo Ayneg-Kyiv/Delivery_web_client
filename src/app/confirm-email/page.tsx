@@ -15,10 +15,9 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 
   async componentDidMount() {
-    const searchParams = useSearchParams();
-    
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
+
+    const token = this.props.searchParams.get('token');
+    const email = this.props.searchParams.get('email');
 
     if (!token || !email) {
       this.setState({
@@ -66,7 +65,6 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     const { status, message } = this.state;
 
     return (
-      <Suspense>
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
           <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow">
             <div className="text-center">
@@ -128,12 +126,16 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
             </div>
           </div>
         </div>
-      </Suspense>
     );
   }
 }
 
 export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
   const router = useRouter();
-  return <ConfirmEmail {...props} router={router} />;
+  const searchParams = useSearchParams();
+  return (
+    <Suspense>
+      <ConfirmEmail {...props} router={router} searchParams={searchParams} />
+    </Suspense>
+  );
 }
