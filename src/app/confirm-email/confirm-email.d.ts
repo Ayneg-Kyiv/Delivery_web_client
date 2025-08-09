@@ -1,5 +1,6 @@
 interface ConfirmEmailProps {
   router: ReturnType<typeof useRouter>;
+  searchParams: ReturnType<typeof useSearchParams>;
 }
 
 interface ConfirmEmailState {

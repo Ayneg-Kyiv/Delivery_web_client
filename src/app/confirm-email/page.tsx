@@ -15,10 +15,9 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 
   async componentDidMount() {
-    const searchParams = useSearchParams();
-    
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
+
+    const token = this.props.searchParams.get('token');
+    const email = this.props.searchParams.get('email');
 
     if (!token || !email) {
       this.setState({
@@ -135,5 +134,6 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
 
 export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
   const router = useRouter();
-  return <ConfirmEmail {...props} router={router} />;
+  const searchParams = useSearchParams();
+  return <ConfirmEmail {...props} router={router} searchParams={searchParams} />;
 }
