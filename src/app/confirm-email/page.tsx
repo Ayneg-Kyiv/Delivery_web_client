@@ -133,7 +133,11 @@ const AddSearchParams = (props:  ConfirmEmailProps) => {
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
-  return <ConfirmEmail router={router} token={token} email={email} />
+  return (
+      <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+        <ConfirmEmail router={router} token={token} email={email} />
+      </Suspense>
+    );
 }
 
 export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
