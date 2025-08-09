@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "./provider";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased  min-h-screen flex flex-col`}>
         <AuthProvider>
           <Navbar />
-          {children}
+            <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+              {children}
+            </Suspense>
           <Footer />
         </AuthProvider>
       </body>
