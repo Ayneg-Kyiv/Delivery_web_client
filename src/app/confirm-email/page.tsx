@@ -64,6 +64,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     const { status, message } = this.state;
 
     return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
           <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow">
             <div className="text-center">
@@ -125,6 +126,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
             </div>
           </div>
         </div>
+    </Suspense>
     );
   }
 }
