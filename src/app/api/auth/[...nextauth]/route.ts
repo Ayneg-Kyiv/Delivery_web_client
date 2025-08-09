@@ -10,7 +10,7 @@ async function getCsrfToken()  {
 
   if (!csrf) {
     // Fallback to fetching CSRF token from the API if not found in cookies
-    const response = await ApiClient.get("/csrf");
+    const response = await ApiClient.get<any>("/csrf");
     csrf = response?.csrfToken || null;
   }
 
@@ -20,7 +20,7 @@ async function getCsrfToken()  {
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
-    const data = await ApiClient.post("/auth/refresh-session", {}, {
+    const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
       headers: {
         "X-XSRF-TOKEN": csrfToken || "",
       },
@@ -45,10 +45,10 @@ async function refreshAccessToken(token: JWT) {
       }
     };
   }
-  catch (error) {
+  catch (error: unknown) {
     return {
       ...token,
-      error: "Error refreshing access token"
+      error: `Error refreshing access token: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -65,9 +65,9 @@ const handler = NextAuth({
       
       async authorize(credentials) {
         try {
-          let csrfToken = await getCsrfToken();
+          const csrfToken = await getCsrfToken();
 
-          const response = await ApiClient.post("/auth/signin", credentials, {
+          const response = await ApiClient.post<any>("/auth/signin", credentials, {
             headers: {
               "X-XSRF-TOKEN": csrfToken || "",
               "Cookie": (await cookies()).toString() || "",
@@ -85,7 +85,7 @@ const handler = NextAuth({
               const [name, value] = nameValue.split("=");
 
               // Extract attributes
-              let cookieOptions: Record<string, any> = {
+              const cookieOptions: Record<string, any> = {
                 name,
                 value: decodeURIComponent(value || ""),
                 httpOnly: false,
@@ -112,7 +112,7 @@ const handler = NextAuth({
               });
             }
 
-          var data = response.data;
+          const data = response.data;
 
           if (data.success && data.data)
             return {
@@ -125,6 +125,7 @@ const handler = NextAuth({
 
           return null;
         } catch (error) {
+          console.error("Authorization error:", error);
           return null;
         }
       }
