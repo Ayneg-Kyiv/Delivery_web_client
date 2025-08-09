@@ -17,7 +17,6 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'off', // Disable unused vars rule
       '@typescript-eslint/no-undef': 'off', // Disable undefined variables rule
       '@typescript-eslint/no-explicit-any': 'off', // Disable explicit any rule
-      '@next/next/missing-suspense-with-csr-bailout': 'off', // Disable missingSuspenseWithCSRBailout rule
     }
   })
 ];

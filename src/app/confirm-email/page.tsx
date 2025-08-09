@@ -126,16 +126,21 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 }
 
-export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
+const AddSearchParams = (props:  ConfirmEmailProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
+  return <ConfirmEmail router={router} token={token} email={email} />
+}
+
+export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
+
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-      <ConfirmEmail {...props} router={router} token={token} email={email} />
+      <AddSearchParams {...props} />
     </Suspense>
   );
 }
