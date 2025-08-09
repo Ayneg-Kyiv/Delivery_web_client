@@ -4,7 +4,6 @@ import React, { Suspense } from 'react';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-
 class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState> {
   constructor(props: ConfirmEmailProps) {
     super(props);
@@ -133,8 +132,9 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
 export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   return (
-    <Suspense>
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
       <ConfirmEmail {...props} router={router} searchParams={searchParams} />
     </Suspense>
   );
