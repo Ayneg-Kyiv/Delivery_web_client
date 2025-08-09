@@ -145,16 +145,13 @@ class PageTemplate extends Component {
             fringilla sit amet.
           </p>
 
-          <Card
-            className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8"
-            children={
-              <Button
-                onClick={() => console.log("Learn more clicked!")}
-                text="Illustration + Button"
-                className="flex items-center justify-center h-full text-5xl text-center"
-              />
-            }
-          />
+          <Card className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8">
+            <Button
+              onClick={() => console.log("Learn more clicked!")}
+              text="Illustration + Button"
+              className="flex items-center justify-center h-full text-5xl text-center"
+            />
+          </Card>
 
           <div className="flex justify-between items-center">
             <Button onClick={() => console.log("Previous clicked!")} className="p-0"

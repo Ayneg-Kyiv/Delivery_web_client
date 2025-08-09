@@ -2,15 +2,12 @@
 
 import React from "react";
 
-
-interface PolicyPageProps {}
-
 interface PolicyPageState {
     accepted: boolean;
 }
 
-class PolicyPage extends React.Component<PolicyPageProps, PolicyPageState> {
-    constructor(props: PolicyPageProps) {
+class PolicyPage extends React.Component<null, PolicyPageState> {
+    constructor(props: null) {
         super(props);
         this.state = {
             accepted: false,

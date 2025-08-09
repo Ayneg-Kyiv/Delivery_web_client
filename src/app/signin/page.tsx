@@ -122,7 +122,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                     <label htmlFor="remember"
                                     className="pl-2 font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] cursor-pointer"
                                     >
-                                    Запам'ятати мене
+                                    Запам&apos;ятати мене
                                     </label>
                                 </div>
 
