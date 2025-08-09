@@ -4,14 +4,6 @@ import React from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-interface ConfirmEmailProps {
-  router: ReturnType<typeof useRouter>;
-}
-
-interface ConfirmEmailState {
-  status: 'loading' | 'success' | 'error';
-  message: string;
-}
 
 class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState> {
   constructor(props: ConfirmEmailProps) {
@@ -23,8 +15,8 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 
   async componentDidMount() {
-    const { router } = this.props;
     const searchParams = new URLSearchParams(window.location.search);
+    
     const token = searchParams.get('token');
     const email = searchParams.get('email');
 
@@ -139,7 +131,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 }
 
-export default function ConfirmEmailWithRouter(props: {}) {
+export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
   const router = useRouter();
   return <ConfirmEmail {...props} router={router} />;
 }

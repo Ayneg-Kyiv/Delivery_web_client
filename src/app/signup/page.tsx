@@ -9,7 +9,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     constructor(props: SignupPageProps) {
         super(props);
         this.state = {
-            email: '',
+            email: 'empty',
             password: '',
             showPassword: false,
             confirmPassword: '',
@@ -20,7 +20,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
     async componentDidMount() {
         try{
-            await ApiClient.get<any>('/csrf');
+            await ApiClient.get<null>('/csrf');
         }catch (error) {
             console.error('Error fetching CSRF token:', error);
         }

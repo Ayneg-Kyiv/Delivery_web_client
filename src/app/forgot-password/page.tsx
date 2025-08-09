@@ -17,7 +17,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 
     async componentDidMount() {
         try {
-            await ApiClient.get<any>('/csrf');
+            await ApiClient.get<null>('/csrf');
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
         }
@@ -66,7 +66,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
             }
         } catch (err) {
             this.setState({
-                error: 'An error occurred. Please try again.',
+                error: `An error occurred. ${err} Please try again.`,
                 success: undefined,
                 loading: false,
             });

@@ -1,12 +1,12 @@
 'use client';
 
 import { SessionProvider } from "next-auth/react";
-import { ReactNode, useEffect } from "react";
-import { ApiClient } from "./api-client";
+import { ReactNode , useEffect } from "react";
+import { Session } from 'next-auth'
 
 type AuthProviderProps = {
   children: ReactNode;
-  session?: any;
+  session?: Session;
 };
 
 export function AuthProvider({ children, session }: AuthProviderProps) {

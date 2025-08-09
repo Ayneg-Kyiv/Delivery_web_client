@@ -5,6 +5,7 @@ import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '../api-client';
 import Button from '@/components/ui/button';
+import TextInputGroup from '@/components/ui/text-input-group';
 
 class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     constructor(props: SignInPageProps) {
@@ -22,13 +23,14 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
     async componentDidMount() {
         try {
-            await ApiClient.get<any>('/csrf');
+            await ApiClient.get<null>('/csrf');
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
         }
     }
 
-    handleEmailChange = (email: string) => {
+    handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const email = e.target.value;
         this.setState({ email });
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) 
@@ -37,18 +39,19 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             this.setState({ emailError: false });
     };
 
-    handlePasswordChange = (password: string) => {
+    handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const password = e.target.value;
         this.setState({ password });
         if (password.length < 8) 
             this.setState({ passwordError: true });
         else 
             this.setState({ passwordError: false, error: undefined });
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
-            if (!passwordRegex.test(password)) {
-                this.setState({ passwordError: true });
-            } else {
-                this.setState({ passwordError: false });
-            }
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
+        if (!passwordRegex.test(password)) {
+            this.setState({ passwordError: true });
+        } else {
+            this.setState({ passwordError: false });
+        }
     };
 
     handleSubmit = async (event: React.FormEvent) => {
@@ -65,7 +68,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             else
                 this.setState({ error: 'Invalid email or password' });
         } catch (error) {
-            this.setState({ error: 'Sign in failed. Please try again.' });
+            this.setState({ error: `Sign in failed. ${error} Please try again.` });
         }
     };
 
@@ -80,31 +83,27 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
                         <div className="w-full max-w-[500px] space-y-6">
                             <div className="space-y-5 flex flex-col">
-                                <div className="floating-input-group flex flex-col ">
-                                    <input
-                                        type="email"
-                                        value={this.state.email}
-                                        onChange={(e) => this.handleEmailChange(e.target.value)}
-                                        className={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
-                                        required
-                                        id="email"
-                                        autoComplete="email"
-                                    />
-                                    <label htmlFor="email" className={`floating-label${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}>E-mail</label>
-                                </div>
+                                <TextInputGroup
+                                    label="E-mail"
+                                    value={this.state.email}
+                                    onChange={this.handleEmailChange}
+                                    type="email"
+                                    className=""
+                                    inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
+                                    labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
+                                    placeholder=""
+                                />
 
-                                <div className="floating-input-group flex flex-col">
-                                    <input
-                                        type={this.state.showPassword ? 'text' : 'password'}
-                                        value={this.state.password}
-                                        onChange={(e) => this.handlePasswordChange(e.target.value)}
-                                        className={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
-                                        required
-                                        id="password"
-                                        autoComplete="current-password"
-                                    />
-                                    <label htmlFor="password" className={`floating-label${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}>Password</label>
-                                </div>
+                                <TextInputGroup
+                                    label="Password"
+                                    value={this.state.password}
+                                    onChange={this.handlePasswordChange}
+                                    type={this.state.showPassword ? 'text' : 'password'}
+                                    className=""
+                                    inputClassName={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
+                                    labelClassName={`${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}
+                                    placeholder=""
+                                />
                             </div>
 
                             <div className="flex items-center justify-between">
@@ -159,8 +158,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                     </form>
                 </div>
             </div>
-        )}
-
+        )
+    }
 
     render() {
         return <>{this.renderContent()}</>;

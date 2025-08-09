@@ -23,7 +23,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
 
     async componentDidMount() {
         try {
-            await ApiClient.get<any>('/csrf');
+            await ApiClient.get<null>('/csrf');
         } catch (error) {
             console.error('Error fetching CSRF token:', error);
         }
@@ -76,7 +76,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
                 this.setState({ error: 'Password reset failed. Please try again.', success: undefined });
             }
         } catch (err) {
-            this.setState({ error: 'An error occurred. Please try again.', success: undefined });
+            this.setState({ error: `An error occurred. ${err} Please try again.`, success: undefined });
         } finally {
             this.setState({ loading: false });
         }

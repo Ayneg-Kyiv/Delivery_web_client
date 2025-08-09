@@ -1,13 +1,29 @@
 import React from "react";
+import Image from 'next/image'
 
-  const footerLinks = Array(7)
-    .fill(null)
-    .map((_, i) => ({
-      title: "Text",
-      links: Array(6)
-        .fill("")
-        .map(() => "Text"),
-    }));
+  const footerLinks = [{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  },{
+    title: 'Title',
+    links: ['link', 'link']
+  }
+]
 
 const Footer: React.FC = () => (
     <footer className="w-full h-[395px] bg-[#0e1010] px-[450px] pt-10 pb-6 relative">
@@ -35,7 +51,7 @@ const Footer: React.FC = () => (
           <div className="flex items-center gap-8 mb-10">
             <div className="flex items-center">
                 <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
-                    <img className="w-[14px] h-[14px]" alt="English flag" src="/worldicon.png" />
+                    <Image width={14} height={14} alt="English flag" src="/worldicon.png" />
                 </div>
               <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-[#c5c2c2] text-base">
                 EN
