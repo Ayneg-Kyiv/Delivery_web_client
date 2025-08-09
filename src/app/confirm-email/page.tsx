@@ -15,10 +15,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
 
   async componentDidMount() {
 
-    const token = this.props.searchParams.get('token');
-    const email = this.props.searchParams.get('email');
-
-    if (!token || !email) {
+    if (!this.props.token || !this.props.email) {
       this.setState({
         status: 'error',
         message: 'Invalid confirmation link. Missing token or email.',
@@ -27,10 +24,10 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     }
 
     try {
-      console.log('Confirming email with token:', token, 'and email:', email);
+      console.log('Confirming email with token:', this.props.token, 'and email:', this.props.email);
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/confirm-email?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/confirm-email?token=${encodeURIComponent(this.props.token)}&email=${encodeURIComponent(this.props.email)}`
       );
 
       if (response.data.success) {
@@ -64,8 +61,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     const { status, message } = this.state;
 
     return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
           <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow">
             <div className="text-center">
               <h1 className="text-2xl font-bold">Email Confirmation</h1>
@@ -125,8 +121,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
               )}
             </div>
           </div>
-        </div>
-    </Suspense>
+      </div>
     );
   }
 }
@@ -135,9 +130,12 @@ export default function ConfirmEmailWithRouter(props: ConfirmEmailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
+
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-      <ConfirmEmail {...props} router={router} searchParams={searchParams} />
+      <ConfirmEmail {...props} router={router} token={token} email={email} />
     </Suspense>
   );
 }
