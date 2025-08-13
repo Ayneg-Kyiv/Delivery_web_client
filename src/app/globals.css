@@ -34,6 +34,15 @@
 
   --title-4-font: var(--font-bahnschrift);
   --title-4-font-size: 34px;
+
+  --subtitle-1-font: var(--font-bahnschrift);
+  --subtitle-1-font-size: 28px;
+
+  --subtitle-2-font: var(--font-bahnschrift);
+  --subtitle-2-font-size: 26px;
+
+  --subtitle-3-font: var(--font-bahnschrift);
+  --subtitle-3-font-size: 24px;
   /*  */
 }
 
@@ -80,6 +89,41 @@
   }
 }
 
+.font-title-1{
+  font-family: var(--title-1-font);
+  font-size: var(--title-1-font-size);
+}
+
+.font-title-2{
+  font-family: var(--title-2-font);
+  font-size: var(--title-2-font-size);
+}
+
+.font-title-3{
+  font-family: var(--title-3-font);
+  font-size: var(--title-3-font-size);
+}
+
+.font-title-4{
+  font-family: var(--title-4-font);
+  font-size: var(--title-4-font-size);
+}
+
+.font-subtitle-1{
+  font-family: var(--subtitle-1-font);
+  font-size: var(--subtitle-1-font-size);
+}
+
+.font-subtitle-2{
+  font-family: var(--subtitle-2-font);
+  font-size: var(--subtitle-2-font-size);
+}
+
+.font-subtitle-3{
+  font-family: var(--subtitle-3-font);
+  font-size: var(--subtitle-3-font-size);
+}
+
 /* Global styles */
 body {
   background: var(--background);
@@ -89,6 +133,10 @@ body {
 
 nav {
   background: var(--background-lighter);
+}
+
+.navbar-underline{
+  background: #94569F;
 }
 
 footer {
@@ -246,21 +294,21 @@ input::placeholder {
 }
 
 .floating-input.floating-input-error {
-  border-color: #ff2222;
-  background: #4a0000;
-  color: #ff2222;
+  border-color: #ED2B2B;
+  background: #ED2B2B20;
+  color: #ED2B2B;
 }
 
 /* Error state for floating label */
 .floating-label.floating-label-error {
-  color: #ff2222;
-  background-color: #4a0000;
+  color: #ED2B2B;
+  background-color: #ED2B2B20;
 }
 
 /* Error + focused state for floating input */
 .floating-input.floating-input-error:focus {
-  border-color: #ff2222;
-  background: #4d0000;
+  border-color: #ED2B2B;
+  background: #ED2B2B20;
 }
 
 /* Error + filled/focused state for label */
@@ -268,11 +316,12 @@ input::placeholder {
 .floating-input.floating-input-error:focus + .floating-label.floating-label-error {
   top: 4px;
   font-size: 0.9rem;
-  color: #ff2222;
-  background: #4d0000;
+  color: #ED2B2B;
+  background: #ED2B2B20;
   padding: 0 4px;
 }
 
+/* Custom checkbox */
 .custom-checkbox-outer {
   width: 20px;
   height: 20px;
@@ -298,3 +347,4 @@ input::placeholder {
 .custom-checkbox-checked .custom-checkbox-inner {
   display: block;
 }
+/**/
