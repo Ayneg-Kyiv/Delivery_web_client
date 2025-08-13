@@ -24,8 +24,9 @@ export const AuthService = {
   try {
     await ApiClient.post('/auth/signout');
 
-    } catch (e) {
+    } catch (error) {
       // Optionally handle/log error, but proceed to signOut anyway
+      throw error;
     }
     return await signOut({ redirect: false });
   },

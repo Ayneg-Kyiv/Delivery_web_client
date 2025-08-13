@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
 import https from 'https';
+import { TResponse } from './response';
 
 function getCsrfTokenSync(): string | null {
   if (typeof window !== "undefined") {
@@ -13,7 +14,7 @@ function getCsrfTokenSync(): string | null {
 }
 
 export const ApiClient = {
-  async request<T = any>(url: string, config: AxiosRequestConfig = {}) {
+  async request<T = TResponse>(url: string, config: AxiosRequestConfig = {}) {
     const session = await getSession();
 
     const headers: Record<string, string> = {
@@ -67,19 +68,19 @@ export const ApiClient = {
     }
   },
 
-  get<T = any>(url: string, config?: AxiosRequestConfig) {
+  get<T = TResponse>(url: string, config?: AxiosRequestConfig) {
     return this.request<T>(url, { ...config, method: 'get' });
   },
 
-  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
+  post<T = TResponse>(url: string, data?: any, config?: AxiosRequestConfig) {
     return this.request<T>(url, { ...config, method: 'post', data });
   },
 
-  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
+  put<T = TResponse>(url: string, data?: any, config?: AxiosRequestConfig) {
     return this.request<T>(url, { ...config, method: 'put', data });
   },
 
-  delete<T = any>(url: string, config?: AxiosRequestConfig) {
+  delete<T = TResponse>(url: string, config?: AxiosRequestConfig) {
     return this.request<T>(url, { ...config, method: 'delete' });
   },
 };

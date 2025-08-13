@@ -2,17 +2,25 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
-import https from 'https';
-import axios from 'axios';
+import { ApiClient } from "../../../api-client";
 
-// Create HTTPS agent that ignores self-signed certificates
-const httpsAgent = new https.Agent({
-  rejectUnauthorized: false
-});
+async function getCsrfToken()  {
+  const cookieStore = await cookies();
+  let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
+
+  if (!csrf) {
+    // Fallback to fetching CSRF token from the API if not found in cookies
+    const response = await ApiClient.get<any>("/csrf");
+    csrf = response?.csrfToken || null;
+  }
+
+  return csrf;
+}
 
 async function refreshAccessToken(token: JWT) {
   try {
-    const response = await axios.post('https://localhost:7051/api/auth/refresh-session', {}, {
+    const csrfToken = await getCsrfToken();
+    const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -42,10 +50,10 @@ async function refreshAccessToken(token: JWT) {
       }
     };
   }
-  catch (error) {
+  catch (error: unknown) {
     return {
       ...token,
-      error: "Error refreshing access token"
+      error: `Error refreshing access token: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -62,13 +70,12 @@ const handler = NextAuth({
       
       async authorize(credentials) {
         try {
-          const response = await axios.post('https://localhost:7051/api/auth/callback/credentials', {
-            email: credentials?.email,
-            password: credentials?.password
-          }, {
-            headers: { 
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
+          const csrfToken = await getCsrfToken();
+
+          const response = await ApiClient.post<any>("/auth/signin", credentials, {
+            headers: {
+              "X-XSRF-TOKEN": csrfToken || "",
+              "Cookie": (await cookies()).toString() || "",
             },
             httpsAgent
           });
@@ -76,23 +83,43 @@ const handler = NextAuth({
           if (response.status === 200) {
             const data = response.data;
             
-            // Parse cookies from response headers
-            const setCookieHeader = response.headers['set-cookie'];
-            if (setCookieHeader) {
-              // Handle refresh token cookie if needed
-              const refreshTokenCookie = setCookieHeader.find((cookie: string) => cookie.startsWith('refreshToken='));
-              if (refreshTokenCookie) {
-                const refreshTokenMatch = refreshTokenCookie.match(/refreshToken=([^;]+)/);
-                if (refreshTokenMatch) {
-                  (await cookies()).set('refreshToken', refreshTokenMatch[1], {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'strict'
-                  });
-                }
-              }
+            if (refreshTokenCookie) {
+              // Split cookie string into parts
+              const parts = refreshTokenCookie.split(";").map(part => part.trim());
+              const [nameValue, ...attributes] = parts;
+              const [name, value] = nameValue.split("=");
+
+              // Extract attributes
+              const cookieOptions: Record<string, any> = {
+                name,
+                value: decodeURIComponent(value || ""),
+                httpOnly: false,
+                secure: false,
+                sameSite: undefined,
+                expires: undefined,
+                path: undefined
+              };
+
+              attributes.forEach(attr => {
+                if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
+                if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
+                if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
+                if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
+                if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
+              });
+
+              (await cookies()).set(cookieOptions.name, cookieOptions.value, {
+                httpOnly: cookieOptions.httpOnly,
+                secure: cookieOptions.secure,
+                sameSite: cookieOptions.sameSite,
+                expires: cookieOptions.expires,
+                path: cookieOptions.path
+              });
             }
-            
+
+          const data = response.data;
+
+          if (data.success && data.data)
             return {
               id: data.user.id,
               name: data.user.name,
@@ -104,7 +131,7 @@ const handler = NextAuth({
           
           return null;
         } catch (error) {
-          console.error('Authorization error:', error);
+          console.error("Authorization error:", error);
           return null;
         }
       }

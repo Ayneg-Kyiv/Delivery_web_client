@@ -22,7 +22,11 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
     }
 
     async componentDidMount() {
-        // CSRF token is handled automatically by getCsrfTokenSync() when needed
+        try {
+            await ApiClient.get<null>('/csrf');
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
     }
 
     handlePasswordChange = (password: string) => {
@@ -72,7 +76,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
                 this.setState({ error: 'Password reset failed. Please try again.', success: undefined });
             }
         } catch (err) {
-            this.setState({ error: 'An error occurred. Please try again.', success: undefined });
+            this.setState({ error: `An error occurred. ${err} Please try again.`, success: undefined });
         } finally {
             this.setState({ loading: false });
         }

@@ -1,10 +1,13 @@
-"use client";
+'use client';
 
 import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '../api-client';
 import Button from '@/components/ui/button';
+import TextInputGroup from '@/components/ui/text-input-group';
+import ContentBox from '@/components/ui/content-box';
+import Image from 'next/image';
 
 class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     constructor(props: SignInPageProps) {
@@ -21,10 +24,15 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     }
 
     async componentDidMount() {
-        // CSRF token is handled automatically by getCsrfTokenSync() when needed
+        try {
+            await ApiClient.get<null>('/csrf');
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
     }
 
-    handleEmailChange = (email: string) => {
+    handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const email = e.target.value;
         this.setState({ email });
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) 
@@ -33,18 +41,19 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             this.setState({ emailError: false });
     };
 
-    handlePasswordChange = (password: string) => {
+    handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const password = e.target.value;
         this.setState({ password });
         if (password.length < 8) 
             this.setState({ passwordError: true });
         else 
             this.setState({ passwordError: false, error: undefined });
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
-            if (!passwordRegex.test(password)) {
-                this.setState({ passwordError: true });
-            } else {
-                this.setState({ passwordError: false });
-            }
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
+        if (!passwordRegex.test(password)) {
+            this.setState({ passwordError: true });
+        } else {
+            this.setState({ passwordError: false });
+        }
     };
 
     handleSubmit = async (event: React.FormEvent) => {
@@ -61,70 +70,67 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             else
                 this.setState({ error: 'Invalid email or password' });
         } catch (error) {
-            this.setState({ error: 'Sign in failed. Please try again.' });
+            this.setState({ error: `Sign in failed. ${error} Please try again.` });
         }
     };
 
     renderContent = () => {
         return (
-            <div className='flex justify-center items-center py-20 h-screen'>
-                <div className="w-full max-w-[760px] bg-[#0f0e10] border-none rounded-[20px] shadow-[0px_0px_10px_20px_#00000040] mx-4">
-                    <form className="p-10 flex flex-col items-center" onSubmit={this.handleSubmit}>
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-16 text-center">
-                            Ласкаво просимо до SMTH?
-                        </h1>
+            <ContentBox>
+                <form className="pt-20 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
+                        
+                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
 
-                        <div className="w-full max-w-[500px] space-y-6">
-                            <div className="space-y-5 flex flex-col">
-                                <div className="floating-input-group flex flex-col ">
-                                    <input
-                                        type="email"
-                                        value={this.state.email}
-                                        onChange={(e) => this.handleEmailChange(e.target.value)}
-                                        className={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
-                                        required
-                                        id="email"
-                                        autoComplete="email"
-                                    />
-                                    <label htmlFor="email" className={`floating-label${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}>E-mail</label>
-                                </div>
+                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-16 text-center">
+                        Ласкаво просимо до Cargix
+                    </h1>
 
-                                <div className="floating-input-group flex flex-col">
-                                    <input
-                                        type={this.state.showPassword ? 'text' : 'password'}
-                                        value={this.state.password}
-                                        onChange={(e) => this.handlePasswordChange(e.target.value)}
-                                        className={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
-                                        required
-                                        id="password"
-                                        autoComplete="current-password"
-                                    />
-                                    <label htmlFor="password" className={`floating-label${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}>Password</label>
-                                </div>
-                            </div>
+                   <div className="flex-1 w-full max-w-[500px] space-y-5">
+                        <div className="space-y-5 flex flex-col">
+                            <TextInputGroup
+                                label="E-mail"
+                                value={this.state.email}
+                                onChange={this.handleEmailChange}
+                                type="email"
+                                className=""
+                                inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
 
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                    <div
-                                        className={`custom-checkbox-outer${this.state.rememberMe ? " custom-checkbox-checked" : ""}`}
-                                        onClick={() => this.setState({ rememberMe: !this.state.rememberMe })}
-                                        tabIndex={0}
-                                        role="checkbox"
-                                        aria-checked={this.state.rememberMe}
-                                        id={"remember"}
-                                        style={{ outline: "none" }}
+                            <TextInputGroup
+                                label="Password"
+                                value={this.state.password}
+                                onChange={this.handlePasswordChange}
+                                type={this.state.showPassword ? 'text' : 'password'}
+                                className=""
+                                inputClassName={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                                <div
+                                    className={`custom-checkbox-outer${this.state.rememberMe ? " custom-checkbox-checked" : ""}`}
+                                    onClick={() => this.setState({ rememberMe: !this.state.rememberMe })}
+                                    tabIndex={0}
+                                    role="checkbox"
+                                    aria-checked={this.state.rememberMe}
+                                    id={"remember"}
+                                    style={{ outline: "none" }}
                                     >
                                     <div className="custom-checkbox-inner" />
                                     </div>
-                                    <label htmlFor="remember"
-                                    className="pl-2 font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] cursor-pointer"
-                                    >
-                                    Запам'ятати мене
+            
+                                    <label htmlFor="remember" className="pl-2 font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] cursor-pointer">
+                                        Запам&apos;ятати мене
                                     </label>
                                 </div>
 
                                 <Button onClick={() => this.props.router?.push('/forgot-password')} text='Забув пароль'
-                                    className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]"
+                                    className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                                 />
                             </div>
 
@@ -147,16 +153,15 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                     Не маєте акаунту? 
                                     </span>
                                     <Button onClick={() => this.props.router?.push('/signup')} text='Створити акаунт'
-                                        className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]"
+                                        className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                                     />
                                 </div>
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        )}
-
+            </ContentBox>
+        )
+    }
 
     render() {
         return <>{this.renderContent()}</>;

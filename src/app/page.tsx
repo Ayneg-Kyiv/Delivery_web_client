@@ -19,7 +19,7 @@ class PageTemplate extends Component {
         className: "button-type-2 w-[242px] h-12 rounded-lg text-2xl" },
     ],
   };
-  
+
   howItWorksSteps = [
     {
       number: "1",
@@ -105,10 +105,10 @@ class PageTemplate extends Component {
                   </span>
                 </div>
 
-                <Card className="w-[370px] h-[400px] bg-[#d9d9d9] rounded-xl mb-6" children={
-                  <CardContent source="/path/to/illustration.png"
-                   className="flex items-center justify-center h-full" />} />
-
+                <Card className="w-[370px] h-[400px] bg-[#d9d9d9] rounded-xl mb-6" >
+                  <CardContent source="/dummy.png"
+                   className="flex items-center justify-center h-full" />
+                </Card>
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[28px] mb-2">
                   {step.title}
                 </h3>
@@ -145,16 +145,13 @@ class PageTemplate extends Component {
             fringilla sit amet.
           </p>
 
-          <Card
-            className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8"
-            children={
-              <Button
-                onClick={() => console.log("Learn more clicked!")}
-                text="Illustration + Button"
-                className="flex items-center justify-center h-full text-5xl text-center"
-              />
-            }
-          />
+          <Card className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8">
+            <Button
+              onClick={() => console.log("Learn more clicked!")}
+              text="Illustration + Button"
+              className="flex items-center justify-center h-full text-5xl text-center"
+            />
+          </Card>
 
           <div className="flex justify-between items-center">
             <Button onClick={() => console.log("Previous clicked!")} className="p-0"
@@ -197,22 +194,22 @@ class PageTemplate extends Component {
         <section className="w-full h-[600px] bg-darker flex justify-center items-center">
           <div className="w-[1552px] h-[520px] mx-auto my-[30px] grid grid-cols-12 grid-rows-2 gap-5">
             <Card className="col-span-4 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
             <Card className="col-span-5 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
             <Card className="col-span-3 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
             <Card className="col-span-3 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
             <Card className="col-span-5 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
             <Card className="col-span-4 bg-[#d9d9d9] rounded-xl">
-              <CardContent className="flex items-center justify-center h-full" />
+              <CardContent source="/dummy.png" className="flex items-center justify-center h-full" />
             </Card>
           </div>
         </section>
@@ -233,8 +230,7 @@ class PageTemplate extends Component {
           <div className="flex flex-col gap-20">
             <div className="flex gap-20">
               <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent className="flex items-center justify-center h-full">
-                </CardContent>
+                <CardContent source="/dummy.png" className="flex items-center justify-center h-full"/>
               </Card>
 
               <div className="flex flex-col justify-center">
@@ -272,8 +268,7 @@ class PageTemplate extends Component {
               </div>
 
               <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent className="flex items-center justify-center h-full">
-                </CardContent>
+                <CardContent source="/dummy.png" className="flex items-center justify-center h-full"/>
               </Card>
             </div>
           </div>
@@ -297,8 +292,7 @@ class PageTemplate extends Component {
             text="Розрахувати доставку" />
 
           <Card className="w-full h-[700px] bg-[#d9d9d9] rounded-xl">
-            <CardContent className="flex items-center justify-center h-full">
-            </CardContent>
+            <CardContent source="/dummy.png" className="flex items-center justify-center h-full"/>
           </Card>
 
         </section>

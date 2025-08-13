@@ -6,6 +6,7 @@ interface ForgotPasswordPageProps {
 interface ForgotPasswordPageState {
     email: string;
     error?: string;
+    emailError?: boolean;
     success?: string;
     loading: boolean;
 }

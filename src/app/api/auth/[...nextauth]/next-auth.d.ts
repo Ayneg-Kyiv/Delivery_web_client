@@ -3,7 +3,7 @@ import { JWT } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 declare module "next-auth" {
-  interface Session {
+  export interface Session {
     accessToken: string;
     user: {
       id: string;

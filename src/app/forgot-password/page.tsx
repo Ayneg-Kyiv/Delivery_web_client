@@ -3,6 +3,10 @@
 import React from 'react';
 import { ApiClient } from '../api-client';
 import { useRouter } from 'next/navigation';
+import ContentBox from '@/components/ui/content-box';
+import Image from 'next/image';
+import TextInputGroup from '@/components/ui/text-input-group';
+import Button from '@/components/ui/button';
 
 class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, ForgotPasswordPageState> {
     constructor(props: ForgotPasswordPageProps) {
@@ -10,26 +14,31 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         this.state = {
             email: '',
             error: undefined,
+            emailError: false,
             success: undefined,
             loading: false,
         };
     }
 
     async componentDidMount() {
-        // CSRF token is handled automatically by getCsrfTokenSync() when needed
+        try {
+            await ApiClient.get<null>('/csrf');
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
     }
 
-    handleEmailChange = (email: string) => {
+    
+    handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const email = e.target.value;
         this.setState({ email });
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (!emailRegex.test(email)) {
-            this.setState({ error: 'Invalid email format', success: undefined });
-        } else {
-            this.setState({ error: undefined });
-        }
-    };
+        if (!emailRegex.test(email)) 
+            this.setState({ emailError: true });
+        else 
+            this.setState({ emailError: false });
+        };
+
 
     handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -48,21 +57,17 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
             const response = await ApiClient.post('/account/forgot-password', { email });
 
             if (response?.success) {
-                this.setState({
-                    success: 'If an account with that email exists, a password reset link has been sent.',
-                    error: undefined,
-                    loading: false,
-                });
+                this.props.router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
             } else {
-                this.setState({
-                    error: 'Failed to send reset link. Please try again.',
-                    success: undefined,
-                    loading: false,
-                });
+            this.setState({
+                error: `An error occurred Please try again.`,
+                success: undefined,
+                loading: false,
+            });
             }
         } catch (err) {
             this.setState({
-                error: 'An error occurred. Please try again.',
+                error: `An error occurred. ${err} Please try again.`,
                 success: undefined,
                 loading: false,
             });
@@ -71,36 +76,55 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 
     renderContent = () => {
         return (
-            <div className='h-[89vh] w-full flex flex-col items-center justify-center bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg'>
-                <div className='m-8'>
-                    <h1 className='text-4xl font-bold'>Forgot Password</h1>
-                </div>
-                <form className='flex flex-col w-95 items-stretch justify-center' onSubmit={this.handleSubmit}>
-                    <input
-                        id='email'
-                        type='email'
-                        placeholder='Email'
-                        autoComplete='email'
-                        value={this.state.email}
-                        onChange={(e) => this.handleEmailChange(e.target.value)}
-                        className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
-                        disabled={this.state.loading}
-                    />
-                    {this.state.error && (
-                        <div className='flex-1 mb-4 mt-4 text-gray-500 outline p-4 rounded-lg bg-gray-200'>{this.state.error}</div>
-                    )}
-                    {this.state.success && (
-                        <div className='flex-1 mb-4 mt-4 text-green-600 outline p-4 rounded-lg bg-green-100'>{this.state.success}</div>
-                    )}
-                    <button
-                        type="submit"
-                        className='flex-1 mt-6 px-4 py-2 bg-blue-500 text-white text-2xl rounded-lg hover:bg-gray-600 transition-colors duration-300 active:opacity-75'
-                        disabled={this.state.loading}
-                    >
-                        {this.state.loading ? 'Sending...' : 'Send Reset Link'}
-                    </button>
+            <ContentBox>
+                <form className='p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                            Забули пароль?
+                        </h1>
+
+                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                            Будь ласка введіть вашу електронну адресу, щоб отримати посилання для скидання паролю.
+                        </p>
+                    </div>
+
+                    <div className="flex-1 w-full max-w-[500px] space-y-6">
+
+                        <div className="space-y-5 flex flex-col">
+                            <TextInputGroup
+                                label="E-mail"
+                                value={this.state.email}
+                                onChange={this.handleEmailChange}
+                                type="email"
+                                className=""
+                                inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+
+                            <div className={`flex flex-row items-center ${this.state.error ? '' : 'hidden'}`}>
+                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                                <p className='text-[#ED2B2B]'>
+                                    Адреса електронної пошти, яку ви вказали, повинна бути зареєстрована в нашій системі.
+                                </p>
+                            </div>
+                        </div>
+
+                        <input type="submit" value='Наступна'
+                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                        />
+
+                        <div className="flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                            <Button onClick={() => this.props.router?.push('/signin')} text='Повернутись до сторінки входу'
+                                className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
+                            />
+                        </div>
+                    </div>
                 </form>
-            </div>
+            </ContentBox>
         );
     };
 

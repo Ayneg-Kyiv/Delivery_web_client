@@ -1,18 +1,16 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface CardContentProps {
+    source: string;
     className?: string;
-    children?: React.ReactNode;
+    width?: number;
+    height?: number;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ 
-    className = '', 
-    children 
-}) => {
+const CardContent: React.FC<CardContentProps> = ({ source, className = '', width = 500, height = 500 }) => {
     return (
-        <div className={`p-6 ${className}`}>
-            {children}
-        </div>
+        <Image src={source} className={`${className}`} alt="" width={width} height={height} />
     );
 };
 
