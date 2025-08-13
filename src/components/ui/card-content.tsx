@@ -1,13 +1,18 @@
 import React from 'react';
 
 interface CardContentProps {
-    source ?: string;
     className?: string;
+    children?: React.ReactNode;
 }
 
-const CardContent: React.FC<CardContentProps> = ({ source, className = '' }) => {
+export const CardContent: React.FC<CardContentProps> = ({ 
+    className = '', 
+    children 
+}) => {
     return (
-        <img src={source} className={`${className}`} alt="" />
+        <div className={`p-6 ${className}`}>
+            {children}
+        </div>
     );
 };
 

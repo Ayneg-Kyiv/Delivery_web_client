@@ -42,7 +42,7 @@ export const ApiClient = {
     try {
       const response = await axios({
         url: `${process.env.NEXT_PUBLIC_API_URL}${url}`,
-        withCredentials: true, // This ensures cookies are sent
+        withCredentials: false, // Temporarily disable credentials for CORS issues
         ...config,
         headers,
         httpsAgent: agent

@@ -19,11 +19,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     }
 
     async componentDidMount() {
-        try{
-            await ApiClient.get<any>('/csrf');
-        }catch (error) {
-            console.error('Error fetching CSRF token:', error);
-        }
+        // CSRF token is handled automatically by getCsrfTokenSync() when needed
     }
 
     handleEmailChange = (email: string) => {
