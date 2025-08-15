@@ -8,13 +8,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HelpCircle, Settings, Star } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
 
 export default function Profile(): React.JSX.Element {
   // State for user data
   const [userData, setUserData] = useState<ApplicationUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 
   // Load user data on component mount with normalization and console logs
@@ -74,6 +77,97 @@ export default function Profile(): React.JSX.Element {
 
   const displayOrMissing = (v?: string) => (v && v.trim() !== "" ? v : "Не вказано");
 
+  // Build absolute URL for image if backend returns relative path
+  const resolveImageSrc = (path?: string | null) => {
+    if (!path) return undefined;
+    const p = String(path);
+    if (/^(https?:)?\/\//i.test(p) || p.startsWith('data:') || p.startsWith('blob:')) return p;
+    const filesBase = (process.env.NEXT_PUBLIC_FILES_BASE_URL || '').replace(/\/+$/, '');
+    const apiBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+    const clean = p.replace(/^\/+/, '');
+    if (filesBase) return `${filesBase}/${clean}`;
+    return apiBase ? `${apiBase}/${clean}` : `/${clean}`;
+  };
+
+  const testImageLoad = (src: string) => new Promise<boolean>((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+
+  // Handlers for changing profile image
+  const handlePickFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userData?.email) return;
+    setUploading(true);
+    // Show instant preview
+    try {
+      const localUrl = URL.createObjectURL(file);
+      setPreviewUrl(prev => {
+        if (prev) URL.revokeObjectURL(prev);
+        return localUrl;
+      });
+    } catch {}
+    try {
+      const result = await ProfileService.updateProfileImage(userData.email, file);
+      console.log('Update profile image result:', result);
+      // Try to update local avatar if API returns a path; otherwise refetch profile
+      const newPath = (result?.data?.imagePath) || (result?.Data?.ImagePath) || (result?.imagePath) || null;
+      if (newPath) {
+        const remote = resolveImageSrc(newPath);
+        if (remote && await testImageLoad(remote)) {
+          setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
+          setPreviewUrl(null);
+        } else {
+          // Keep preview if remote not available yet (eventual consistency)
+          setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
+        }
+      } else {
+        // fallback: reload profile
+        try {
+          const refreshed = await ProfileService.getUserProfile();
+          const success = (refreshed as any)?.Success ?? (refreshed as any)?.success;
+          const payload = (refreshed as any)?.Data ?? (refreshed as any)?.data ?? {};
+          const raw = Array.isArray(payload) ? payload[0] : payload;
+          if (success && raw) {
+            const normalized: ApplicationUser = {
+              firstName: raw?.firstName ?? raw?.FirstName ?? "",
+              middleName: raw?.middleName ?? raw?.MiddleName ?? "",
+              lastName: raw?.lastName ?? raw?.LastName ?? "",
+              email: raw?.email ?? raw?.Email ?? "",
+              dateOfBirth: raw?.dateOfBirth ?? raw?.DateOfBirth ?? "",
+              aboutMe: raw?.aboutMe ?? raw?.AboutMe ?? "",
+              phoneNumber: raw?.phoneNumber ?? raw?.PhoneNumber ?? "",
+              address: raw?.address ?? raw?.Address ?? "",
+              imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
+              rating: raw?.rating ?? raw?.Rating ?? 0,
+            };
+            const remote = resolveImageSrc(normalized.imagePath);
+            if (remote && await testImageLoad(remote)) {
+              setUserData(normalized);
+              setPreviewUrl(null);
+            } else {
+              setUserData(normalized);
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to refresh profile after image upload', err);
+        }
+      }
+      // Clear file input so selecting the same file again re-triggers change
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      console.error('Failed to update profile image:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   // Navigation items
   const navItems = ["Text", "Text", "Text", "Text"];
 
@@ -114,8 +208,23 @@ export default function Profile(): React.JSX.Element {
             {/* Profile avatar and name */}
             <div className="flex flex-col items-center justify-center">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
-                {userData?.imagePath ? (
-                  <img src={userData.imagePath} alt="avatar" className="w-full h-full object-cover" />
+                {previewUrl || userData?.imagePath ? (
+                  <img
+                    src={previewUrl || resolveImageSrc(userData?.imagePath)}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                    onError={async (e) => {
+                      // Avoid loops on preview
+                      if (!userData?.email || previewUrl) return;
+                      try {
+                        const blob = await ProfileService.getProfileImageBlobByEmail(userData.email);
+                        const blobUrl = URL.createObjectURL(blob);
+                        (e.currentTarget as HTMLImageElement).src = blobUrl;
+                      } catch (err) {
+                        console.warn('Fallback blob fetch for avatar failed:', err);
+                      }
+                    }}
+                  />
                 ) : (
                   <AvatarFallback className="bg-[#d9d9d9] text-[#4d4d4d] font-semibold text-4xl">
                     {getInitials()}
@@ -125,6 +234,22 @@ export default function Profile(): React.JSX.Element {
               <span className="mt-[18px] font-['Bahnschrift-Regular',Helvetica] text-white text-2xl">
                 {getDisplayName()}
               </span>
+              {/* Change photo link and hidden input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={handlePickFile}
+                disabled={uploading}
+                className="mt-2 text-[#7f51b3] hover:text-[#6a4399] underline disabled:opacity-60"
+              >
+                {uploading ? 'Завантаження…' : 'Змінити фото'}
+              </button>
             </div>
 
             {/* Rating section */}

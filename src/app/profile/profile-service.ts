@@ -62,4 +62,40 @@ export class ProfileService {
       };
     }
   }
+
+  static async updateProfileImage(email: string, imageFile: File): Promise<any> {
+    try {
+      const form = new FormData();
+      // API expects these exact field names based on provided curl
+      form.append('Email', email);
+      form.append('Image', imageFile);
+
+  const response = await ApiClient.put<any>('/api/Account/update-profile-image', form, {
+        headers: {
+          // Override default JSON to let axios set proper multipart boundary
+          'Content-Type': 'multipart/form-data',
+          'Accept': '*/*',
+        },
+      });
+
+      return response;
+    } catch (error: any) {
+      console.error('Error updating profile image:', error);
+      throw error;
+    }
+  }
+
+  static async getProfileImageBlobByEmail(email: string): Promise<Blob> {
+    // Try to fetch image directly from API as a blob; many backends expose such endpoint
+    // Example: GET /api/Account/profile-image?email=
+    const blob = await ApiClient.get<Blob>(
+      '/api/Account/profile-image',
+      {
+        params: { email },
+        responseType: 'blob',
+        headers: { Accept: 'image/*' }
+      }
+    );
+    return blob;
+  }
 }
