@@ -98,4 +98,19 @@ export class ProfileService {
     );
     return blob;
   }
+
+  static async changePassword(email: string, currentPassword: string, newPassword: string): Promise<ApiResponse<any> | any> {
+    try {
+      const payload = { email, currentPassword, newPassword };
+      const response = await ApiClient.put<any>('/api/Account/change-password', payload, {
+        headers: { 'Content-Type': 'application/json', 'Accept': '*/*' },
+      });
+      return response;
+    } catch (error: any) {
+      console.error('Error changing password:', error);
+      // Return API error response if present, else throw
+      if (error.response?.data) return error.response.data;
+      throw error;
+    }
+  }
 }
