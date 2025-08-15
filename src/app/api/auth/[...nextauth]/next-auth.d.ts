@@ -1,6 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import { useSession } from "next-auth/react";
 
 declare module "next-auth" {
   export interface Session {
@@ -36,3 +37,6 @@ declare module "next-auth/jwt" {
     error?: string;
   }
 }
+
+const { data: session } = useSession();
+console.log("Session:", session);

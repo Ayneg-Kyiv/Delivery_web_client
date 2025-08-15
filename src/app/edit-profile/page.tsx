@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { ProfileService } from "../profile/profile-service";
 import { ChangeUserDataDTO } from "../profile/profile.d";
 
@@ -25,19 +26,34 @@ export default function EditProfile(): React.JSX.Element {
   const [successMessage, setSuccessMessage] = useState("");
 
   // Load current user data
+  const { data: session } = useSession();
   useEffect(() => {
     const loadUserData = async () => {
       setLoading(true);
       try {
-        const response = await ProfileService.getUserProfile();
-        if (response.Success && response.Data) {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/Account`;
+        console.log('Шлях запиту до API:', url);
+        const token = session?.accessToken;
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Дані з API /Account:', data);
+        if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+          const user = data.data[0];
           setFormData({
-            Email: response.Data.email || "",
-            FirstName: response.Data.firstName || "",
-            MiddleName: response.Data.middleName || "",
-            LastName: response.Data.lastName || "",
-            DateOfBirth: response.Data.dateOfBirth || "",
-            AboutMe: response.Data.aboutMe || ""
+            Email: user.email || "",
+            FirstName: user.firstName || "",
+            MiddleName: user.middleName || "",
+            LastName: user.lastName || "",
+            DateOfBirth: user.dateOfBirth || "",
+            AboutMe: user.aboutMe || ""
           });
         }
       } catch (error) {
@@ -47,8 +63,10 @@ export default function EditProfile(): React.JSX.Element {
       }
     };
 
-    loadUserData();
-  }, []);
+    if (session?.accessToken) {
+      loadUserData();
+    }
+  }, [session]);
 
   // Handle input changes
   const handleInputChange = (field: keyof ChangeUserDataDTO, value: string) => {
@@ -56,7 +74,7 @@ export default function EditProfile(): React.JSX.Element {
       ...prev,
       [field]: value
     }));
-    
+    setSuccessMessage("");
     // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors(prev => ({
@@ -109,21 +127,24 @@ export default function EditProfile(): React.JSX.Element {
       return;
     }
     
-    setSaveLoading(true);
-    setErrors({});
-    setSuccessMessage("");
+  setSaveLoading(true);
+  setErrors({});
+  setSuccessMessage("");
     
     try {
       const response = await ProfileService.changeUserData(formData);
+  console.log('Відповідь API на зміну даних:', response);
       
       if (response.Success) {
+        setErrors({});
         setSuccessMessage("Дані успішно оновлено!");
         // Optionally redirect back to profile page
         // window.location.href = '/profile';
+        return;
       } else {
         if (response.Errors && response.Errors.length > 0) {
           const errorObj: Record<string, string> = {};
-          response.Errors.forEach(error => {
+          response.Errors.forEach((error: string) => {
             errorObj.general = error;
           });
           setErrors(errorObj);
@@ -167,9 +188,9 @@ export default function EditProfile(): React.JSX.Element {
                   {successMessage}
                 </div>
               )}
-              
-              {/* General Error */}
-              {errors.general && (
+
+              {/* General Error (показувати тільки якщо немає successMessage і errors.general) */}
+              {!successMessage && errors.general && (
                 <div className="bg-red-600 text-white p-4 rounded-md">
                   {errors.general}
                 </div>
