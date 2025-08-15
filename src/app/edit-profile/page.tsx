@@ -122,35 +122,35 @@ export default function EditProfile(): React.JSX.Element {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setSaveLoading(true);
+    setErrors({});
+    setSuccessMessage("");
+
     if (!validateForm()) {
+      setSaveLoading(false);
       return;
     }
-    
-  setSaveLoading(true);
-  setErrors({});
-  setSuccessMessage("");
-    
+
     try {
       const response = await ProfileService.changeUserData(formData);
-  console.log('Відповідь API на зміну даних:', response);
-      
-      if (response.Success) {
+      console.log('Відповідь API на зміну даних:', response);
+
+      // Accept only Success key (API returns Success: true)
+      if (response.Success === true) {
         setErrors({});
         setSuccessMessage("Дані успішно оновлено!");
-        // Optionally redirect back to profile page
-        // window.location.href = '/profile';
         return;
+      }
+
+      // If not success, show error
+      if (response.Errors && response.Errors.length > 0) {
+        const errorObj: Record<string, string> = {};
+        response.Errors.forEach((error: string) => {
+          errorObj.general = error;
+        });
+        setErrors(errorObj);
       } else {
-        if (response.Errors && response.Errors.length > 0) {
-          const errorObj: Record<string, string> = {};
-          response.Errors.forEach((error: string) => {
-            errorObj.general = error;
-          });
-          setErrors(errorObj);
-        } else {
-          setErrors({ general: response.Message || 'Помилка при збереженні даних' });
-        }
+        setErrors({ general: response.Message || 'Помилка при збереженні даних' });
       }
     } catch (error: any) {
       console.error('Error saving data:', error);
