@@ -94,8 +94,8 @@ export default function Profile(): React.JSX.Element {
 
   if (loading) {
     return (
-      <main className="bg-[#130c1f] grid justify-items-center w-screen min-h-screen h-full">
-        <div className="flex items-center justify-center h-screen">
+      <main className="bg-[#130c1f] grid justify-items-center w-full">
+        <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-white text-xl">Завантаження...</div>
         </div>
       </main>
@@ -103,13 +103,13 @@ export default function Profile(): React.JSX.Element {
   }
 
   return (
-    <main className="bg-[#130c1f] grid justify-items-center w-screen min-h-screen h-full">
-      <div className="bg-[#130c1f] w-full max-w-[1920px] relative">
+    <main className="bg-[#130c1f] grid justify-items-center w-full">
+      <div className="bg-[#130c1f] w-full max-w-[1920px] relative pb-6">
         {/* Top separator */}
         <Separator className="w-full h-px mt-[95px]" />
 
         {/* Profile header card */}
-        <Card className="w-[1080px] h-[460px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none">
+  <Card className="w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none">
           <CardContent className="grid grid-cols-2 gap-[100px] p-[100px]">
             {/* Profile avatar and name */}
             <div className="flex flex-col items-center justify-center">
@@ -190,7 +190,7 @@ export default function Profile(): React.JSX.Element {
         </Tabs>
 
         {/* Profile form section */}
-        <Card className="w-[1080px] h-[575px] mx-auto bg-[#0f0e10] border-0 rounded-none">
+  <Card className="w-[1080px] mx-auto bg-[#0f0e10] border-0 rounded-none">
           <CardContent className="pt-[39px] px-[68px]">
             <Separator className="w-[965px] h-px mb-[20px]" />
 

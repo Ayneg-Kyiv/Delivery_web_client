@@ -26,7 +26,7 @@ import Image from 'next/image'
 ]
 
 const Footer: React.FC = () => (
-    <footer className="w-full h-[395px] bg-[#0e1010] px-[450px] pt-10 pb-6 relative">
+  <footer className="w-full h-[395px] bg-[#0e1010] px-[450px] pt-10 pb-6 relative">
           <div className="grid grid-cols-7 gap-[130px] mb-10">
             {footerLinks.map((column, colIndex) => (
               <div key={colIndex} className="flex flex-col gap-2">
