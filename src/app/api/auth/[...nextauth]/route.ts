@@ -3,49 +3,44 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
-
+ 
 async function getCsrfToken()  {
   const cookieStore = await cookies();
   let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
-
+ 
   if (!csrf) {
     // Fallback to fetching CSRF token from the API if not found in cookies
     const response = await ApiClient.get<any>("/csrf");
     csrf = response?.csrfToken || null;
   }
-
+ 
   return csrf;
 }
-
+ 
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
-    const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
+  const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token.accessToken}`
+        "X-XSRF-TOKEN": csrfToken || "",
       },
-      httpsAgent
     });
-
-    const data = response.data;
-
-    if (!data.success) {
+ 
+    if (!data.success)
       return {
         ...token,
         error: "Error refreshing access token"
       };
-    }
-
+ 
     return {
       ...token,
       accessToken: data.data.token,
-      accessTokenExpires: Date.now() + 1 * 60 * 60 * 1000, // Convert to milliseconds
+      accessTokenExpires: Date.now() + 1 * 60 * 60, // Convert seconds to milliseconds
       user: {
         id: data.data.id,
         name: data.data.name,
         email: data.data.email,
+        token: data.data.token,
         roles: data.data.roles
       }
     };
@@ -57,38 +52,39 @@ async function refreshAccessToken(token: JWT) {
     };
   }
 }
-
+ 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "credentials",
-
+      name: "Credentials",
+ 
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "checkbox" }
       },
-      
+     
       async authorize(credentials) {
         try {
           const csrfToken = await getCsrfToken();
-
+ 
           const response = await ApiClient.post<any>("/auth/signin", credentials, {
             headers: {
               "X-XSRF-TOKEN": csrfToken || "",
               "Cookie": (await cookies()).toString() || "",
             },
-            httpsAgent
           });
-          
-          if (response.status === 200) {
-            const data = response.data;
-            
+ 
+          // Parse the refreshToken cookie from the Set-Cookie header
+            const setCookieHeader: string[] = response.headers["set-cookie"] || [];
+            const refreshTokenCookie = setCookieHeader.find(cookie => cookie.startsWith("refreshToken="));
+           
             if (refreshTokenCookie) {
               // Split cookie string into parts
               const parts = refreshTokenCookie.split(";").map(part => part.trim());
               const [nameValue, ...attributes] = parts;
               const [name, value] = nameValue.split("=");
-
+ 
               // Extract attributes
               const cookieOptions: Record<string, any> = {
                 name,
@@ -99,7 +95,7 @@ const handler = NextAuth({
                 expires: undefined,
                 path: undefined
               };
-
+ 
               attributes.forEach(attr => {
                 if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
                 if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
@@ -107,7 +103,7 @@ const handler = NextAuth({
                 if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
                 if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
               });
-
+ 
               (await cookies()).set(cookieOptions.name, cookieOptions.value, {
                 httpOnly: cookieOptions.httpOnly,
                 secure: cookieOptions.secure,
@@ -116,19 +112,18 @@ const handler = NextAuth({
                 path: cookieOptions.path
               });
             }
-
+ 
           const data = response.data;
-
+ 
           if (data.success && data.data)
             return {
-              id: data.user.id,
-              name: data.user.name,
-              email: data.user.email,
-              token: data.user.token,
-              roles: data.user.roles
+              id: data.data.id,
+              name: data.data.name,
+              email: data.data.email,
+              token: data.data.token,
+              roles: data.data.roles
             };
-          }
-          
+ 
           return null;
         } catch (error) {
           console.error("Authorization error:", error);
@@ -137,7 +132,7 @@ const handler = NextAuth({
       }
     })
   ],
-
+ 
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -162,51 +157,46 @@ const handler = NextAuth({
 
       return refreshAccessToken(token);
     },
-
+ 
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.error = token.error;
-      
+     
       return session;
     }
   },
-
+ 
   events: {
     async signOut({ token }) {
       try {
-        await axios.post('https://localhost:7051/api/auth/signout', {}, {
+        await ApiClient.post("/auth/signout", {}, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token.accessToken}`
+            "Authorization": `Bearer ${token.accessToken}`
           },
-          httpsAgent
         });
-
-        // Clear session storage on client side (this runs server-side, so might not work)
-        if (typeof window !== 'undefined') {
-          sessionStorage.removeItem("next-auth.session-token");
-          sessionStorage.removeItem("next-auth.csrf-token"); 
-          sessionStorage.removeItem("next-auth.callback-url");
-        }
-        
+ 
+        sessionStorage.removeItem("next-auth.session-token");
+        sessionStorage.removeItem("next-auth.csrf-token");
+        sessionStorage.removeItem("next-auth.callback-url");
+       
       } catch (error) {
         console.error("Sign out error:", error);
       }
     }
   },
-
+ 
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error'
+    signIn: '/signin',
+    error: '/error'
   },
-
+ 
   session: {
     strategy: "jwt",
     maxAge: 1 * 60 * 60, // 1 hour (match your refresh token expiry)
   },
-
+ 
   debug: process.env.NODE_ENV === "development",
 });
-
+ 
 export { handler as GET, handler as POST };
