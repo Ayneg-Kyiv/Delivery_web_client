@@ -10,6 +10,7 @@ declare global {
     email: string;
     dateOfBirth?: string;
     aboutMe?: string;
+  phoneNumber?: string;
     address?: string;
     imagePath?: string;
     rating: number;

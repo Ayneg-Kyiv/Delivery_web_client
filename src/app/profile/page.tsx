@@ -4,100 +4,59 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HelpCircle, Settings, Star } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { ProfileService } from "./profile-service";
-import { ChangeUserDataDTO } from "./profile.d";
 
 export default function Profile(): React.JSX.Element {
   // State for user data
   const [userData, setUserData] = useState<ApplicationUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ChangeUserDataDTO>({
-    Email: "",
-    FirstName: "",
-    MiddleName: "",
-    LastName: "",
-    DateOfBirth: "",
-    AboutMe: ""
-  });
-  const [saveLoading, setSaveLoading] = useState(false);
 
-  // Load user data on component mount
+
+  // Load user data on component mount with normalization and console logs
   useEffect(() => {
-    const loadUserData = async () => {
+    async function loadUserData() {
       setLoading(true);
       try {
         const response = await ProfileService.getUserProfile();
-        if (response.Success && response.Data) {
-          setUserData(response.Data);
-          setFormData({
-            Email: response.Data.email,
-            FirstName: response.Data.firstName || "",
-            MiddleName: response.Data.middleName || "",
-            LastName: response.Data.lastName || "",
-            DateOfBirth: response.Data.dateOfBirth || "",
-            AboutMe: response.Data.aboutMe || ""
-          });
+        console.log('Profile API response:', response);
+        const success = (response as any)?.Success ?? (response as any)?.success;
+        const payload = (response as any)?.Data ?? (response as any)?.data ?? {};
+        const raw = Array.isArray(payload) ? payload[0] : payload;
+        console.log('Profile payload:', payload);
+        if (success && raw) {
+          const normalized: ApplicationUser = {
+            firstName: raw?.firstName ?? raw?.FirstName ?? "",
+            middleName: raw?.middleName ?? raw?.MiddleName ?? "",
+            lastName: raw?.lastName ?? raw?.LastName ?? "",
+            email: raw?.email ?? raw?.Email ?? "",
+            // date stays as-is (API string)
+            dateOfBirth: raw?.dateOfBirth ?? raw?.DateOfBirth ?? "",
+            aboutMe: raw?.aboutMe ?? raw?.AboutMe ?? "",
+            phoneNumber: raw?.phoneNumber ?? raw?.PhoneNumber ?? "",
+            address: raw?.address ?? raw?.Address ?? "",
+            imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
+            rating: raw?.rating ?? raw?.Rating ?? 0,
+          };
+          console.log('Normalized profile data:', normalized);
+          setUserData(normalized);
+        } else {
+          console.warn('Profile load not successful:', response);
         }
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
         setLoading(false);
       }
-    };
-
+    }
     loadUserData();
   }, []);
 
-  // Handle field changes
-  const handleFieldChange = (key: keyof ChangeUserDataDTO, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  // Handle save changes
-  const handleSaveField = async (fieldKey: string) => {
-    setSaveLoading(true);
-    try {
-      const response = await ProfileService.changeUserData(formData);
-      
-      if (response.Success) {
-        // Update local user data
-        if (userData) {
-          const updatedUser = { ...userData };
-          switch (fieldKey) {
-            case 'name':
-              updatedUser.firstName = formData.FirstName;
-              updatedUser.middleName = formData.MiddleName;
-              updatedUser.lastName = formData.LastName;
-              break;
-            case 'email':
-              updatedUser.email = formData.Email;
-              break;
-            case 'birthDate':
-              updatedUser.dateOfBirth = formData.DateOfBirth;
-              break;
-          }
-          setUserData(updatedUser);
-        }
-        setEditingField(null);
-        alert('Дані успішно збережено!');
-      } else {
-        alert(`Помилка: ${response.Message || 'Не вдалося зберегти дані'}`);
-      }
-    } catch (error) {
-      console.error('Error saving data:', error);
-      alert('Помилка при збереженні даних');
-    } finally {
-      setSaveLoading(false);
-    }
-  };
+  // No inline editing on this page; fields are read-only
 
   // Get display name
   const getDisplayName = () => {
@@ -106,46 +65,32 @@ export default function Profile(): React.JSX.Element {
     return parts.length > 0 ? parts.join(' ') : "Не вказано";
   };
 
+  const getInitials = () => {
+    if (!userData) return "";
+    const first = userData.firstName?.[0] ?? "";
+    const last = userData.lastName?.[0] ?? "";
+    return `${first}${last}`.toUpperCase() || "U";
+  };
+
+  const displayOrMissing = (v?: string) => (v && v.trim() !== "" ? v : "Не вказано");
+
   // Navigation items
   const navItems = ["Text", "Text", "Text", "Text"];
 
-  // Form fields with dynamic data
+  // Form fields with dynamic data (only existing/available fields)
   const formFields = [
-    { 
-      label: "Ім'я", 
-      value: getDisplayName(),
-      key: "name",
-      editValue: `${formData.FirstName} ${formData.MiddleName} ${formData.LastName}`.trim()
-    },
-    { 
-      label: "E-mail", 
-      value: userData?.email || "@mail.com", 
-      key: "email",
-      editValue: formData.Email
-    },
-    {
-      label: "Дата народження",
-      value: userData?.dateOfBirth || "7/03/2000",
-      key: "birthDate",
-      hasHelp: true,
-      editValue: formData.DateOfBirth
-    },
-    { 
-      label: "Пароль", 
-      value: "***********************", 
-      key: "password",
-      editValue: "***********************"
-    },
-    { 
-      label: "Номер телефону", 
-      value: "+38011 111 11 11", 
-      key: "phone",
-      editValue: "+38011 111 11 11"
-    },
+    { label: "Ім'я", value: displayOrMissing(userData?.firstName), key: "firstName" },
+    { label: "Прізвище", value: displayOrMissing(userData?.lastName), key: "lastName" },
+    { label: "E-mail", value: displayOrMissing(userData?.email), key: "email" },
+    { label: "Дата народження", value: displayOrMissing(userData?.dateOfBirth), key: "birthDate", hasHelp: true },
+    { label: "Номер телефону", value: displayOrMissing(userData?.phoneNumber), key: "phoneNumber" },
+    { label: "Адреса", value: displayOrMissing(userData?.address), key: "address" },
+    { label: "Про мене", value: displayOrMissing(userData?.aboutMe), key: "aboutMe", type: "textarea" as const },
   ];
 
-  // Rating stars (3 filled out of 5)
-  const stars = [true, true, true, false, false];
+  // Rating stars based on user rating (0..5)
+  const starCount = Math.max(0, Math.min(5, Math.round(userData?.rating ?? 0)));
+  const stars = Array.from({ length: 5 }, (_, i) => i < starCount);
 
   if (loading) {
     return (
@@ -169,7 +114,13 @@ export default function Profile(): React.JSX.Element {
             {/* Profile avatar and name */}
             <div className="flex flex-col items-center justify-center">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
-                <AvatarFallback className="bg-[#d9d9d9]"></AvatarFallback>
+                {userData?.imagePath ? (
+                  <img src={userData.imagePath} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <AvatarFallback className="bg-[#d9d9d9] text-[#4d4d4d] font-semibold text-4xl">
+                    {getInitials()}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <span className="mt-[18px] font-['Bahnschrift-Regular',Helvetica] text-white text-2xl">
                 {getDisplayName()}
@@ -198,10 +149,10 @@ export default function Profile(): React.JSX.Element {
 
               <div className="mt-[70px]">
                 <span className="font-['Bahnschrift-Light',Helvetica] font-light text-white text-lg">
-                  Місяць
+                  Рейтинг
                 </span>
                 <div className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-[28px] text-center mt-2">
-                  {userData?.rating || 2}
+                  {userData?.rating ?? 0}
                 </div>
                 <Separator className="w-12 h-px mt-2" />
               </div>
@@ -250,62 +201,20 @@ export default function Profile(): React.JSX.Element {
                     <label className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
                       {field.label}
                     </label>
-                    <span 
-                      className="text-sm text-white underline cursor-pointer hover:text-[#7f51b3]"
-                      onClick={() => setEditingField(editingField === field.key ? null : field.key)}
-                    >
-                      {editingField === field.key ? 'Скасувати' : 'Змінити'}
-                    </span>
                   </div>
 
                   <div className="relative mt-1">
-                    {editingField === field.key && field.key !== 'password' ? (
-                      <div className="flex gap-2">
-                        {field.key === 'name' ? (
-                          <div className="flex gap-2">
-                            <Input
-                              className="w-[120px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
-                              placeholder="Ім'я"
-                              value={formData.FirstName}
-                              onChange={(e) => handleFieldChange('FirstName', e.target.value)}
-                            />
-                            <Input
-                              className="w-[120px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
-                              placeholder="По батькові"
-                              value={formData.MiddleName}
-                              onChange={(e) => handleFieldChange('MiddleName', e.target.value)}
-                            />
-                            <Input
-                              className="w-[120px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
-                              placeholder="Прізвище"
-                              value={formData.LastName}
-                              onChange={(e) => handleFieldChange('LastName', e.target.value)}
-                            />
-                          </div>
-                        ) : (
-                          <Input
-                            className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
-                            value={field.key === 'email' ? formData.Email : field.key === 'birthDate' ? formData.DateOfBirth : field.editValue}
-                            onChange={(e) => {
-                              if (field.key === 'email') handleFieldChange('Email', e.target.value);
-                              if (field.key === 'birthDate') handleFieldChange('DateOfBirth', e.target.value);
-                            }}
-                            type={field.key === 'birthDate' ? 'date' : field.key === 'email' ? 'email' : 'text'}
-                          />
-                        )}
-                        <Button
-                          className="px-4 py-2 bg-[#7f51b3] text-white rounded hover:bg-[#6a4399]"
-                          onClick={() => handleSaveField(field.key)}
-                          disabled={saveLoading}
-                        >
-                          {saveLoading ? 'Збереження...' : 'Зберегти'}
-                        </Button>
-                      </div>
+                    {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
+                      <Textarea
+                        className="w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                        value={(field.value as string) || ''}
+                        readOnly
+                      />
                     ) : (
                       <Input
                         className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
-                        value={field.value}
-                        type={field.key === "password" ? "password" : "text"}
+                        value={(field.value as string) || ''}
+                        type="text"
                         readOnly
                       />
                     )}

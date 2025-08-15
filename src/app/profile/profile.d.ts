@@ -5,6 +5,7 @@ type ApplicationUser = {
   email: string;
   dateOfBirth?: string;
   aboutMe?: string;
+  phoneNumber?: string;
   address?: string;
   imagePath?: string;
   rating: number;
