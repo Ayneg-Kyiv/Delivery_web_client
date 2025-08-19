@@ -7,6 +7,9 @@ import { AuthService } from '../app/auth-service';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Button from './ui/button';
+import dynamic from 'next/dynamic';
+
+const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,6 +20,10 @@ export default function Navbar() {
   const [selectedLanguage, setSelectedLanguage] = useState("EN");
 
   const handleMenuToggle = () => setMenuOpen((open) => !open);
+
+  React.useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const handleSignOut = async () => {
     await AuthService.logout();
@@ -143,6 +150,7 @@ export default function Navbar() {
       ) : (
         standardNavigation
       )}
+      {menuOpen && <BurgerMenu onClose={() => setMenuOpen(false)} />}
     </>
   )
 }
