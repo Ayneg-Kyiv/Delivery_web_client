@@ -7,8 +7,10 @@ interface ResetPasswordPageProps {
 
 interface ResetPasswordPageState {
     password: string;
+    passwordError: boolean;
     showPassword: boolean;
     confirmPassword: string;
+    confirmPasswordError: boolean;
     showConfirmPassword: boolean;
     error?: string;
     success?: string;

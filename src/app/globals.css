@@ -89,6 +89,7 @@
   }
 }
 
+/* Global styles */
 .font-title-1{
   font-family: var(--title-1-font);
   font-size: var(--title-1-font-size);
@@ -124,7 +125,6 @@
   font-size: var(--subtitle-3-font-size);
 }
 
-/* Global styles */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -262,6 +262,11 @@ input::placeholder {
 .floating-input-group {
   position: relative;
   margin-bottom: 2rem;
+}
+
+/* temporary fix */
+.floating-input-group-without-margin {
+  margin-bottom: 0;
 }
 
 .floating-input {

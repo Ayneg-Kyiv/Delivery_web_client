@@ -28,11 +28,6 @@ export default function Navbar() {
     console.log(`Language changed to: ${langCode}`);
   };
 
-  const handleHelpClick = () => {
-    // Help functionality can be implemented here
-    console.log("Help clicked");
-  };
-
   const authNavigation = (
     <nav className="h-[78px] max-w-screen w-full ">
       <div className="h-full mx-auto flex items-center justify-between">
@@ -67,7 +62,16 @@ export default function Navbar() {
           </div>
 
           <div className='flex items-center'>
-            <Button text='Help' onClick={handleHelpClick} className='ml-[20px] w-[79px] h-9 rounded-xl border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer' />
+            <Link href='help' className='ml-[20px] w-[79px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Help</Link>
+            { 
+              session?.user && (
+                <>
+                  <p className='ml-[20px]'>{session.user.email}</p>
+                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                    <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
+                  </Link>
+                </>
+            )}
           </div>
 
           {/* Burger button for mobile */}
@@ -118,19 +122,34 @@ export default function Navbar() {
             </Button>
           </div>
 
-          <div className='flex items-center'>
-            <Button text='Help' onClick={handleHelpClick} className='ml-[20px] w-[79px] h-9 rounded-xl border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer' />
+          <div className='flex items-center '>
+            <Link href='help' className='ml-[20px] w-[89px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+
+            { 
+              session?.user && (
+                <>
+                  <p className='ml-[20px]'>{session.user.email}</p>
+                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                    <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
+                  </Link>
+                </>
+            )}
+            {
+              !session?.user && (
+                <>
+                  <Link href='signup' className='ml-[20px] w-[129px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
+                  <Link href='signin' className='ml-[20px] w-[89px] h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
+                </>
+            )}
           </div>
 
-          {/* Burger button for mobile */}
-            <button
-              className="ml-[20px] text-3xl focus:outline-none"
-              onClick={handleMenuToggle}
-              aria-label="Toggle menu">
-              &#9776;
-            </button>
-            </div>
-
+          <button
+            className="ml-[20px] text-3xl focus:outline-none"
+            onClick={handleMenuToggle}
+            aria-label="Toggle menu">
+            &#9776;
+          </button>
+        </div>
       </div>
       <div className='h-[2px] navbar-underline' />
     </nav>
