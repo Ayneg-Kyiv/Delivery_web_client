@@ -2,17 +2,18 @@ import { signIn, signOut } from 'next-auth/react';
 import { ApiClient } from './api-client';
 
 export const AuthService = {
-  async login(email: string, password: string) {
+  async login(email: string, password: string, rememberMe: boolean) {
     return signIn('credentials', {
       email,
       password,
+      rememberMe,
       redirect: false,
     });
   },
 
-  async register(email: string, password: string) {
+  async register(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthDate: string) {
     try {
-      const data = await ApiClient.post('/auth/signup', { email, password });
+      const data = await ApiClient.post('/auth/signup', { email, password, firstName, lastName, phoneNumber, birthDate });
       
       return data;
     } catch (error) {  

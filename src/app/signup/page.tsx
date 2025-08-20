@@ -4,16 +4,37 @@ import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '../api-client';
+import Image from 'next/image';
+import ContentBox from '@/components/ui/content-box';
+import Button from '@/components/ui/button';
+import TextInputGroup from '@/components/ui/text-input-group';
+import DateInputGroup from '@/components/ui/date-input-group';
 
 class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     constructor(props: SignupPageProps) {
         super(props);
         this.state = {
-            email: 'empty',
+            stage: 1,
+            
+            email: '',
+            emailError: false,
+
+            birthDate: '0000.00.00',
+            birthDateError: false,
+
             password: '',
+            passwordError: false,
             showPassword: false,
+            
             confirmPassword: '',
+            confirmPasswordError: false,
             showConfirmPassword: false,
+            
+            firstName: '',
+            lastName: '',
+            
+            phoneNumber: '',
+            phoneNumberError: false,
             error: undefined
         };
     }
@@ -28,34 +49,66 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
     handleEmailChange = (email: string) => {
         this.setState({ email });
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) 
-            this.setState({ error: 'Invalid email format' });
+            this.setState({ emailError: true });
         else 
-            this.setState({ error: undefined });
+            this.setState({ emailError: false });
     };
 
     handlePasswordChange = (password: string) => {
         this.setState({ password });
+
         if (password.length < 8) 
             this.setState({ error: 'Password must be at least 8 characters long' });
         else 
             this.setState({ error: undefined });
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
             if (!passwordRegex.test(password)) {
-                this.setState({ error: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character' });
+                this.setState({ passwordError: true });
             } else {
-                this.setState({ error: undefined });
+                this.setState({ passwordError: false });
             }
     };
 
     handleConfirmPasswordChange = (confirmPassword: string) => {
         this.setState({ confirmPassword });
+
         if (confirmPassword !== this.state.password) 
-            this.setState({ error: 'Passwords do not match' });
+            this.setState({ confirmPasswordError: true });
         else 
-            this.setState({ error: undefined });
+            this.setState({ confirmPasswordError: false });
         
+    };
+
+    handleBirthDateChange = (birthDate: string) => {
+        this.setState({ birthDate });
+
+        if (birthDate < '1900-01-01') {
+            this.setState({ birthDateError: true });
+        } else {
+            this.setState({ birthDateError: false });
+        }
+    };
+
+    handleFirstNameChange = (firstName: string) => {
+        this.setState({ firstName });
+    };
+
+    handleLastNameChange = (lastName: string) => {
+        this.setState({ lastName });
+    };
+
+    handlePhoneNumberChange = (phoneNumber: string) => {
+        this.setState({ phoneNumber });
+
+        const phoneNumberRegex = /^\+?[0-9]\d{1,14}$/;
+        if (!phoneNumberRegex.test(phoneNumber)) {
+            this.setState({ phoneNumberError: true });
+        } else {
+            this.setState({ phoneNumberError: false });
+        }
     };
 
     handleSignUp = async (event: React.FormEvent) => {
@@ -63,7 +116,11 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         
         const response = await AuthService.register(
             this.state.email,
-            this.state.password
+            this.state.password,
+            this.state.firstName,
+            this.state.lastName,
+            this.state.phoneNumber,
+            this.state.birthDate
         );
 
         if (response?.success) 
@@ -73,69 +130,240 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         
     };
 
-    renderContent = () => {
+    // Stage 1
+    handleSignupStage1 = async (event: React.FormEvent) => {
+        // Handle the first stage of signup
+        event.preventDefault();
+
+        const email = this.state;
+
+        try{
+            const response = await ApiClient.get(`/auth/check-is-email-exists/${this.state.email}`);
+
+            if( response.success ){
+                this.props.router?.push('/user-exists');
+            }
+            else {
+                this.setState({ stage: 2 });
+            }
+        } catch (error) {
+            this.props.router?.push('/error');
+        }
+    }
+
+
+    renderContentForStage1 = () => {
         return (
-            <div className='h-[89vh] w-full flex flex-col items-center justify-center bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg'>
+            <ContentBox>
                 
-                <div className='m-8'>
-                    <h1 className='text-4xl font-bold'>Sign Up</h1>
-                </div>
-                
-                <form className='flex flex-col w-95 items-stretch justify-center' onSubmit={this.handleSignUp}>
-                    
-                    <input
-                        id='email'
-                        type='email'
-                        placeholder='Email'
-                        autoComplete='email'
-                        value={this.state.email}
-                        onChange={(e) => this.handleEmailChange(e.target.value)}
-                        className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
-                    />
-                    
-                    <div className='flex flex-row'>
+                <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage1}>
+                       
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
                         
-                        <input
-                            id='password'
-                            type={this.state.showPassword ? 'text' : 'password'}
-                            placeholder='Password'
-                            value={this.state.password}
-                            onChange={(e) => this.handlePasswordChange(e.target.value)}
-                            className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                            Створіть свій обліковий запис в Cargix
+                        </h1>
+
+                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                           Введіть вашу електронну адресу, щоб продовжити. 
+                        </p>
+                    </div>
+
+                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                        <TextInputGroup
+                                label="E-mail"
+                                value={this.state.email}
+                                onChange={(e) => this.handleEmailChange(e.target.value)}
+                                type="email"
+                                className=""
+                                inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+
+                        <input type="submit" value='Продовжити'
+                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
+                        
+                        <div className="flex-1 pt-4 space-y-4">
+                            <div className="font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                                <span className="text-[#e4e4e4] pr-2">
+                                    Маєте аккаунт?
+                                </span>
+                                <Button onClick={() => this.props.router?.push('/signin')} text='ввійти'
+                                    className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
+                                    />
+                            </div>
+                        </div>
 
                     </div>
-                    
-                    <div className='flex flex-row'>
-                        
-                        <input
-                            id='confirmPassword'
-                            type={this.state.showConfirmPassword ? 'text' : 'password'}
-                            placeholder='Confirm Password'
-                            value={this.state.confirmPassword}
-                            onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
-                            className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
-                        />
-                    
-                    </div>
-                    
-                    {this.state.error && (
-                        <div className='flex-1 mb-4 mt-4 text-gray-500 outline p-4 rounded-lg bg-gray-200'>{this.state.error}</div>
-                    )}
-                    
-                    <button type="submit"
-                        className='flex-1 mt-6 px-4 py-2 bg-blue-500 text-white text-2xl rounded-lg hover:bg-gray-600 transition-colors duration-300 active:opacity-75'>
-                        Sign Up
-                    </button>
-                
+
                 </form>
-            
-            </div>
+                
+            </ContentBox>
         );
     };
+    // 
+
+    // Stage 2 
+    handleSignupStage2 = async (event : React.FormEvent) => {
+        event.preventDefault();
+
+        if(!this.state.passwordError && !this.state.confirmPasswordError) {
+            this.setState({ stage: 3 });
+        }
+    }
+
+    renderContentForStage2 = () => {
+        return (
+            <ContentBox>
+                
+                <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage2}>
+                       
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                        
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                            Встановіть пароль
+                        </h1>
+
+                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                           Введіть пароль для облікового запису.
+                        </p>
+                    </div>
+
+                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                        <TextInputGroup
+                                label="Пароль"
+                                value={this.state.password}
+                                onChange={(e) => this.handlePasswordChange(e.target.value)}
+                                type="password"
+                                className="floating-input-group-without-margin"
+                                inputClassName={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+
+                        {!this.state.error && (
+                        <p className='text-sm text-stretch mt-[4px] pl-[12px]'>
+                           Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
+                        </p>
+                        )}
+                        {this.state.passwordError && (
+                            <div className={`flex flex-row items-center  mt-[8px]`}>
+                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                                <p className='text-[#ED2B2B] text-sm text-stretch'>
+                                    Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
+                                </p>
+                            </div>
+                        )}
+
+                        <TextInputGroup
+                                label="Підтвердження пароля"
+                                value={this.state.confirmPassword}
+                                onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
+                                type="password"
+                                className={`${this.state.confirmPasswordError ? 'floating-input-group-without-margin' : ''}`}
+                                inputClassName={`floating-input ${this.state.confirmPasswordError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.confirmPassword ? ' filled' : ''} ${this.state.confirmPasswordError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+                            
+                        {this.state.confirmPasswordError && (
+                            <div className={`flex flex-row items-center mt-[8px]`}>
+                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                                <p className='text-[#ED2B2B] text-sm text-stretch'>
+                                    Паролі мають співпадати.
+                                </p>
+                            </div>
+                        )}
+
+                        <input type="submit" value='Продовжити'
+                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                        />
+
+                    </div>
+
+                </form>
+                
+            </ContentBox>
+        );
+    };
+// 
+
+// Stage 3
+renderContentForStage3 = () => {
+    return (
+        <ContentBox>
+            <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignUp}>
+                
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                        
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                            Останній крок
+                        </h1>
+
+                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                           Введіть вказану інформацію.
+                        </p>
+                    </div>
+                    
+                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                        
+                        <div className='flex flex-row space-x-2'>
+                            <TextInputGroup
+                                label="Ім'я"
+                                value={this.state.firstName}
+                                type='text'
+                                onChange={(e) => this.handleFirstNameChange(e.target.value)} />
+
+                            <TextInputGroup
+                                label="Прізвище"
+                                value={this.state.lastName}
+                                type='text'
+                                onChange={(e) => this.handleLastNameChange(e.target.value)} />
+                        </div>
+
+                        <DateInputGroup
+                            label='Дата народження'
+                            value={this.state.birthDate}
+                            onChange={(e) => this.handleBirthDateChange(e.target.value)}
+                            className={`${this.state.birthDateError ? 'floating-input-group-without-margin' : ''}`}
+                            inputClassName={`floating-input ${this.state.birthDateError ? 'floating-input-error' : ''}`}
+                            labelClassName={`${this.state.birthDate ? ' filled' : ''} ${this.state.birthDateError ? ' floating-label-error' : ''}`}
+                        />
+
+                        <TextInputGroup
+                            label="Номер телефону"
+                            value={this.state.phoneNumber}
+                            type='tel'
+                            className={`${this.state.phoneNumberError ? 'floating-input-group-without-margin' : ''}`}
+                            inputClassName={`floating-input ${this.state.phoneNumberError ? 'floating-input-error' : ''}`}
+                            labelClassName={`${this.state.phoneNumber ? ' filled' : ''} ${this.state.phoneNumberError ? ' floating-label-error' : ''}`}
+                            onChange={(e) => this.handlePhoneNumberChange(e.target.value)} />
+
+                        <input type="submit" value='Продовжити'
+                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                        />
+                    </div>
+            </form>
+        </ContentBox>
+    );
+}
+// 
 
     render() {
-        return <>{this.renderContent()}</>;
+        if(this.state.stage === 1) {
+            return this.renderContentForStage1();
+        }
+        else if (this.state.stage === 2) {
+            return this.renderContentForStage2();
+        }
+        else if (this.state.stage === 3) {
+            return this.renderContentForStage3();
+        }
     }
 }
 

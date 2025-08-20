@@ -1,23 +1,26 @@
 "use client";
 
 import React from 'react';
+import { ApiClient } from '../api-client';
 import { AuthService } from '../auth-service';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ApiClient } from '../api-client';
+import ContentBox from '@/components/ui/content-box';
+import Image from 'next/image';
+import TextInputGroup from '@/components/ui/text-input-group';
 
-
-class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPasswordPageState> {
-
+class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token: string; email: string }, ResetPasswordPageState> {
     constructor(props: ResetPasswordPageProps & { token: string; email: string }) {
         super(props);
         this.state = {
             password: '',
-            showPassword: false,
             confirmPassword: '',
-            showConfirmPassword: false,
             error: undefined,
             success: undefined,
             loading: false,
+            passwordError: false,
+            confirmPasswordError: false,
+            showPassword: false,
+            showConfirmPassword: false,
         };
     }
 
@@ -29,103 +32,102 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
         }
     }
 
-    handlePasswordChange = (password: string) => {
+    handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const password = e.target.value;
         this.setState({ password });
-        if (password.length < 8) {
-            this.setState({ error: 'Password must be at least 8 characters long' });
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            this.setState({ passwordError: true });
         } else {
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
-            if (!passwordRegex.test(password)) {
-                this.setState({
-                    error:
-                        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-                });
-            } else {
-                this.setState({ error: undefined });
-            }
+            this.setState({ passwordError: false });
         }
     };
 
-    handleConfirmPasswordChange = (confirmPassword: string) => {
+    handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const confirmPassword = e.target.value;
         this.setState({ confirmPassword });
         if (confirmPassword !== this.state.password) {
-            this.setState({ error: 'Passwords do not match' });
+            this.setState({ confirmPasswordError: true });
         } else {
-            this.setState({ error: undefined });
+            this.setState({ confirmPasswordError: false });
         }
     };
 
-    handleResetPassword = async (event: React.FormEvent) => {
+    handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (this.state.error) return;
 
-        this.setState({ loading: true, success: undefined, error: undefined });
+        const { password, confirmPassword, passwordError, confirmPasswordError } = this.state;
+        if (passwordError || confirmPasswordError || !password || !confirmPassword) {
+            this.setState({ error: 'Please fix the errors above.', success: undefined });
+            return;
+        }
+
+        this.setState({ loading: true, error: undefined, success: undefined });
 
         try {
             const response = await AuthService.resetPassword(
                 this.props.email,
                 this.props.token,
-                this.state.password
+                password
             );
             if (response?.success) {
-                this.setState({ success: 'Password reset successful. You can now log in.', error: undefined });
-                setTimeout(() => {
-                    this.props.router?.push('/login');
-                }, 2000);
+                this.props.router.push('/reset-password-success');
             } else {
-                this.setState({ error: 'Password reset failed. Please try again.', success: undefined });
+                this.setState({ error: 'Не вдалося змінити пароль. Спробуйте ще раз.', success: undefined, loading: false });
             }
         } catch (err) {
-            this.setState({ error: `An error occurred. ${err} Please try again.`, success: undefined });
-        } finally {
-            this.setState({ loading: false });
+            this.setState({ error: `Виникла помилка. ${err} Спробуйте ще раз.`, success: undefined, loading: false });
         }
     };
 
     renderContent = () => {
         return (
-            <div className='h-[89vh] w-full flex flex-col items-center justify-center bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg'>
-                <div className='m-8'>
-                    <h1 className='text-4xl font-bold'>Reset Password</h1>
-                </div>
-                <form className='flex flex-col w-95 items-stretch justify-center' onSubmit={this.handleResetPassword}>
-                    <input
-                        id='password'
-                        type={this.state.showPassword ? 'text' : 'password'}
-                        placeholder='New Password'
-                        autoComplete='new-password'
-                        value={this.state.password}
-                        onChange={(e) => this.handlePasswordChange(e.target.value)}
-                        className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
-                    />
-                    <input
-                        id='confirmPassword'
-                        type={this.state.showConfirmPassword ? 'text' : 'password'}
-                        placeholder='Confirm New Password'
-                        autoComplete='new-password'
-                        value={this.state.confirmPassword}
-                        onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
-                        className='flex-1 mb-4 p-2 border rounded-lg focus:bg-gray-100 focus:text-black'
-                    />
-                    {this.state.error && (
-                        <div className='flex-1 mb-4 mt-4 text-gray-500 outline p-4 rounded-lg bg-gray-200'>
-                            {this.state.error}
+            <ContentBox>
+                <form className='flex-1 p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                            Встановлення нового паролю
+                        </h1>
+                        <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                            Введіть новий пароль для вашого акаунта.
+                        </p>
+                    </div>
+                    
+                    <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
+                        <div className="space-y-5 flex flex-col">
+                            <TextInputGroup
+                                label="Новий пароль"
+                                value={this.state.password}
+                                onChange={this.handlePasswordChange}
+                                type="password"
+                                className=""
+                                inputClassName={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}
+                                placeholder=""
+                            />
+
+
+                            <TextInputGroup
+                                label="Підтвердіть новий пароль"
+                                value={this.state.confirmPassword}
+                                onChange={this.handleConfirmPasswordChange}
+                                type="password"
+                                className=""
+                                inputClassName={`floating-input ${this.state.confirmPasswordError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.confirmPassword ? ' filled' : ''} ${this.state.confirmPasswordError ? ' floating-label-error' : ''}`}
+                            />
+
+                            <input
+                                type="submit"
+                                value={this.state.loading ? 'Змінюємо...' : 'Змінити пароль'}
+                                disabled={this.state.loading}
+                                className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                            />
                         </div>
-                    )}
-                    {this.state.success && (
-                        <div className='flex-1 mb-4 mt-4 text-green-600 outline p-4 rounded-lg bg-green-100'>
-                            {this.state.success}
-                        </div>
-                    )}
-                    <button
-                        type="submit"
-                        disabled={this.state.loading}
-                        className='flex-1 mt-6 px-4 py-2 bg-blue-500 text-white text-2xl rounded-lg hover:bg-gray-600 transition-colors duration-300 active:opacity-75 disabled:opacity-50'
-                    >
-                        {this.state.loading ? 'Resetting...' : 'Reset Password'}
-                    </button>
+                    </div>
                 </form>
-            </div>
+            </ContentBox>
         );
     };
 
@@ -134,11 +136,10 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps, ResetPas
     }
 }
 
-export default function ResetPasswordPageWrapper() {
+export default function ResetPasswordPageWrapper(props: ResetPasswordPageProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams.get('token') || '';
     const email = searchParams.get('email') || '';
-
-    return <ResetPasswordPage router={router} token={token} email={email} />;
+    return <ResetPasswordPage {...props} router={router} token={token} email={email} />;
 }
