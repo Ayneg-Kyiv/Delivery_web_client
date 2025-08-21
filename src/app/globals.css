@@ -294,7 +294,6 @@ input::placeholder {
   top: 4px;
   font-size: 0.9rem;
   color: #94569F;
-  background: #0f0e10;
   padding: 0 4px;
 }
 
@@ -307,13 +306,11 @@ input::placeholder {
 /* Error state for floating label */
 .floating-label.floating-label-error {
   color: #ED2B2B;
-  background-color: #ED2B2B20;
 }
 
 /* Error + focused state for floating input */
 .floating-input.floating-input-error:focus {
   border-color: #ED2B2B;
-  background: #ED2B2B20;
 }
 
 /* Error + filled/focused state for label */
@@ -322,7 +319,6 @@ input::placeholder {
   top: 4px;
   font-size: 0.9rem;
   color: #ED2B2B;
-  background: #ED2B2B20;
   padding: 0 4px;
 }
 
