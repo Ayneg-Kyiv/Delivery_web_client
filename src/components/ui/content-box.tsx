@@ -8,13 +8,13 @@ type ContentBoxProps = {
 
 const ContentBox: React.FC<ContentBoxProps> = ({
     children,
-    height = '820px',
-    lheight = '760px'
+    height = null,
+    lheight = null
 }) => {
     return (
-        <div className='flex-1 flex items-center justify-center p-[30px]'>
-            <div className={`w-[820px] h-[${height}] bg-[#2c1b48] rounded-[30px] flex flex-col`}>
-                <div className={`w-[760px] max-h-[${lheight}] m-[30px] bg-[#0f0e10] rounded-[20px] flex-1 flex flex-col justify-center`}>
+        <div className='flex-1 flex flex-col items-center justify-center p-[30px]'>
+            <div className={`flex-1 w-[820px] bg-[#2c1b48] rounded-[30px] flex flex-col`}>
+                <div className={`flex-1 w-[760px] m-[30px] bg-[#0f0e10] rounded-[20px] flex flex-col justify-center`}>
                     {children}
                 </div>
             </div>

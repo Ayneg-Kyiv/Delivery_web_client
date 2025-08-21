@@ -62,7 +62,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         try {
             const response = await AuthService.login(
                 this.state.email,
-                this.state.password
+                this.state.password,
+                this.state.rememberMe
             );
 
             if (response?.ok)
@@ -76,8 +77,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
     renderContent = () => {
         return (
-            <ContentBox>
-                <form className="pt-20 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
+            <ContentBox height='860px' lheight='800px'>
+                <form className="flex-1 pt-20 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
                         
                     <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
 

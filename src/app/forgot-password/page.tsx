@@ -77,7 +77,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
     renderContent = () => {
         return (
             <ContentBox>
-                <form className='p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+                <form className='flex-1 p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
 
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
@@ -86,12 +86,12 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
                             Забули пароль?
                         </h1>
 
-                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
                             Будь ласка введіть вашу електронну адресу, щоб отримати посилання для скидання паролю.
                         </p>
                     </div>
 
-                    <div className="flex-1 w-full max-w-[500px] space-y-6">
+                    <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
 
                         <div className="space-y-5 flex flex-col">
                             <TextInputGroup

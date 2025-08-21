@@ -89,6 +89,7 @@
   }
 }
 
+/* Global styles */
 .font-title-1{
   font-family: var(--title-1-font);
   font-size: var(--title-1-font-size);
@@ -124,7 +125,6 @@
   font-size: var(--subtitle-3-font-size);
 }
 
-/* Global styles */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -264,6 +264,11 @@ input::placeholder {
   margin-bottom: 2rem;
 }
 
+/* temporary fix */
+.floating-input-group-without-margin {
+  margin-bottom: 0;
+}
+
 .floating-input {
   width: 100%;
   padding: 18px 12px 6px 12px;
@@ -289,7 +294,6 @@ input::placeholder {
   top: 4px;
   font-size: 0.9rem;
   color: #94569F;
-  background: #0f0e10;
   padding: 0 4px;
 }
 
@@ -302,13 +306,11 @@ input::placeholder {
 /* Error state for floating label */
 .floating-label.floating-label-error {
   color: #ED2B2B;
-  background-color: #ED2B2B20;
 }
 
 /* Error + focused state for floating input */
 .floating-input.floating-input-error:focus {
   border-color: #ED2B2B;
-  background: #ED2B2B20;
 }
 
 /* Error + filled/focused state for label */
@@ -317,7 +319,6 @@ input::placeholder {
   top: 4px;
   font-size: 0.9rem;
   color: #ED2B2B;
-  background: #ED2B2B20;
   padding: 0 4px;
 }
 

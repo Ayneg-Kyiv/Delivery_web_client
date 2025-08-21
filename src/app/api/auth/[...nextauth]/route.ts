@@ -60,7 +60,8 @@ const handler = NextAuth({
 
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "checkbox" }
       },
       
       async authorize(credentials) {
@@ -186,8 +187,8 @@ const handler = NextAuth({
   },
 
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error'
+    signIn: '/signin',
+    error: '/error'
   },
 
   session: {
