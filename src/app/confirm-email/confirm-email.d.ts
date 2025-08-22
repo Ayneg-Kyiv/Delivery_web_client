@@ -5,6 +5,6 @@ interface ConfirmEmailProps {
 }
 
 interface ConfirmEmailState {
-  status: 'loading' | 'success' | 'error';
+  status: 'loading' | 'success' | 'error' | 'resent';
   message: string;
 }

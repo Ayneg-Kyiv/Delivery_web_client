@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased  min-h-screen flex flex-col`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <AuthProvider>
           <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
             <Navbar />

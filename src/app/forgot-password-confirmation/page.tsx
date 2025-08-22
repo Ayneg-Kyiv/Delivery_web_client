@@ -22,7 +22,7 @@ class ForgotPasswordConfirmationPage extends Component<ForgotPasswordConfirmatio
 
     render() {
 
-        let email = this.props.email;
+        const email = this.props.email;
 
         return (
             <ContentBox height='760px' lheight='700px'>
@@ -58,7 +58,7 @@ export default function ForgotPasswordConfirmationPageWrapper(props: ForgotPassw
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    let email = searchParams.get('email') || '';
+    const email = searchParams.get('email') || '';
 
     return <ForgotPasswordConfirmationPage {...props} email={email} router={router} />;
 }

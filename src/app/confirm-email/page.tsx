@@ -3,6 +3,10 @@
 import React from 'react';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
+import ContentBox from '@/components/ui/content-box';
+import Button from '@/components/ui/button';
+import Image from 'next/image';
+import Link from 'next/link';
 
 class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState> {
   constructor(props: ConfirmEmailProps) {
@@ -49,12 +53,20 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     }
   }
 
-  handleGoToLogin = () => {
-    this.props.router.push('/signin');
-  };
+  handleResendConfirmation = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/resend-confirmation?email=${encodeURIComponent(this.props.email!)}`);
 
-  handleResendConfirmation = () => {
-    this.props.router.push('/resend-confirmation');
+    if (response.data.success) {
+      this.setState({
+        status: 'resent',
+        message: 'Confirmation email resent successfully!',
+      });
+    } else {
+      this.setState({
+        status: 'error',
+        message: response.data.message || 'Failed to resend confirmation email.',
+      });
+    }
   };
 
   render() {
@@ -74,50 +86,79 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
               )}
 
               {status === 'success' && (
-                <div className="mt-4">
-                  <div className="w-16 h-16 bg-green-100 mx-auto rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  </div>
-                  <p className="mt-4 text-gray-600">{message}</p>
-                  <div className="mt-6">
-                    <button
-                      type="button"
-                      onClick={this.handleGoToLogin}
-                      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                    >
-                      Go to Login
-                    </button>
-                  </div>
+            <ContentBox height='760px' lheight='700px'>
+                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                            Ваш обліковий запис підтверджено
+                        </h1>
+                        <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                            Ваш обліковий запис підтверджено. Тепер ви можете увійти до свого облікового запису.
+                        </p>
+
+                        <Image src='/SuccessVector1.png' alt='success' width={126} height={126} className=''/>
+
+                    </div>
+                    <div className="flex-1 w-full max-w-[500px]">
+                        <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                            <Link href='/signin' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]">Ввійти</Link>
+                        </div>
+                    </div>
                 </div>
+            </ContentBox>
               )}
 
               {status === 'error' && (
-                <div className="mt-4">
-                  <div className="w-16 h-16 bg-red-100 mx-auto rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </div>
-                  <p className="mt-4 text-gray-600">{message}</p>
-                  <div className="mt-6 space-y-2">
-                    <button
-                      type="button"
-                      onClick={this.handleGoToLogin}
-                      className="block w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 text-center"
-                    >
-                      Go to Login
-                    </button>
-                    <button
-                      type="button"
-                      onClick={this.handleResendConfirmation}
-                      className="block w-full px-4 py-2 text-blue-500 border border-blue-500 rounded hover:bg-blue-50 text-center"
-                    >
-                      Resend Confirmation Email
-                    </button>
-                  </div>
+                
+            <ContentBox height='760px' lheight='700px'>
+                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                            Щось пішло не так
+                        </h1>
+                        <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                            Виникла помилка під час підтвердження вашої електронної адреси. Будь ласка, спробуйте ще раз.
+                        </p>
+
+                    </div>
+                    <div className="flex-1 w-full max-w-[500px]">
+                        <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                            <Button
+                                onClick={this.handleResendConfirmation}
+                                text='Надіслати підтвердження ще раз'
+                                className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                            />
+                        </div>
+                    </div>
                 </div>
+            </ContentBox>
+              )}
+              {status === 'resent' && (
+            <ContentBox height='760px' lheight='700px'>
+                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                            Перевірте вашу пошту
+                        </h1>
+                        <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                            Ми надіслали вам нове посилання для підтвердження електронної адреси. Будь ласка, перевірте вашу пошту.
+                        </p>
+
+                    </div>
+                    <div className="flex-1 w-full max-w-[500px]">
+                        <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                            <Button
+                                onClick={this.handleResendConfirmation}
+                                text='Надіслати підтвердження ще раз'
+                                className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </ContentBox>
               )}
             </div>
           </div>

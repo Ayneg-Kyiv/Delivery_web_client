@@ -11,7 +11,7 @@ class PageTemplate extends Component {
   heroData = {
     tagline: "Доставка від людей для людей",
     title: "Відправляй куди та як завгодно",
-    subtitle: "Name - робе це можливим",
+    subtitle: "Cargix - робе це можливим",
     buttons: [
       { text: "Відправити зараз", onclick: () => console.log("Send Now clicked!"), 
         className: "button-type-1 w-[242px] h-12 rounded-lg text-2xl" },
@@ -128,21 +128,23 @@ class PageTemplate extends Component {
           </h2>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-16">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est
-            vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi
-            fringilla sit amet.
+              Наш сервіс об’єднує тих, хто хоче відправити речі,
+              і водіїв, які вже прямують у потрібному напрямку. 
+              Використовуючи вільне місце в багажнику,
+              ми знижуємо кількість порожніх кілометрів, 
+              економимо ваш час і гроші та зменшуємо викиди CO₂.
           </p>
 
           <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-            Lorem Ipsum .....
+            Як це працює?
           </h3>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-8">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est
-            vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi
-            fringilla sit amet.
+            Ви залишаєте заявку з деталями відправлення, 
+            ми підбираємо найближчого попутного водія, 
+            який бере вашу посилку в дорогу. 
+            {/* Слідкуйте за маршрутом у реальному часі,  */}
+            спілкуйтеся з водієм через чат і залишайте відгук після успішної доставки.
           </p>
 
           <Card className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8">
@@ -217,32 +219,30 @@ class PageTemplate extends Component {
         {/* Earn with us section */}
         <section className="w-full px-[190px] py-16">
           <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl mb-4">
-            Заробляйте разом з Name
+            Заробляйте разом з Cargix
           </h2>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[1020px] mb-16">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est
-            vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi
-            fringilla sit amet.
+            Плануйте маршрути з максимальним комфортом та без зайвих зусиль.
+            Наша платформа дозволяє швидко знаходити оптимальні заїзди та економити час на дорозі.
+            Використовуйте додаток для зручної комунікації з відправниками та прозорих виплат без зайвої паперової тяганини.
           </p>
 
           <div className="flex flex-col gap-20">
             <div className="flex gap-20">
               <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent source="/dummy.png" className="flex items-center justify-center h-full"/>
+                <CardContent source="/EarnImage1.png" className="flex items-center justify-center h-full w-full"/>
               </Card>
 
               <div className="flex flex-col justify-center">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-                  Lorem Ipsum
+                  Переваги для водія
                 </h3>
 
                 <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[758px] mb-8">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a
-                  est vestibulum suscipit. Integer sodales laoreet nunc, at
-                  convallis nisi fringilla sit amet.
+                  Вибирайте поїздки відповідно до свого графіка та отримуйте дохід з кожної доставки.
+                  Інтуїтивний інтерфейс дозволяє швидко додавати маршрути й приймати замовлення без зайвих дзвінків.
+                  Автоматичні сповіщення тримають вас у курсі нових запитів та статусу виконання.
                 </p>
 
                 <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
@@ -253,14 +253,13 @@ class PageTemplate extends Component {
             <div className="flex gap-20">
               <div className="flex flex-col justify-center">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-                  Lorem Ipsum
+                  Переваги для відправника
                 </h3>
 
                 <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a
-                  est vestibulum suscipit. Integer sodales laoreet nunc, at
-                  convallis nisi fringilla sit amet.
+                    Знаходьте перевірених водіїв для швидкої та надійної доставки в кілька кліків.
+                    Гнучкі тарифи та рейтинг водіїв гарантують оптимальне співвідношення ціни й якості.
+                    Всі комунікації, підтвердження та оплати відбуваються в додатку — без зайвої бюрократії.
                 </p>
 
                 <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
@@ -268,7 +267,7 @@ class PageTemplate extends Component {
               </div>
 
               <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent source="/dummy.png" className="flex items-center justify-center h-full"/>
+                <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full"/>
               </Card>
             </div>
           </div>
