@@ -56,6 +56,9 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/" onClick={onClose}>
             Дошка замовлення
           </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/about" onClick={onClose}>
+            Про нас
+          </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/policy" onClick={onClose}>
             Політика
           </Link>
