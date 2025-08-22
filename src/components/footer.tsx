@@ -56,33 +56,11 @@ import Link from "next/link";
     //     </footer>
 // 
 const Footer: React.FC = () => (
-<<<<<<< HEAD
-  <footer className="w-full h-[395px] bg-[#0e1010] px-[450px] pt-10 pb-6 relative">
-          <div className="grid grid-cols-7 gap-[130px] mb-10">
-            {footerLinks.map((column, colIndex) => (
-              <div key={colIndex} className="flex flex-col gap-2">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-white text-base mb-4">
-                  {column.title}
-                </h4>
-                {column.links.map((link, linkIndex) => (
-                  <a
-                    key={linkIndex}
-                    href="#"
-                    className="[font-family:'Inter-Regular',Helvetica] text-[#e4e4e4] text-xs"
-                  >
-                    {link}
-                  </a>
-                ))}
-              </div>
-            ))}
-          </div>
-=======
   <footer className="w-full h-[125px] px-[190px] footer">
     <div className="flex flex-col items-center justify-center h-full">
       <div className="w-full h-[1px] bg-white/20 rounded-sm">
       </div>
       <div className="w-full flex flex-row justify-between">
->>>>>>> 0e1dcf3ca0ce7e00d5c6c458c22a9cc4d217edbf
 
         <div className="flex h-[45px] items-end">
           <p>
