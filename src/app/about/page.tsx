@@ -138,37 +138,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* TIMELINE */}
-      <section className="w-full px-8 md:px-20 xl:px-40 py-24 bg-[#141018] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-25 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at 12% 25%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 88% 75%, #3d2a5a 0, transparent 55%)" }} />
-        <div className="relative max-w-6xl mx-auto">
-          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-5xl md:text-6xl mb-12">Шлях розвитку</h2>
-          <ol className="relative border-l border-[#3d2a5a] pl-8 space-y-10">
-            {timeline.map(t => (
-              <li key={t.year} className="relative">
-                <span className="absolute -left-[14px] top-1 w-6 h-6 rounded-full bg-[#2a2332] border border-[#c84cd8]" />
-                <div className="[font-family:'Bahnschrift-Regular',Helvetica] text-sm fg-secondary tracking-wide mb-1">{t.year}</div>
-                <h3 className="text-xl mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{t.title}</h3>
-                <p className="text-sm fg-secondary leading-relaxed max-w-3xl">{t.text}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* CALL TO ACTION */}
-      <section className="w-full px-8 md:px-20 xl:px-40 py-24 relative">
-        <div className="relative max-w-5xl mx-auto text-center">
-          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-5xl md:text-6xl mb-8">Приєднайся до руху</h2>
-          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10">
-            Допоможи зменшити порожні поїздки, зекономити ресурси та зробити доставку прозорішою. Почни з створення свого першого запиту або додай маршрут.
-          </p>
-          <div className="flex flex-wrap gap-6 justify-center">
-            <Link href="/signup"><Button className="h-[60px] w-[220px] button-type-1 rounded-xl" onClick={()=>{}} text="Створити акаунт" /></Link>
-            <Link href="/" ><Button className="h-[60px] w-[220px] button-type-2 rounded-xl" onClick={()=>{}} text="Переглянути запити" /></Link>
-          </div>
-        </div>
-      </section>
+     
 
     </main>
   );
