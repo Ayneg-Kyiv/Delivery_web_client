@@ -40,30 +40,46 @@ export const ApiClient = {
       rejectUnauthorized: false // for self-signed, not for production!
     });
 
+    // Build final URL safely (env already has /api)
+    const rawBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+    let path = url.startsWith('/') ? url : `/${url}`;
+    // remove duplicate /api prefix in path if base already ends with /api
+    if (/\/api$/i.test(rawBase) && path.toLowerCase().startsWith('/api/')) {
+      path = path.substring(4); // remove leading /api
+    }
+    const finalUrl = rawBase + path;
+
     try {
       const response = await axios({
-        url: `${process.env.NEXT_PUBLIC_API_URL}${url}`,
-        withCredentials: false, // Temporarily disable credentials for CORS issues
-        ...config,
+        url: finalUrl,
+        withCredentials: config.withCredentials ?? false,
+        method: config.method || 'get',
+        data: config.data,
+        params: config.params,
         headers,
-        httpsAgent: agent
+        httpsAgent: agent,
+        responseType: config.responseType,
       });
 
-      if(url === "/auth/signin") {
-        return response as T;
+      if (path === '/auth/signin') {
+        return response as T; // need headers
       }
-
       return response.data as T;
     } catch (error: any) {
-
-      if (error.response?.status === 401 && typeof window !== "undefined") {
+      if (typeof window === 'undefined') {
+        // eslint-disable-next-line no-console
+        console.error('[ApiClient] Request failed', {
+          finalUrl,
+          status: error?.response?.status,
+          data: error?.response?.data,
+        });
+      }
+      if (error.response?.status === 401 && typeof window !== 'undefined') {
         window.location.href = '/signin';
       }
-      
-      if (error.response?.status === 403 && typeof window !== "undefined") {
+      if (error.response?.status === 403 && typeof window !== 'undefined') {
         window.location.href = '/unauthorized';
       }
-      
       throw error;
     }
   },

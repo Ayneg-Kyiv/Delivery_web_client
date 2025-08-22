@@ -67,10 +67,18 @@ const handler = NextAuth({
       async authorize(credentials) {
         try {
           const csrfToken = await getCsrfToken();
- 
-          const response = await ApiClient.post<any>("/auth/signin", credentials, {
+          // Normalize credentials payload for backend expectations
+          const rememberRaw: any = credentials?.rememberMe;
+          const rememberBool = rememberRaw === true || rememberRaw === 'true' || rememberRaw === 'on';
+          const payload: Record<string, any> = {
+            email: credentials?.email ?? '',
+            password: credentials?.password ?? '',
+          };
+          if (rememberBool) payload.rememberMe = true; // only include if true
+
+          const response = await ApiClient.post<any>("/auth/signin", payload, {
             headers: {
-              "X-XSRF-TOKEN": csrfToken || "",
+              ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
               "Cookie": (await cookies()).toString() || "",
             },
           });
@@ -114,6 +122,10 @@ const handler = NextAuth({
             }
  
           const data = response.data;
+          if (!data.success && data.errors) {
+            // eslint-disable-next-line no-console
+            console.warn('[auth] signin validation errors', data.errors);
+          }
  
           if (data.success && data.data)
             return {
