@@ -54,7 +54,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
   }
 
   handleResendConfirmation = async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/resend-confirmation?email=${encodeURIComponent(this.props.email!)}`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/resend-confirmation-email?email=${encodeURIComponent(this.props.email!)}`);
 
     if (response.data.success) {
       this.setState({
