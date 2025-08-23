@@ -1,0 +1,53 @@
+<svg width="640" height="704" viewBox="0 0 640 704" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Крок 2: Вибір перевізника">
+<rect width="640" height="704" rx="32" fill="#241C2D"/>
+<rect x="48" y="64" width="544" height="512" rx="24" fill="#2F2538" stroke="#3d2a5a" stroke-width="2"/>
+
+<!-- Driver cards row -->
+<g transform="translate(0,8)">
+<rect x="92" y="132" width="136" height="176" rx="18" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="252" y="132" width="136" height="176" rx="18" fill="#372c45" stroke="#c84cd8" stroke-width="2"/>
+<rect x="412" y="132" width="136" height="176" rx="18" fill="#31283A" stroke="#3d2a5a"/>
+
+<!-- Avatars -->
+<circle cx="160" cy="172" r="34" fill="url(#gradAvatar2a)" stroke="#7f51b3" stroke-width="2"/>
+<circle cx="320" cy="172" r="34" fill="url(#gradAvatar2b)" stroke="#c84cd8" stroke-width="3"/>
+<circle cx="480" cy="172" r="34" fill="url(#gradAvatar2c)" stroke="#7f51b3" stroke-width="2"/>
+<!-- Avatar silhouettes -->
+<path d="M160 158c8 0 14.5 6.5 14.5 14.5S168 187 160 187s-14.5-6.5-14.5-14.5S152 158 160 158Zm0 34c12.8 0 23 6.9 23 15.5V212h-46v-4.5c0-8.6 10.2-15.5 23-15.5Z" fill="#fff" fill-opacity="0.15"/>
+<path d="M320 158c8 0 14.5 6.5 14.5 14.5S328 187 320 187s-14.5-6.5-14.5-14.5S312 158 320 158Zm0 34c12.8 0 23 6.9 23 15.5V212h-46v-4.5c0-8.6 10.2-15.5 23-15.5Z" fill="#fff" fill-opacity="0.2"/>
+<path d="M480 158c8 0 14.5 6.5 14.5 14.5S488 187 480 187s-14.5-6.5-14.5-14.5S472 158 480 158Zm0 34c12.8 0 23 6.9 23 15.5V212h-46v-4.5c0-8.6 10.2-15.5 23-15.5Z" fill="#fff" fill-opacity="0.15"/>
+
+<!-- Names & rating bars -->
+<rect x="112" y="222" width="100" height="14" rx="7" fill="#3d2a5a"/>
+<rect x="272" y="222" width="100" height="14" rx="7" fill="#c84cd8" fill-opacity="0.4"/>
+<rect x="432" y="222" width="100" height="14" rx="7" fill="#3d2a5a"/>
+<rect x="112" y="246" width="84" height="10" rx="5" fill="#3d2a5a"/>
+<rect x="272" y="246" width="84" height="10" rx="5" fill="#c84cd8" fill-opacity="0.4"/>
+<rect x="432" y="246" width="84" height="10" rx="5" fill="#3d2a5a"/>
+<!-- Stars simplified -->
+<circle cx="118" cy="270" r="5" fill="#7f51b3"/><circle cx="130" cy="270" r="5" fill="#7f51b3"/><circle cx="142" cy="270" r="5" fill="#7f51b3"/><circle cx="154" cy="270" r="5" fill="#7f51b3"/><circle cx="166" cy="270" r="5" fill="#7f51b3"/>
+<circle cx="278" cy="270" r="5" fill="#c84cd8"/><circle cx="290" cy="270" r="5" fill="#c84cd8"/><circle cx="302" cy="270" r="5" fill="#c84cd8"/><circle cx="314" cy="270" r="5" fill="#c84cd8"/><circle cx="326" cy="270" r="5" fill="#c84cd8"/>
+<circle cx="438" cy="270" r="5" fill="#7f51b3"/><circle cx="450" cy="270" r="5" fill="#7f51b3"/><circle cx="462" cy="270" r="5" fill="#7f51b3"/><circle cx="474" cy="270" r="5" fill="#7f51b3"/><circle cx="486" cy="270" r="5" fill="#3d2a5a"/>
+</g>
+
+<!-- Chat preview panel -->
+<rect x="96" y="344" width="448" height="132" rx="20" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="120" y="368" width="180" height="22" rx="11" fill="#7f51b3" fill-opacity="0.4"/>
+<rect x="120" y="398" width="140" height="18" rx="9" fill="#3d2a5a"/>
+<rect x="120" y="424" width="104" height="18" rx="9" fill="#3d2a5a"/>
+<rect x="320" y="368" width="120" height="22" rx="11" fill="#c84cd8" fill-opacity="0.45"/>
+<rect x="352" y="398" width="160" height="18" rx="9" fill="#3d2a5a"/>
+
+<!-- Select button -->
+<rect x="344" y="500" width="200" height="60" rx="16" fill="url(#gradBtn2)"/>
+<text x="444" y="538" font-family="Bahnschrift, Helvetica, Arial" font-size="24" fill="#fff" text-anchor="middle">Обрати</text>
+
+<text x="64" y="620" font-family="Bahnschrift, Helvetica, Arial" font-size="38" fill="#e4e4e4">2. Оберіть перевізника</text>
+
+<defs>
+<linearGradient id="gradAvatar2a" x1="126" y1="138" x2="194" y2="206" gradientUnits="userSpaceOnUse"><stop stop-color="#7f51b3"/><stop offset="1" stop-color="#3d2a5a"/></linearGradient>
+<linearGradient id="gradAvatar2b" x1="286" y1="138" x2="354" y2="206" gradientUnits="userSpaceOnUse"><stop stop-color="#c84cd8"/><stop offset="1" stop-color="#7f51b3"/></linearGradient>
+<linearGradient id="gradAvatar2c" x1="446" y1="138" x2="514" y2="206" gradientUnits="userSpaceOnUse"><stop stop-color="#7f51b3"/><stop offset="1" stop-color="#3d2a5a"/></linearGradient>
+<linearGradient id="gradBtn2" x1="344" y1="500" x2="544" y2="560" gradientUnits="userSpaceOnUse"><stop stop-color="#c84cd8"/><stop offset="1" stop-color="#7f51b3"/></linearGradient>
+</defs>
+</svg>

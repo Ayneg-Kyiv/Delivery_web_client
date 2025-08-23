@@ -3,35 +3,35 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
-
+ 
 async function getCsrfToken()  {
   const cookieStore = await cookies();
   let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
-
+ 
   if (!csrf) {
     // Fallback to fetching CSRF token from the API if not found in cookies
     const response = await ApiClient.get<any>("/csrf");
     csrf = response?.csrfToken || null;
   }
-
+ 
   return csrf;
 }
-
+ 
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
-    const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
+  const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
       headers: {
         "X-XSRF-TOKEN": csrfToken || "",
       },
     });
-
+ 
     if (!data.success)
       return {
         ...token,
         error: "Error refreshing access token"
       };
-
+ 
     return {
       ...token,
       accessToken: data.data.token,
@@ -52,39 +52,47 @@ async function refreshAccessToken(token: JWT) {
     };
   }
 }
-
+ 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
-
+ 
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
         rememberMe: { label: "Remember Me", type: "checkbox" }
       },
-      
+     
       async authorize(credentials) {
         try {
           const csrfToken = await getCsrfToken();
+          // Normalize credentials payload for backend expectations
+          const rememberRaw: any = credentials?.rememberMe;
+          const rememberBool = rememberRaw === true || rememberRaw === 'true' || rememberRaw === 'on';
+          const payload: Record<string, any> = {
+            email: credentials?.email ?? '',
+            password: credentials?.password ?? '',
+          };
+          if (rememberBool) payload.rememberMe = true; // only include if true
 
-          const response = await ApiClient.post<any>("/auth/signin", credentials, {
+          const response = await ApiClient.post<any>("/auth/signin", payload, {
             headers: {
-              "X-XSRF-TOKEN": csrfToken || "",
+              ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
               "Cookie": (await cookies()).toString() || "",
             },
           });
-
+ 
           // Parse the refreshToken cookie from the Set-Cookie header
             const setCookieHeader: string[] = response.headers["set-cookie"] || [];
             const refreshTokenCookie = setCookieHeader.find(cookie => cookie.startsWith("refreshToken="));
-            
+           
             if (refreshTokenCookie) {
               // Split cookie string into parts
               const parts = refreshTokenCookie.split(";").map(part => part.trim());
               const [nameValue, ...attributes] = parts;
               const [name, value] = nameValue.split("=");
-
+ 
               // Extract attributes
               const cookieOptions: Record<string, any> = {
                 name,
@@ -95,7 +103,7 @@ const handler = NextAuth({
                 expires: undefined,
                 path: undefined
               };
-
+ 
               attributes.forEach(attr => {
                 if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
                 if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
@@ -103,7 +111,7 @@ const handler = NextAuth({
                 if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
                 if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
               });
-
+ 
               (await cookies()).set(cookieOptions.name, cookieOptions.value, {
                 httpOnly: cookieOptions.httpOnly,
                 secure: cookieOptions.secure,
@@ -112,9 +120,13 @@ const handler = NextAuth({
                 path: cookieOptions.path
               });
             }
-
+ 
           const data = response.data;
-
+          if (!data.success && data.errors) {
+            // eslint-disable-next-line no-console
+            console.warn('[auth] signin validation errors', data.errors);
+          }
+ 
           if (data.success && data.data)
             return {
               id: data.data.id,
@@ -123,7 +135,7 @@ const handler = NextAuth({
               token: data.data.token,
               roles: data.data.roles
             };
-
+ 
           return null;
         } catch (error) {
           console.error("Authorization error:", error);
@@ -132,7 +144,7 @@ const handler = NextAuth({
       }
     })
   ],
-
+ 
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -157,16 +169,16 @@ const handler = NextAuth({
 
       return refreshAccessToken(token);
     },
-
+ 
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.error = token.error;
-      
+     
       return session;
     }
   },
-
+ 
   events: {
     async signOut({ token }) {
       try {
@@ -175,28 +187,28 @@ const handler = NextAuth({
             "Authorization": `Bearer ${token.accessToken}`
           },
         });
-
+ 
         sessionStorage.removeItem("next-auth.session-token");
-        sessionStorage.removeItem("next-auth.csrf-token"); 
+        sessionStorage.removeItem("next-auth.csrf-token");
         sessionStorage.removeItem("next-auth.callback-url");
-        
+       
       } catch (error) {
         console.error("Sign out error:", error);
       }
     }
   },
-
+ 
   pages: {
     signIn: '/signin',
     error: '/error'
   },
-
+ 
   session: {
     strategy: "jwt",
     maxAge: 1 * 60 * 60, // 1 hour (match your refresh token expiry)
   },
-
+ 
   debug: process.env.NODE_ENV === "development",
 });
-
+ 
 export { handler as GET, handler as POST };

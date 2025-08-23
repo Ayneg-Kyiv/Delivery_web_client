@@ -1,0 +1,49 @@
+<svg width="640" height="704" viewBox="0 0 640 704" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Крок 3: Доставка та відгук">
+<rect width="640" height="704" rx="32" fill="#241C2D"/>
+<rect x="48" y="64" width="544" height="512" rx="24" fill="#2F2538" stroke="#3d2a5a" stroke-width="2"/>
+
+<!-- Status header -->
+<rect x="96" y="96" width="448" height="56" rx="14" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="116" y="114" width="120" height="20" rx="10" fill="#7f51b3"/>
+<rect x="248" y="114" width="100" height="20" rx="10" fill="#3d2a5a"/>
+<rect x="356" y="114" width="120" height="20" rx="10" fill="#3d2a5a"/>
+
+<!-- Progress bar -->
+<rect x="96" y="172" width="448" height="14" rx="7" fill="#3d2a5a"/>
+<rect x="96" y="172" width="310" height="14" rx="7" fill="url(#gradProg3)"/>
+<circle cx="406" cy="179" r="18" fill="#c84cd8" stroke="#7f51b3" stroke-width="3"/>
+<path d="M398 179.5l6 6 10-14" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- Chat area -->
+<rect x="96" y="210" width="448" height="200" rx="20" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="120" y="236" width="180" height="28" rx="14" fill="#7f51b3" fill-opacity="0.5"/>
+<rect x="120" y="276" width="140" height="24" rx="12" fill="#3d2a5a"/>
+<rect x="120" y="310" width="200" height="24" rx="12" fill="#3d2a5a"/>
+<rect x="340" y="250" width="140" height="28" rx="14" fill="#c84cd8" fill-opacity="0.45"/>
+<rect x="360" y="290" width="120" height="24" rx="12" fill="#3d2a5a"/>
+<rect x="380" y="324" width="100" height="24" rx="12" fill="#3d2a5a"/>
+
+<!-- Images / proof row -->
+<rect x="96" y="426" width="90" height="90" rx="16" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="196" y="426" width="90" height="90" rx="16" fill="#31283A" stroke="#3d2a5a"/>
+<rect x="296" y="426" width="90" height="90" rx="16" fill="#31283A" stroke="#3d2a5a"/>
+<path d="M108 470l20 24 16-18 14 20" stroke="#7f51b3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+<!-- Action buttons -->
+<rect x="400" y="436" width="144" height="60" rx="18" fill="url(#gradBtn3a)"/>
+<text x="472" y="472" font-family="Bahnschrift, Helvetica, Arial" font-size="20" fill="#fff" text-anchor="middle">Підтвердити</text>
+<rect x="400" y="506" width="144" height="60" rx="18" fill="url(#gradBtn3b)"/>
+<text x="472" y="542" font-family="Bahnschrift, Helvetica, Arial" font-size="20" fill="#fff" text-anchor="middle">Оцінити</text>
+
+<!-- Confirmation icon -->
+<circle cx="560" cy="520" r="52" fill="#7f51b3"/>
+<path d="M536 522.5 555.25 542 586 500" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+<text x="64" y="620" font-family="Bahnschrift, Helvetica, Arial" font-size="38" fill="#e4e4e4">3. Доставка</text>
+
+<defs>
+<linearGradient id="gradProg3" x1="96" y1="172" x2="404" y2="186" gradientUnits="userSpaceOnUse"><stop stop-color="#7f51b3"/><stop offset="1" stop-color="#c84cd8"/></linearGradient>
+<linearGradient id="gradBtn3a" x1="400" y1="436" x2="544" y2="496" gradientUnits="userSpaceOnUse"><stop stop-color="#c84cd8"/><stop offset="1" stop-color="#7f51b3"/></linearGradient>
+<linearGradient id="gradBtn3b" x1="400" y1="506" x2="544" y2="566" gradientUnits="userSpaceOnUse"><stop stop-color="#7f51b3"/><stop offset="1" stop-color="#c84cd8"/></linearGradient>
+</defs>
+</svg>
