@@ -36,6 +36,3 @@ declare module "next-auth/jwt" {
     error?: string;
   }
 }
-
-const { data: session } = useSession();
-console.log("Session:", session);

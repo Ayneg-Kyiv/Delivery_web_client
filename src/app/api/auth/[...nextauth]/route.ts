@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
+import { error } from "console";
  
 async function getCsrfToken()  {
   const cookieStore = await cookies();
@@ -123,7 +124,7 @@ const handler = NextAuth({
  
           const data = response.data;
           if (!data.success && data.errors) {
-            // eslint-disable-next-line no-console
+            throw error();
           }
  
           if (data.success && data.data)
