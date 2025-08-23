@@ -124,7 +124,6 @@ const handler = NextAuth({
           const data = response.data;
           if (!data.success && data.errors) {
             // eslint-disable-next-line no-console
-            console.warn('[auth] signin validation errors', data.errors);
           }
  
           if (data.success && data.data)
