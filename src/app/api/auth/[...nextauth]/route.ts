@@ -75,6 +75,7 @@ const handler = NextAuth({
             email: credentials?.email ?? '',
             password: credentials?.password ?? '',
           };
+          
           if (rememberBool) payload.rememberMe = true; // only include if true
 
           const response = await ApiClient.post<any>("/auth/signin", payload, {
