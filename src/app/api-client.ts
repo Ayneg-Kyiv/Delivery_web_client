@@ -67,12 +67,7 @@ export const ApiClient = {
       return response.data as T;
     } catch (error: any) {
       if (typeof window === 'undefined') {
-        // eslint-disable-next-line no-console
-        console.error('[ApiClient] Request failed', {
-          finalUrl,
-          status: error?.response?.status,
-          data: error?.response?.data,
-        });
+        throw error;
       }
       if (error.response?.status === 401 && typeof window !== 'undefined') {
         window.location.href = '/signin';
