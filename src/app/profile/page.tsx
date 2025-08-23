@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HelpCircle, Settings, Star } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
+import Image from "next/image";
 
 export default function Profile(): React.JSX.Element {
   // State for user data
@@ -90,7 +91,7 @@ export default function Profile(): React.JSX.Element {
   };
 
   const testImageLoad = (src: string) => new Promise<boolean>((resolve) => {
-    const img = new Image();
+    const img = typeof window !== "undefined" ? new (window.Image as { new (): HTMLImageElement })() : {} as HTMLImageElement;
     img.onload = () => resolve(true);
     img.onerror = () => resolve(false);
     img.src = src;
@@ -209,8 +210,8 @@ export default function Profile(): React.JSX.Element {
             <div className="flex flex-col items-center justify-center">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
                 {previewUrl || userData?.imagePath ? (
-                  <img
-                    src={previewUrl || resolveImageSrc(userData?.imagePath)}
+                  <Image
+                    src={previewUrl || resolveImageSrc(userData?.imagePath) || ''}
                     alt="avatar"
                     className="w-full h-full object-cover"
                     onError={async (e) => {
