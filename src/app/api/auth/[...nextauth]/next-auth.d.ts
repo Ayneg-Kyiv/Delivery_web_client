@@ -1,7 +1,6 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { NextResponse } from "next/server";
-import { useSession } from "next-auth/react";
 
 declare module "next-auth" {
   export interface Session {
