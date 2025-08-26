@@ -5,6 +5,9 @@ import Card from "@/components/ui/card";
 import CardContent from "@/components/ui/card-content";
 import React, { Component } from "react";
 import { ArrowLeft, ArrowRight} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { ImageOptimizerCache } from "next/dist/server/image-optimizer";
 
 class PageTemplate extends Component {
   
@@ -40,20 +43,28 @@ class PageTemplate extends Component {
 
   newsItems = [
     {
-      category: "Новини",
-      date: "01/01/2025",
+      id: 1,
+      createdAt: "01/01/2025",
+      imagePath: "/dummy.png",
       title: "Lorem ipsum dolor sit amet, consectetur....",
       content:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi fringilla sit amet...",
     },
     {
-      category: "Новини",
-      date: "01/01/2025",
+      id: 2,
+      createdAt: "01/01/2025",
+      imagePath: "/dummy.png",
       title: "Lorem ipsum dolor sit amet, consectetur....",
       content:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi fringilla sit amet...",
     },
   ];
+
+  fetchLastNews = async () => {
+    const response = await fetch("/api/article?pageSize=2");
+    const data = await response.json();
+    this.setState({ newsItems: data.data });
+  };
 
   render() {
     return (
@@ -322,18 +333,20 @@ class PageTemplate extends Component {
               >
                 {/* переробити під card */}
                 <div className="w-[370px] h-[350px] bg-[#ababab] rounded-[12px_0px_0px_12px] flex items-center justify-center">
-                  <span className="rotate-[-43.80deg] [font-family:'Bahnschrift-Regular',Helvetica] text-black text-5xl text-center">
-                    Illustration
-                  </span>
+                  <Image
+                    src={item.imagePath}
+                    alt={item.title}
+                    className="w-full h-auto rounded-lg"
+                  />
                 </div>
 
                 <div className="flex-1 p-5 relative">
                   <div className="flex justify-between items-center">
                     <span className="[font-family:'Inter-Regular',Helvetica] text-base">
-                      {item.category}
+                      Новини
                     </span>
                     <span className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xs">
-                      {item.date}
+                      {item.createdAt}
                     </span>
                   </div>
 
@@ -346,12 +359,12 @@ class PageTemplate extends Component {
                   </p>
 
                   {/* Коли буде готовий функціонал то переробити під некстові лінки */}
-                  <a
-                    href="#"
+                    <Link
+                    href={`/article/${item.id}`}
                     className="[font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline absolute bottom-5"
-                  >
+                    >
                     Дивитися далі
-                  </a>
+                    </Link>
                 </div>
               </div>
             ))}
