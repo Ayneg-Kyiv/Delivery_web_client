@@ -1,0 +1,131 @@
+"use client";
+
+import React, { useState } from "react";
+import { useSession } from "next-auth/react";
+import { ProfileService } from "../profile/profile-service";
+
+export default function ChangePasswordPage(): React.JSX.Element {
+  const { data: session } = useSession();
+  const email = (session?.user as any)?.email || "";
+
+  const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
+  const [show, setShow] = useState({ current: false, new: false, confirm: false });
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handlePasswordChange = (field: keyof typeof passwords, value: string) => {
+    setPasswords(prev => ({ ...prev, [field]: value }));
+  };
+
+  const toggle = (field: keyof typeof show) => setShow(prev => ({ ...prev, [field]: !prev[field] }));
+
+  const validate = () => {
+    if (!email) return "Немає email користувача в сесії";
+    if (!passwords.current || !passwords.new || !passwords.confirm) return "Заповніть усі поля";
+    if (passwords.new.length < 6) return "Новий пароль має бути не менше 6 символів";
+    if (passwords.new !== passwords.confirm) return "Паролі не співпадають";
+    if (passwords.new === passwords.current) return "Новий пароль не може збігатися з поточним";
+    return null;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+    setError(null);
+    const v = validate();
+    if (v) { setError(v); return; }
+    setSubmitting(true);
+    try {
+      const res = await ProfileService.changePassword(email, passwords.current, passwords.new);
+      const ok = (res?.Success ?? res?.success ?? false) as boolean;
+      const msg = (res?.Message ?? res?.message ?? "Операція виконана успішно") as string;
+      if (ok) {
+        setMessage(msg);
+        setPasswords({ current: "", new: "", confirm: "" });
+      } else {
+        setError(msg || "Помилка зміни паролю");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Помилка зміни паролю");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="bg-[#130c1f] grid justify-items-center w-screen">
+      <div className="bg-[#130c1f] w-full max-w-[1920px]">
+        <div className="relative w-[1157px] min-h-[696px] mx-auto mt-[190px]">
+          <div className="absolute w-full h-[600px] top-24 left-0 bg-[#0f0e10] border-b-8 border-b-[#2c1b48]" />
+
+          <header className="absolute w-full h-[100px] top-0 left-0 bg-[#2c1b48] rounded-[8px_8px_0px_0px]">
+            <h1 className="absolute top-5 left-1/2 -translate-x-1/2 font-['Bahnschrift-Regular',Helvetica] text-white text-3xl">
+              Password and security
+            </h1>
+          </header>
+
+          <form onSubmit={onSubmit} className="absolute w-[1002px] top-[185px] left-20">
+            <div className="mb-6">
+              <label htmlFor="current-password" className="block text-white text-lg mb-2">Ваш існуючий пароль:</label>
+              <div className="relative">
+                <input
+                  id="current-password"
+                  type={show.current ? "text" : "password"}
+                  value={passwords.current}
+                  onChange={(e) => handlePasswordChange("current", e.target.value)}
+                  placeholder="Пароль"
+                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                />
+                <button type="button" onClick={() => toggle("current")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.current ? 'Hide' : 'Show'}</button>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="new-password" className="block text-white text-lg mb-2">Новий пароль:</label>
+              <div className="relative">
+                <input
+                  id="new-password"
+                  type={show.new ? "text" : "password"}
+                  value={passwords.new}
+                  onChange={(e) => handlePasswordChange("new", e.target.value)}
+                  placeholder="Новий пароль"
+                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                />
+                <button type="button" onClick={() => toggle("new")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.new ? 'Hide' : 'Show'}</button>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label htmlFor="confirm-password" className="block text-white text-lg mb-2">Підтвердити новий пароль:</label>
+              <div className="relative">
+                <input
+                  id="confirm-password"
+                  type={show.confirm ? "text" : "password"}
+                  value={passwords.confirm}
+                  onChange={(e) => handlePasswordChange("confirm", e.target.value)}
+                  placeholder="Підтвердити новий пароль"
+                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                />
+                <button type="button" onClick={() => toggle("confirm")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.confirm ? 'Hide' : 'Show'}</button>
+              </div>
+            </div>
+
+            {error && <div className="text-red-400 mb-3">{error}</div>}
+            {message && <div className="text-green-400 mb-3">{message}</div>}
+
+            <div className="mt-6 flex justify-center">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-[242px] h-12 bg-[#94569f] rounded-lg hover:bg-[#a366ad] disabled:opacity-60"
+              >
+                <span className="text-white text-2xl">{submitting ? 'Зберігаю…' : 'Зберегти'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

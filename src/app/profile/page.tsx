@@ -1,57 +1,364 @@
+"use client";
 
-// 'use client';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { HelpCircle, Settings, Star } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { ProfileService } from "./profile-service";
+import Image from "next/image";
 
-// import React from 'react';
-// import { ApiClient } from '../api-client';
+export default function Profile(): React.JSX.Element {
+  // State for user data
+  const [userData, setUserData] = useState<ApplicationUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-// interface ProfilePageState {
-//   user: ApplicationUser | null;
-//   loading: boolean;
-// }
 
-// export default class ProfilePage extends React.Component<{}, ProfilePageState> {
-//   constructor(props: {}) {
-//     super(props);
-//     this.state = {
-//       user: null,
-//       loading: true,
-//     };
-//   }
+  // Load user data on component mount with normalization and console logs
+  useEffect(() => {
+    async function loadUserData() {
+      setLoading(true);
+      try {
+        const response = await ProfileService.getUserProfile();
+        console.log('Profile API response:', response);
+        const success = (response as any)?.Success ?? (response as any)?.success;
+        const payload = (response as any)?.Data ?? (response as any)?.data ?? {};
+        const raw = Array.isArray(payload) ? payload[0] : payload;
+        console.log('Profile payload:', payload);
+        if (success && raw) {
+          const normalized: ApplicationUser = {
+            firstName: raw?.firstName ?? raw?.FirstName ?? "",
+            middleName: raw?.middleName ?? raw?.MiddleName ?? "",
+            lastName: raw?.lastName ?? raw?.LastName ?? "",
+            email: raw?.email ?? raw?.Email ?? "",
+            // date stays as-is (API string)
+            dateOfBirth: raw?.dateOfBirth ?? raw?.DateOfBirth ?? "",
+            aboutMe: raw?.aboutMe ?? raw?.AboutMe ?? "",
+            phoneNumber: raw?.phoneNumber ?? raw?.PhoneNumber ?? "",
+            address: raw?.address ?? raw?.Address ?? "",
+            imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
+            rating: raw?.rating ?? raw?.Rating ?? 0,
+          };
+          console.log('Normalized profile data:', normalized);
+          setUserData(normalized);
+        } else {
+          console.warn('Profile load not successful:', response);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadUserData();
+  }, []);
 
-//   async componentDidMount() {
-//     try {
-//       await ApiClient.get<any>('/csrf');
+  // No inline editing on this page; fields are read-only
 
-//       const result = await ApiClient.get<any>('/account');
-//       console.log('Fetched user:', result);
-//       this.setState({ user: result.data[0] });
-//     } finally {
-//       this.setState({ loading: false });
-//     }
-//   }
+  // Get display name
+  const getDisplayName = () => {
+    if (!userData) return "Name Second name";
+    const parts = [userData.firstName, userData.middleName, userData.lastName].filter(Boolean);
+    return parts.length > 0 ? parts.join(' ') : "Не вказано";
+  };
 
-//   render() {
-//     const { user, loading } = this.state;
-//     if (loading) return <div className='flex-1'>Loading...</div>;
-//     if (!user) return <div className='flex-1'>Profile not found.</div>;
+  const getInitials = () => {
+    if (!userData) return "";
+    const first = userData.firstName?.[0] ?? "";
+    const last = userData.lastName?.[0] ?? "";
+    return `${first}${last}`.toUpperCase() || "U";
+  };
 
-//     return (
-//       <div className="flex-1 w-full max-w-xl mx-auto p-6 bg-white rounded shadow text-gray-800">
-//         <h1 className="text-2xl font-bold mb-4">Profile</h1>
-//         {user.imagePath && (
-//           <img
-//             src={user.imagePath}
-//             alt="Profile"
-//             className="w-32 h-32 rounded-full object-cover mb-4"
-//           />
-//         )}
-//         <div className="mb-2"><strong>Name:</strong> {user.firstName} {user.middleName} {user.lastName}</div>
-//         <div className="mb-2"><strong>Email:</strong> {user.email}</div>
-//         <div className="mb-2"><strong>Date of Birth:</strong> {user.dateOfBirth || '—'}</div>
-//         <div className="mb-2"><strong>About Me:</strong> {user.aboutMe || '—'}</div>
-//         <div className="mb-2"><strong>Address:</strong> {user.address || '—'}</div>
-//         <div className="mb-2"><strong>Rating:</strong> {user.rating ?? 0} / 5</div>
-//       </div>
-//     );
-//   }
-// }
+  const displayOrMissing = (v?: string) => (v && v.trim() !== "" ? v : "Не вказано");
+
+  // Build absolute URL for image if backend returns relative path
+  const resolveImageSrc = (path?: string | null) => {
+    if (!path) return undefined;
+    const p = String(path);
+    if (/^(https?:)?\/\//i.test(p) || p.startsWith('data:') || p.startsWith('blob:')) return p;
+    const filesBase = (process.env.NEXT_PUBLIC_FILES_BASE_URL || '').replace(/\/+$/, '');
+    const apiBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+    const clean = p.replace(/^\/+/, '');
+    if (filesBase) return `${filesBase}/${clean}`;
+    return apiBase ? `${apiBase}/${clean}` : `/${clean}`;
+  };
+
+  const testImageLoad = (src: string) => new Promise<boolean>((resolve) => {
+    const img = typeof window !== "undefined" ? new (window.Image as { new (): HTMLImageElement })() : {} as HTMLImageElement;
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+
+  // Handlers for changing profile image
+  const handlePickFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userData?.email) return;
+    setUploading(true);
+    // Show instant preview
+    try {
+      const localUrl = URL.createObjectURL(file);
+      setPreviewUrl(prev => {
+        if (prev) URL.revokeObjectURL(prev);
+        return localUrl;
+      });
+    } catch {}
+    try {
+      const result = await ProfileService.updateProfileImage(userData.email, file);
+      console.log('Update profile image result:', result);
+      // Try to update local avatar if API returns a path; otherwise refetch profile
+      const newPath = (result?.data?.imagePath) || (result?.Data?.ImagePath) || (result?.imagePath) || null;
+      if (newPath) {
+        const remote = resolveImageSrc(newPath);
+        if (remote && await testImageLoad(remote)) {
+          setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
+          setPreviewUrl(null);
+        } else {
+          // Keep preview if remote not available yet (eventual consistency)
+          setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
+        }
+      } else {
+        // fallback: reload profile
+        try {
+          const refreshed = await ProfileService.getUserProfile();
+          const success = (refreshed as any)?.Success ?? (refreshed as any)?.success;
+          const payload = (refreshed as any)?.Data ?? (refreshed as any)?.data ?? {};
+          const raw = Array.isArray(payload) ? payload[0] : payload;
+          if (success && raw) {
+            const normalized: ApplicationUser = {
+              firstName: raw?.firstName ?? raw?.FirstName ?? "",
+              middleName: raw?.middleName ?? raw?.MiddleName ?? "",
+              lastName: raw?.lastName ?? raw?.LastName ?? "",
+              email: raw?.email ?? raw?.Email ?? "",
+              dateOfBirth: raw?.dateOfBirth ?? raw?.DateOfBirth ?? "",
+              aboutMe: raw?.aboutMe ?? raw?.AboutMe ?? "",
+              phoneNumber: raw?.phoneNumber ?? raw?.PhoneNumber ?? "",
+              address: raw?.address ?? raw?.Address ?? "",
+              imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
+              rating: raw?.rating ?? raw?.Rating ?? 0,
+            };
+            const remote = resolveImageSrc(normalized.imagePath);
+            if (remote && await testImageLoad(remote)) {
+              setUserData(normalized);
+              setPreviewUrl(null);
+            } else {
+              setUserData(normalized);
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to refresh profile after image upload', err);
+        }
+      }
+      // Clear file input so selecting the same file again re-triggers change
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch (err) {
+      console.error('Failed to update profile image:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Navigation items
+  const navItems = ["Text", "Text", "Text", "Text"];
+
+  // Form fields with dynamic data (only existing/available fields)
+  const formFields = [
+    { label: "Ім'я", value: displayOrMissing(userData?.firstName), key: "firstName" },
+    { label: "Прізвище", value: displayOrMissing(userData?.lastName), key: "lastName" },
+    { label: "E-mail", value: displayOrMissing(userData?.email), key: "email" },
+    { label: "Дата народження", value: displayOrMissing(userData?.dateOfBirth), key: "birthDate", hasHelp: true },
+    { label: "Номер телефону", value: displayOrMissing(userData?.phoneNumber), key: "phoneNumber" },
+    { label: "Адреса", value: displayOrMissing(userData?.address), key: "address" },
+    { label: "Про мене", value: displayOrMissing(userData?.aboutMe), key: "aboutMe", type: "textarea" as const },
+  ];
+
+  // Rating stars based on user rating (0..5)
+  const starCount = Math.max(0, Math.min(5, Math.round(userData?.rating ?? 0)));
+  const stars = Array.from({ length: 5 }, (_, i) => i < starCount);
+
+  if (loading) {
+    return (
+      <main className="bg-[#130c1f] grid justify-items-center w-full">
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-white text-xl">Завантаження...</div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="bg-[#130c1f] grid justify-items-center w-full">
+      <div className="bg-[#130c1f] w-full max-w-[1920px] relative pb-6">
+        {/* Top separator */}
+        <Separator className="w-full h-px mt-[95px]" />
+
+        {/* Profile header card */}
+  <Card className="w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none">
+          <CardContent className="grid grid-cols-2 gap-[100px] p-[100px]">
+            {/* Profile avatar and name */}
+            <div className="flex flex-col items-center justify-center">
+              <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
+                {previewUrl || userData?.imagePath ? (
+                  <Image
+                    src={previewUrl || resolveImageSrc(userData?.imagePath) || ''}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                    onError={async (e) => {
+                      // Avoid loops on preview
+                      if (!userData?.email || previewUrl) return;
+                      try {
+                        const blob = await ProfileService.getProfileImageBlobByEmail(userData.email);
+                        const blobUrl = URL.createObjectURL(blob);
+                        (e.currentTarget as HTMLImageElement).src = blobUrl;
+                      } catch (err) {
+                        console.warn('Fallback blob fetch for avatar failed:', err);
+                      }
+                    }}
+                  />
+                ) : (
+                  <AvatarFallback className="bg-[#d9d9d9] text-[#4d4d4d] font-semibold text-4xl">
+                    {getInitials()}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <span className="mt-[18px] font-['Bahnschrift-Regular',Helvetica] text-white text-2xl">
+                {getDisplayName()}
+              </span>
+              {/* Change photo link and hidden input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={handlePickFile}
+                disabled={uploading}
+                className="mt-2 text-[#7f51b3] hover:text-[#6a4399] underline disabled:opacity-60"
+              >
+                {uploading ? 'Завантаження…' : 'Змінити фото'}
+              </button>
+            </div>
+
+            {/* Rating section */}
+            <div className="flex flex-col">
+              <div className="flex items-center">
+                <span className="font-['Bahnschrift-Light',Helvetica] font-light text-white text-lg mr-1">
+                  Рейтинг
+                </span>
+                <div className="flex">
+                  {stars.map((filled, index) => (
+                    <Star
+                      key={`star-${index}`}
+                      className="w-[31px] h-[30px]"
+                      fill={filled ? "white" : "none"}
+                      color="white"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <Separator className="w-[177px] h-px mt-[10px]" />
+
+              <div className="mt-[70px]">
+                <span className="font-['Bahnschrift-Light',Helvetica] font-light text-white text-lg">
+                  Рейтинг
+                </span>
+                <div className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-[28px] text-center mt-2">
+                  {userData?.rating ?? 0}
+                </div>
+                <Separator className="w-12 h-px mt-2" />
+              </div>
+
+              {/* Edit Profile Button */}
+              <div className="mt-8">
+                <Button
+                  className="w-full bg-[#7f51b3] text-white py-3 rounded-lg hover:bg-[#6a4399] transition-colors"
+                  onClick={() => window.location.href = '/edit-profile'}
+                >
+                  Редагувати профіль
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Navigation tabs */}
+        <Tabs defaultValue="tab1" className="w-[1080px] mx-auto">
+          <TabsList className="w-full h-[83px] bg-[#2c1b48] rounded-[8px_8px_0px_0px] p-2.5 justify-start gap-4">
+            <Button className="w-[60px] h-[60px] bg-[#7f51b3] rounded-lg p-0 flex items-center justify-center">
+              <Settings className="w-[34px] h-[34px]" />
+            </Button>
+
+            {navItems.map((item, index) => (
+              <TabsTrigger
+                key={`tab-${index}`}
+                value={`tab${index + 1}`}
+                className="w-[210px] h-[60px] font-['Bahnschrift-SemiBold',Helvetica] font-semibold text-white text-2xl bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-white"
+              >
+                {item}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+
+        {/* Profile form section */}
+  <Card className="w-[1080px] mx-auto bg-[#0f0e10] border-0 rounded-none">
+          <CardContent className="pt-[39px] px-[68px]">
+            <Separator className="w-[965px] h-px mb-[20px]" />
+
+            <div className="w-[682px] mx-auto mt-[20px]">
+              {formFields.map((field, index) => (
+                <div key={field.key} className="mb-[56px]">
+                  <div className="flex justify-between">
+                    <label className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
+                      {field.label}
+                    </label>
+                  </div>
+
+                  <div className="relative mt-1">
+                    {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
+                      <Textarea
+                        className="w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                        value={(field.value as string) || ''}
+                        readOnly
+                      />
+                    ) : (
+                      <Input
+                        className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                        value={(field.value as string) || ''}
+                        type="text"
+                        readOnly
+                      />
+                    )}
+
+                    {field.hasHelp && (
+                      <div className="absolute right-[-20px] top-[10px]">
+                        <div className="w-5 h-5 rounded-[10px] bg-[#d9d9d9] flex items-center justify-center">
+                          <HelpCircle className="w-4 h-4 text-[#4d4d4d]" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
+  );
+}
