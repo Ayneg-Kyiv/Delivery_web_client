@@ -30,7 +30,9 @@ export class ProfileService {
         aboutMe: userData.AboutMe
       };
 
-      const response = await ApiClient.put<ApiResponse>('/api/Account/change-user-data', apiData);
+  // NOTE: Do NOT prefix with /api here; base URL (NEXT_PUBLIC_API_URL) already includes /api.
+  // ApiClient will also de-duplicate if both are present, but we keep paths clean.
+  const response = await ApiClient.put<ApiResponse>('/Account/change-user-data', apiData);
       return response;
     } catch (error: any) {
       console.error('Error changing user data:', error);
@@ -50,7 +52,7 @@ export class ProfileService {
 
   static async getUserProfile(): Promise<ApiResponse<ApplicationUser>> {
     try {
-      const response = await ApiClient.get<ApiResponse<ApplicationUser>>('/api/Account');
+  const response = await ApiClient.get<ApiResponse<ApplicationUser>>('/Account');
       return response;
     } catch (error: any) {
       console.error('Error fetching user profile:', error);
@@ -70,7 +72,7 @@ export class ProfileService {
       form.append('Email', email);
       form.append('Image', imageFile);
 
-  const response = await ApiClient.put<any>('/api/Account/update-profile-image', form, {
+  const response = await ApiClient.put<any>('/Account/update-profile-image', form, {
         headers: {
           // Override default JSON to let axios set proper multipart boundary
           'Content-Type': 'multipart/form-data',
@@ -102,7 +104,7 @@ export class ProfileService {
   static async changePassword(email: string, currentPassword: string, newPassword: string): Promise<ApiResponse<any> | any> {
     try {
       const payload = { email, currentPassword, newPassword };
-      const response = await ApiClient.put<any>('/api/Account/change-password', payload, {
+  const response = await ApiClient.put<any>('/Account/change-password', payload, {
         headers: { 'Content-Type': 'application/json', 'Accept': '*/*' },
       });
       return response;
