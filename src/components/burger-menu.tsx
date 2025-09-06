@@ -2,12 +2,16 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 type BurgerMenuProps = {
   onClose?: () => void;
 };
 
 export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Element {
+
+  const { data: session } = useSession();
+  
   // Lock body scroll while open
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -50,21 +54,27 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
         </div>
 
         <nav className="p-4 space-y-1">
-          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
-            Профіль
-          </Link>
-          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/" onClick={onClose}>
-            Дошка замовлення
-          </Link>
+          { session?.user && (
+            <>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
+                Профіль
+              </Link>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/" onClick={onClose}>
+                Дошка замовлення
+              </Link>
+            </>
+          )}
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/about" onClick={onClose}>
             Про нас
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/policy" onClick={onClose}>
             Політика
           </Link>
-          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
-            Увійти
-          </Link>
+          { !session?.user && (
+            <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
+              Увійти
+            </Link>
+          )}
         </nav>
       </div>
     </div>

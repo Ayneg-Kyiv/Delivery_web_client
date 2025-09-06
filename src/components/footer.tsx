@@ -69,10 +69,10 @@ const Footer: React.FC = () => (
         </div>
 
         <div className="flex h-[45px] space-x-4 items-end">
-          <Link href="/terms">Terms & Conditions</Link>
-          <Link href="/cookies">Cookies</Link>
-          <Link href="/policy">Policy</Link>
-          <Link href="/security">Security</Link>
+          <Link href="/terms">Умови користування</Link>
+          <Link href="/cookies">Кукі</Link>
+          <Link href="/policy">Політика</Link>
+          <Link href="/security">Безпека</Link>
         </div>
 
       </div>
