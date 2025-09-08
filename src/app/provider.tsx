@@ -12,10 +12,11 @@ type AuthProviderProps = {
 export function AuthProvider({ children, session }: AuthProviderProps) {
 
   useEffect(() => {
+    
   }, []);
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={1 * 60 * 60} refetchOnWindowFocus={true}>
       {children}
     </SessionProvider>
   );

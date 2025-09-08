@@ -180,7 +180,7 @@ class PageTemplate extends Component {
 
   fetchLastNews = async () => {
     const response = await ApiClient.get<any>('/article/list?pageSize=2');
-    var data = response.data?.data || [];
+    let data = response.data?.data || [];
     this.setState({ newsItems: data });
   };
 
@@ -206,7 +206,7 @@ class PageTemplate extends Component {
                 {this.heroData.tagline}
               </p>
 
-              <h1 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl max-w-[580px] mb-8">
+              <h1 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl max-w-[580px] mb-8">
                 {this.heroData.title}
               </h1>
 
@@ -214,7 +214,7 @@ class PageTemplate extends Component {
                 {this.heroData.subtitle}
               </p>
 
-              <div className="flex gap-5">
+              <div className="flex sm:flex-row flex-col gap-5">
                 {this.heroData.buttons.map((button, index) => (
                   <Button
                     onClick={button.onclick}
@@ -271,11 +271,11 @@ class PageTemplate extends Component {
 
         {/* Ecological delivery section */}
         <section className="w-full px-8 md:px-20 xl:px-40 py-24 bg-darker mx-auto ">
-          <h2 className="w-full [font-family:'Bahnschrift-Regular',Helvetica] text-7xl mb-10">
+          <h2 className="w-full [font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
             Робимо доставку екологічною та швидкою
           </h2>
 
-          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-16">
+          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-8">
               Наш сервіс об’єднує тих, хто хоче відправити речі,
               і водіїв, які вже прямують у потрібному напрямку. 
               Використовуючи вільне місце в багажнику,
@@ -326,14 +326,14 @@ class PageTemplate extends Component {
         </section>
 
         {/* Mission section (rewritten) */}
-        <section className="w-full sm:px-8 md:px-20 xl:px-40 py-20 relative overflow-hidden">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-20 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 10% 20%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 90% 80%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[34px] mb-5 tracking-wide uppercase">
               Наша місія
             </h3>
 
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-6xl md:text-7xl leading-[1.05] max-w-[920px] mx-auto mb-14">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[920px] mx-auto mb-14">
               Робимо доставку людяною, доступною та<br className="hidden md:block"/> екологічно відповідальною
             </h2>
 
@@ -400,7 +400,7 @@ class PageTemplate extends Component {
 
         {/* Earn with us section */}
         <section className="w-full px-8 md:px-20 xl:px-40 py-24">
-          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl mb-4">
+          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl lg:text-7xl mb-4">
             Заробляйте разом з Cargix
           </h2>
 
@@ -410,9 +410,9 @@ class PageTemplate extends Component {
             Використовуйте додаток для зручної комунікації з відправниками та прозорих виплат без зайвої паперової тяганини.
           </p>
 
-          <div className="flex flex-col gap-20">
-            <div className="flex gap-20">
-              <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
+          <div className="flex flex-col lg:flex-row md:gap-20">
+            <div className="flex-1 flex flex-col gap-10 md:gap-20">
+              <Card className=" w-full  bg-[#d9d9d9] rounded-xl">
                 <CardContent source="/EarnImage1.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
               </Card>
 
@@ -427,13 +427,19 @@ class PageTemplate extends Component {
                   Автоматичні сповіщення тримають вас у курсі нових запитів та статусу виконання.
                 </p>
 
-                <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
+                <Button className="h-[76px] mb-8 w-full lg:w-[320px] bg-[#d9d9d9] rounded-xl md:place-self-center" onClick={() => console.log("Learn more clicked!")}
                   text="Дізнатися більше"/>
               </div>
             </div>
 
-            <div className="flex gap-20">
-              <div className="flex flex-col justify-center">
+            <div className="h w-[1px] bg-white/20 rounded-sm"></div>
+
+            <div className="flex-1 flex flex-col gap-10 md:gap-20">
+              <Card className="flex md:hidden w-full bg-[#d9d9d9] rounded-xl ">
+                <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
+              </Card>
+
+              <div className="flex flex-col justify-center ">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
                   Переваги для відправника
                 </h3>
@@ -444,13 +450,13 @@ class PageTemplate extends Component {
                     Всі комунікації, підтвердження та оплати відбуваються в додатку — без зайвої бюрократії.
                 </p>
 
-                <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
-                  text="Дізнатися більше" />
-              </div>
+                <Button className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center" onClick={() => console.log("Learn more clicked!")}
+                text="Дізнатися більше" />
 
-              <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
-              </Card>
+                <Card className="flex hidden md:block w-full bg-[#d9d9d9] rounded-xl ">
+                  <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
+                </Card>
+              </div>
             </div>
           </div>
 
@@ -463,7 +469,7 @@ class PageTemplate extends Component {
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[30px] md:text-[34px] mb-5 tracking-wide uppercase">
               Швидкий розрахунок
             </h3>
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-6xl md:text-7xl leading-[1.05] max-w-[980px] mx-auto mb-10">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[980px] mx-auto mb-10">
               Розрахуй доставку за кілька секунд
             </h2>
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[900px] mx-auto mb-14 leading-relaxed">
@@ -545,7 +551,7 @@ class PageTemplate extends Component {
         {/* News section */}
         <section className="px-8 md:px-20 xl:px-40 py-16">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:lg:text-7xl">
               Новини та оновлення
             </h2>
           </div>
@@ -555,26 +561,26 @@ class PageTemplate extends Component {
             Слідкуйте за змінами, щоб бути в курсі нових можливостей та акцій на платформі Cargix.
             </p>
 
-          <Button className="h-[70px] w-60 button-type-1 rounded-xl mb-8">
+          <Button className="h-[70px] w-full md:w-60 button-type-1 rounded-xl mb-8">
             <Link href={'/news'} className="w-full h-full flex items-center justify-center">Переглянути всі новини</Link>
           </Button>
 
-          <div className="flex sm:flex-col md:flex-col lg:flex-row gap-5 mb-8 items-center">
+          <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
             {this.state.newsItems.map((item, index) => (
               <div
                 key={index}
-                className="w-[760px] h-[350px] bg-[#231d2d] rounded-xl flex"
+                className="flex-1 md:lg:w-[760px] md:lg:h-[350px] bg-[#231d2d] rounded-xl flex flex-col lg:flex-row border border-[#3d2a5a] hover:border-[#c84cd8]/70 transition-colors"
               >
                   <Image
                     src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + item.imagePath || '/dummy.png'}
                     alt={item.title || 'No title'}
                     width={370}
                     height={350}
-                    className=" rounded-lg object-cover"
+                    className="w-full rounded-lg object-cover"
                   />
 
-                <div className="flex-1 p-5 relative">
-                  <div className="flex justify-between items-center">
+                <div className=" p-4 flex flex-col ">
+                  <div className="flex sm:flex-col justify-between items-center">
                     <span className="[font-family:'Inter-Regular',Helvetica] text-base">
                       Новини
                     </span>
@@ -583,16 +589,16 @@ class PageTemplate extends Component {
                     </span>
                   </div>
 
-                  <h3 className="[font-family:'Bahnschrift-Regular',Helvetica]text-[26px] mt-12 mb-4 max-w-[260px] ellipsis">
+                  <h3 className="flex h-[30px] [font-family:'Bahnschrift-Regular',Helvetica] text-[26px] my-2 overflow-hidden w-full ">
                     {item.title}
                   </h3>
 
-                  <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base max-w-[350px] ellipsis">
+                  <p className="flex-1 flex [font-family:'Inter-Regular',Helvetica] fg-secondary text-base overflow-hidden my-2">
                     {item.content}
                   </p>
-
+                  
                   <Link href={`/article/?id=${item.id}`}
-                    className="[font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline absolute bottom-5">
+                    className="flex [font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline bottom-5 h-[10%]">
                       Дивитися далі
                   </Link>
                 </div>

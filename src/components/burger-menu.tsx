@@ -3,6 +3,8 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { AuthService } from "@/app/auth-service";
+import { useRouter } from "next/navigation";
 
 type BurgerMenuProps = {
   onClose?: () => void;
@@ -11,7 +13,8 @@ type BurgerMenuProps = {
 export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Element {
 
   const { data: session } = useSession();
-  
+  const router = useRouter();
+
   // Lock body scroll while open
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -32,6 +35,11 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget === e.target) onClose?.();
+  };
+  
+  const handleSignOut = async () => {
+    await AuthService.logout();
+    router.push('/');
   };
 
   return (
@@ -74,6 +82,12 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
             <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
               Увійти
             </Link>
+          )}
+
+          { session?.user && (
+              <button className="block px-3 py-2 rounded-md hover:bg-white/10 w-full text-left absolute bottom-4" onClick={() => { handleSignOut(); onClose?.(); }}>
+                Вийти
+              </button>
           )}
         </nav>
       </div>

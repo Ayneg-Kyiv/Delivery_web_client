@@ -5,14 +5,16 @@ import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
 import { error } from "console";
  
+
+
 async function getCsrfToken()  {
   const cookieStore = await cookies();
   let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
  
   if (!csrf) {
     // Fallback to fetching CSRF token from the API if not found in cookies
-    const response = await ApiClient.get<any>("/csrf");
-    csrf = response?.csrfToken || null;
+    await ApiClient.get<any>("/csrf");
+    csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
   }
  
   return csrf;
@@ -21,22 +23,62 @@ async function getCsrfToken()  {
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
-  const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
+
+    const data = await ApiClient.post<any>("/auth/refresh-session", {}, {
       headers: {
         "X-XSRF-TOKEN": csrfToken || "",
+        "Cookie": (await cookies()).toString() || "",
       },
     });
+      const setCookieHeader: string[] = data.headers["set-cookie"] || [];
+      const refreshTokenCookie = setCookieHeader.find(cookie => cookie.startsWith("refreshToken="));
+           
+      if (refreshTokenCookie) {
+        // Split cookie string into parts
+        const parts = refreshTokenCookie.split(";").map(part => part.trim());
+        const [nameValue, ...attributes] = parts;
+        const [name, value] = nameValue.split("=");
  
-    if (!data.success)
+        // Extract attributes
+        const cookieOptions: Record<string, any> = {
+          name,
+          value: decodeURIComponent(value || ""),
+          httpOnly: false,
+          secure: false,
+          sameSite: undefined,
+          expires: undefined,
+          path: undefined
+        };
+ 
+        attributes.forEach(attr => {
+          if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
+          if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
+          if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
+          if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
+          if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
+        });
+ 
+        (await cookies()).set(cookieOptions.name, cookieOptions.value, {
+          httpOnly: cookieOptions.httpOnly,
+          secure: cookieOptions.secure,
+          sameSite: cookieOptions.sameSite,
+          expires: cookieOptions.expires,
+          path: cookieOptions.path
+        });
+      }
+    
+
+    if (!data.success){
       return {
         ...token,
         error: "Error refreshing access token"
       };
- 
+    };
+
     return {
       ...token,
       accessToken: data.data.token,
-      accessTokenExpires: Date.now() + 1 * 60 * 60, // Convert seconds to milliseconds
+      accessTokenExpires: Date.now() + 60 * 60 * 1000, // Convert seconds to milliseconds
       user: {
         id: data.data.id,
         name: data.data.name,
@@ -147,14 +189,14 @@ const handler = NextAuth({
   ],
  
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         // If user is provided, it means this is the first time the JWT is being created
         // Store user information and access token in the JWT
         return {
           ...token,
           accessToken: user.token,
-          accessTokenExpires: Date.now() + 1 * 60 * 60,
+          accessTokenExpires: Date.now() + 60 * 60 * 1000,
           user: {
             id: user.id,
             name: user.name,
@@ -163,15 +205,17 @@ const handler = NextAuth({
           }
         };
       }
-        // If the token already has an access token and it hasn't expired, return it
-      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-        return token;
-      }
 
+      // If the token is still valid, return it
+      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires)
+        return token;
+        
       return refreshAccessToken(token);
     },
  
     async session({ session, token }) {
+
+      // Attach the access token and user information to the session object
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.error = token.error;
@@ -181,6 +225,7 @@ const handler = NextAuth({
   },
  
   events: {
+
     async signOut({ token }) {
       try {
         await ApiClient.post("/auth/signout", {}, {
@@ -206,7 +251,8 @@ const handler = NextAuth({
  
   session: {
     strategy: "jwt",
-    maxAge: 1 * 60 * 60, // 1 hour (match your refresh token expiry)
+    maxAge: 1 * 60 * 60 * 1000, // 1 hour (match your refresh token expiry)
+    updateAge: 60 * 60 * 1000, // 1 hour
   },
  
   debug: process.env.NODE_ENV === "development",
