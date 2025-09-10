@@ -27,6 +27,7 @@ export const ApiClient = {
       ),
     };
 
+    console.log("Session in ApiClient:", session);
     if (session?.accessToken) headers['Authorization'] = `Bearer ${session.accessToken}`;
 
     // Add CSRF token for mutating requests

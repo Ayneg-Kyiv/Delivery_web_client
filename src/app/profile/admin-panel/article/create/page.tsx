@@ -58,6 +58,9 @@ type Article = {
     content: string;
     contentError: string;
     author: string;
+    authorError: string;
+    category?: string;
+    categoryError: string;
     imagePath?: string;
     createdAt?: string;
     image?: File;
@@ -83,6 +86,9 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 content: '',
                 contentError: '',
                 author: props.session.data?.user?.name || '',
+                authorError: '',
+                category: '',
+                categoryError: '',
                 imagePath: '',
                 image: undefined,
                 articleBlocks: [],
@@ -242,26 +248,36 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                     <form className="flex flex-col gap-4 w-full max-w-7xl bg-lighter p-4 rounded-lg" onSubmit={(e) => this.createArticle(e)}>
                         <div className="flex flex-col">
                             <TextInputGroup
-                                    value={this.state.article.title}
-                                    onChange={(e) => this.setState({ article: { ...this.state.article, title: e.target.value } })}
-                                    placeholder=""
-                                    label={"Заголовок"}
-                                    className="w-full"
-                                    inputClassName={`floating-input ${this.state.article.titleError ? 'floating-input-error' : ''}`}
-                                    labelClassName={`${this.state.article.title ? ' filled' : ''} ${this.state.article.titleError ? ' floating-label-error' : ''}`}
-                                />
+                                value={this.state.article.title}
+                                onChange={(e) => this.setState({ article: { ...this.state.article, title: e.target.value } })}
+                                placeholder=""
+                                label={"Заголовок"}
+                                className="w-full"
+                                inputClassName={`floating-input ${this.state.article.titleError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.article.title ? ' filled' : ''} ${this.state.article.titleError ? ' floating-label-error' : ''}`}
+                            />
 
-                                <TextAreaGroup
-                                    value={this.state.article.content}
-                                    onChange={(e) => this.setState({ 
-                                        article: { ...this.state.article, content: e.target.value }
-                                    })}
-                                    placeholder=""
-                                    label="Контент"
-                                    className="mb-4"
-                                    error={!!this.state.article.contentError}
-                                    minHeight="150px"
-                                />
+                            <TextAreaGroup
+                                value={this.state.article.content}
+                                onChange={(e) => this.setState({ 
+                                    article: { ...this.state.article, content: e.target.value }
+                                })}
+                                placeholder=""
+                                label="Контент"
+                                className="mb-4"
+                                error={!!this.state.article.contentError}
+                                minHeight="150px"
+                            />
+
+                            <TextInputGroup
+                                value={this.state.article.category || ''}
+                                onChange={(e) => this.setState({ article: { ...this.state.article, category: e.target.value } })}
+                                placeholder=""
+                                label={"Категорія"}
+                                className="w-full"
+                                inputClassName={`floating-input ${this.state.article.categoryError ? 'floating-input-error' : ''}`}
+                                labelClassName={`${this.state.article.category ? ' filled' : ''} ${this.state.article.categoryError ? ' floating-label-error' : ''}`}
+                            />
 
                             {this.state.article.imagePath && (
                                 <Image

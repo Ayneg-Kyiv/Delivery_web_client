@@ -49,6 +49,8 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                 title: '',
                 content: '',
                 author: '',
+                category: '',
+                categoryError: false,
                 imagePath: '',
                 createdAt: '',
                 image: undefined,
@@ -179,6 +181,16 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                     className="mb-4"
                                     error={!!this.state.article.contentError}
                                     minHeight="150px"
+                                />
+                                
+                                <TextInputGroup
+                                    value={this.state.article.category || ''}
+                                    onChange={(e) => this.setState({ article: { ...this.state.article, category: e.target.value } })}
+                                    placeholder=""
+                                    label={"Категорія"}
+                                    className="w-full"
+                                    inputClassName={`floating-input ${this.state.article.categoryError ? 'floating-input-error' : ''}`}
+                                    labelClassName={`${this.state.article.category ? ' filled' : ''} ${this.state.article.categoryError ? ' floating-label-error' : ''}`}
                                 />
 
                                 {this.state.article.imagePath && (

@@ -12,6 +12,8 @@ interface EditArticlePageState {
         contentError?: boolean;
         author: string;
         authorError?: boolean;
+        category: string;
+        categoryError?: boolean;
         imagePath?: string;
         imagePathError?: boolean;
         image?: File;

@@ -77,7 +77,7 @@ export default function Navbar() {
               session?.user && (
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
                   </Link>
                 </>
@@ -138,7 +138,7 @@ export default function Navbar() {
               session?.user && (
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
                   </Link>
                 </>
@@ -146,8 +146,8 @@ export default function Navbar() {
             {
               !session?.user && (
                 <>
-                  <Link href='signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
-                  <Link href='signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
+                  <Link href='/signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
+                  <Link href='/signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
                 </>
             )}
           </div>

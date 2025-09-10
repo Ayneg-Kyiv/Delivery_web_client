@@ -45,6 +45,11 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
             
             userPanel: {
                 ifPanelOpen: false,
+
+                totalUsers: 0,
+                totalDrivers: 0,
+                activeOrders: 0,
+
                 users: [{
                     id: '',
                     name: ''
@@ -56,6 +61,14 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
 
             driverApplicationPanel: {
                 ifPanelOpen: false,
+
+                totalApplications: 0,
+                
+                applications: [],
+                
+                currentPage: 0,
+                totalPages: 0,
+                batchSize: 0
             },
 
             articlePanel: {
@@ -100,6 +113,31 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
             const articles = response.data.data;
 
             this.setState({ articlePanel: { ...this.state.articlePanel, articles: articles, totalPages: response.data.pagination.totalPages, totalArticles: response.data.pagination.totalCount } });
+
+            const statsResponse = await ApiClient.get<any>('/admin/panel-data');
+
+            this.setState({
+                userPanel: {
+                    ...this.state.userPanel,
+                    totalUsers: statsResponse.data.usersCount,
+                    totalDrivers: statsResponse.data.driversCount,
+                    activeOrders: statsResponse.data.totalTrips
+                }
+            });
+
+            const driverAppsResponse = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=1&pageSize=10`);
+
+            this.setState({
+                driverApplicationPanel: {
+                    ...this.state.driverApplicationPanel,
+                    totalApplications: driverAppsResponse.data.pagination.totalCount,
+                    applications: driverAppsResponse.data.data,
+                    currentPage: driverAppsResponse.data.pagination.pageNumber,
+                    totalPages: driverAppsResponse.data.pagination.totalPages,
+                    batchSize: driverAppsResponse.data.pagination.pageSize
+                }
+            });
+
     }
 
     async componentDidUpdate(prevProps: Readonly<AdminPanelProps>, prevState: Readonly<AdminPanelState>): Promise<void> {
@@ -140,21 +178,33 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
         }
     }
 
-    render() {
-
-        // Your render logic here...
+    dashboardPanelRender () {
         return (
-                <div className="flex-1 flex flex-col px-8 md:px:10 lg:px-[190px] py-10">
-                    <div className="flex-1 flex flex-row bg-darker rounded-lg border border-line border items-center px-8 py-10 mb-10 font-bold">
-                        <div className="flex-1 flex flex-col gap-2">
-                            <h1 className="text-5xl">Адміністративна панель</h1>
-                            <p className="text-2xl">Керування платформою</p>
-                        </div>
-
-                        <div className="flex-1 flex justify-end">
-
-                        </div>
+            <div className="flex flex-col justify-center  rounded-lg text-4xl">
+                <div className="flex flex-col justify-between md:flex-row gap-6">
+                    <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
+                        <div className="text-2xl">Статті</div>
+                        <div className="pt-2 text-4xl">{this.state.articlePanel.totalArticles}</div>
                     </div>
+                    <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
+                        <div className="text-2xl">Користувачі</div>
+                        <div className="pt-2 text-4xl">{this.state.userPanel.totalUsers}</div>
+                    </div>
+                    <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
+                        <div className="text-2xl">Водіїв</div>
+                        <div className="pt-2 text-4xl">{this.state.driverApplicationPanel.totalApplications}</div>
+                    </div>
+                    <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
+                        <div className="text-2xl">Активні замовлення</div>
+                        <div className="pt-2 text-4xl">{this.state.userPanel.activeOrders}</div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    articlesPanelRender () {
+        return (
                     <div className="flex-1 bg-lighter flex py-10 rounded-lg">
                         <div className='flex-1 flex-col w-full flex py-10 px-8'>
 
@@ -210,7 +260,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                             </div>
 
                                 <Link href={'/profile/admin-panel/article/create'}  
-                                    className='px-6 py-4 bg-default rounded-lg text-2xl w-full md:w-[320px]'>
+                                    className='px-6 py-4 bg-default rounded-lg text-2xl w-full lg:w-[320px]'>
                                         Додати статтю</Link>
 
                             {this.state.articlePanel.articles.map((item, index) => (
@@ -230,9 +280,9 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                             <p className='pt-4 text-l'>Опубліковано: {item.createdAt}</p>
                                             <div className="flex gap-4 mt-6 w-full">
                                                 <Link href={'/profile/admin-panel/article/edit?articleId=' + item.id}
-                                                    className='flex-1 w-full px-4 py-2 bg-lighter rounded-lg'>Редагувати</Link>
+                                                    className='flex-1 w-full px-4 py-2 button-type-2 rounded-lg'>Редагувати</Link>
                                                 <button onClick={async() => await this.deleteArticle(item.id)} 
-                                                    className='flex-1 px-4 py-2 bg-lighter rounded-lg'>Видалити</button>
+                                                    className='flex-1 px-4 py-2 button-type-2 rounded-lg'>Видалити</button>
                                             </div>
                                         </div>
                                     </div>
@@ -305,6 +355,41 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                             }
                         </div>
                     </div>
+        )
+    }
+
+    render() {
+
+        // Your render logic here...
+        return (
+                <div className="flex-1 flex flex-col px-8 md:px:10 lg:px-[190px] py-10">
+                    <div className=" flex flex-col lg:flex-row bg-darker rounded-lg border border-line items-between lg:items-center px-8 py-10 mb-10 font-bold">
+                        <div className="w-[40%] flex flex-col gap-2 mb-6 lg:mb-0">
+                            <h1 className="text-xl md:text-3xl lg:text-4xl">Адміністративна панель</h1>
+                            <p className="text-lg md:text-xl lg:text-2xl">Керування платформою</p>
+                        </div>
+
+                        <div className="flex-1 flex-col md:flex-row flex justify-center md:items-end gap-6 flex-wrap">
+                            <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'dashboard' ? 'bg-lighter' : 'button-type-3'}`}
+                                onClick={() => this.setState({ mode: 'dashboard' })}>
+                                Панель приладів
+                            </button>
+                            <button className={`flex-1 py-2 px-4  rounded-lg border border-line border-[1px] ${this.state.mode === 'users' ? 'bg-lighter' : 'button-type-3'}`} 
+                                onClick={() => this.setState({ mode: 'users' })}>
+                                Користувачі
+                            </button>
+                            <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'articles' ? 'bg-lighter' : 'button-type-3'}`} 
+                                onClick={() => this.setState({ mode: 'articles' })}>
+                                Статті
+                            </button>
+                            <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'driver-applications' ? 'bg-lighter' : 'button-type-3'}`} 
+                                onClick={() => this.setState({ mode: 'driver-applications' })}>
+                                Заявки водіїв
+                            </button>
+                        </div>
+                    </div>
+                    { this.state.mode === 'dashboard' && this.dashboardPanelRender() }
+                    { this.state.mode === 'articles' && this.articlesPanelRender() }
                 </div>
         );
     }
