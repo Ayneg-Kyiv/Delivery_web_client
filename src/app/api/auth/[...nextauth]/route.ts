@@ -4,6 +4,7 @@ import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
 import { error } from "console";
+import { Session } from "inspector/promises";
  
 
 
@@ -24,8 +25,6 @@ async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
 
-    console.log(`Refreshing access token... ${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-session`);
-
     const responseRaw = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-session`, {
       method: "POST",
       headers: {
@@ -38,79 +37,73 @@ async function refreshAccessToken(token: JWT) {
 
     const response = await responseRaw.json();
 
-    console.log("Refresh token response --------------------:", responseRaw);
+    const setCookieHeader: string[] = responseRaw.headers.getSetCookie() || [];
+    // Filter for valid refreshToken cookies (not expired)
+    const validRefreshTokenCookies = setCookieHeader
+      .filter(cookie => cookie.startsWith("refreshToken="))
+      .filter(cookie => {
+        const expiresMatch = cookie.match(/expires=([^;]+)/i);
+        if (!expiresMatch) return true;
+        const expiresDate = new Date(expiresMatch[1]);
+        return expiresDate > new Date();
+      });
 
-  const setCookieHeader: string[] = responseRaw.headers.getSetCookie() || [];
-  // Filter for valid refreshToken cookies (not expired)
-  const validRefreshTokenCookies = setCookieHeader
-    .filter(cookie => cookie.startsWith("refreshToken="))
-    .filter(cookie => {
-      const expiresMatch = cookie.match(/expires=([^;]+)/i);
-      if (!expiresMatch) return true;
-      const expiresDate = new Date(expiresMatch[1]);
-      return expiresDate > new Date();
-    });
-
-  // Use the last valid refreshToken cookie (usually the newest one)
-  const refreshTokenCookie = validRefreshTokenCookies.length > 0
-    ? validRefreshTokenCookies[validRefreshTokenCookies.length - 1]
-    : undefined;
+    // Use the last valid refreshToken cookie (usually the newest one)
+    const refreshTokenCookie = validRefreshTokenCookies.length > 0
+      ? validRefreshTokenCookies[validRefreshTokenCookies.length - 1]
+      : undefined;
 
 
-  if (refreshTokenCookie) {
-    // Split cookie string into parts
-    const parts = refreshTokenCookie.split(";").map(part => part.trim());
-    const [nameValue, ...attributes] = parts;
-    const [name, value] = nameValue.split("=");
+    if (refreshTokenCookie) {
+      // Split cookie string into parts
+      const parts = refreshTokenCookie.split(";").map(part => part.trim());
+      const [nameValue, ...attributes] = parts;
+      const [name, value] = nameValue.split("=");
 
-    // Extract attributes
-    const cookieOptions: Record<string, any> = {
-      name,
-      value: decodeURIComponent(value || ""),
-      httpOnly: false,
-      secure: false,
-      sameSite: undefined,
-      expires: undefined,
-      path: undefined
-    };
-
-  console.log("Setting refresh token cookie:", name, cookieOptions.value);
-
-  attributes.forEach(attr => {
-    if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
-    if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
-    if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
-    if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
-    if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
-  });
-
-  (await cookies()).set(cookieOptions.name, cookieOptions.value, {
-    httpOnly: cookieOptions.httpOnly,
-    secure: cookieOptions.secure,
-    sameSite: cookieOptions.sameSite,
-    expires: cookieOptions.expires,
-    path: cookieOptions.path
-  });
-
-  //find rememberMe cookie and re-set it
-  const rememberMeCookie = (await cookies()).get('rememberMe');
-
-  if (rememberMeCookie) {
-      (await cookies()).set('rememberMe', rememberMeCookie.value, {
+      // Extract attributes
+      const cookieOptions: Record<string, any> = {
+        name,
+        value: decodeURIComponent(value || ""),
         httpOnly: false,
         secure: false,
-        sameSite: 'lax',
-        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        path: '/'
-      });
+        sameSite: undefined,
+        expires: undefined,
+        path: undefined
+      };
+
+    attributes.forEach(attr => {
+      if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
+      if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
+      if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
+      if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
+      if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
+    });
+
+    (await cookies()).set(cookieOptions.name, cookieOptions.value, {
+      httpOnly: cookieOptions.httpOnly,
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+      expires: cookieOptions.expires,
+      path: cookieOptions.path
+    });
+
+    //find rememberMe cookie and re-set it
+    const rememberMeCookie = (await cookies()).get('rememberMe');
+
+    if (rememberMeCookie) {
+        (await cookies()).set('rememberMe', rememberMeCookie.value, {
+          httpOnly: false,
+          secure: false,
+          sameSite: 'lax',
+          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+          path: '/'
+        });
+      }
     }
-  }
 
     if (!response.success){
 
-      localStorage.removeItem("next-auth.session-token");
-      localStorage.removeItem("next-auth.csrf-token");
-      localStorage.removeItem("next-auth.callback-url");
+      sessionStorage.clear();
 
       return {
         ...token,
@@ -133,9 +126,7 @@ async function refreshAccessToken(token: JWT) {
   }
   catch (error: unknown) {
 
-    sessionStorage.removeItem("next-auth.session-token");
-    sessionStorage.removeItem("next-auth.csrf-token");
-    sessionStorage.removeItem("next-auth.callback-url");
+    sessionStorage.clear();
 
     return {
       ...token,
@@ -184,7 +175,6 @@ const handler = NextAuth({
             },
           });
 
- 
           // Parse the refreshToken cookie from the Set-Cookie header
             const setCookieHeader: string[] = response.headers["set-cookie"] || [];
             const refreshTokenCookie = setCookieHeader.find(cookie => cookie.startsWith("refreshToken="));

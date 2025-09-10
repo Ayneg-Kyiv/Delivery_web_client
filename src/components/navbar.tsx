@@ -72,7 +72,7 @@ export default function Navbar() {
           </div>
 
           <div className='flex items-center'>
-            <Link href='help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+            <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
             { 
               session?.user && (
                 <>
@@ -132,7 +132,7 @@ export default function Navbar() {
           </div>
 
           <div className='flex items-center '>
-            <Link href='help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+            <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
 
             { 
               session?.user && (
