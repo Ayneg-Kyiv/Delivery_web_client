@@ -9,34 +9,38 @@ import Link from "next/link";
 import Image from "next/image";
 import TextAreaGroup from "@/components/ui/text-area-group";
 
-const withSession = (Component: React.ComponentType<any>) => (props: any) => {
-    const session = useSession();
-    const router = useRouter();
+const withSession = (Component: React.ComponentType<any>) => {
+    const WrappedComponent = (props: any) => {
+        const session = useSession();
+        const router = useRouter();
 
-    if (session.status === 'loading') {
-        return <div>Loading...</div>;
-    }
+        if (session.status === 'loading') {
+            return <div>Loading...</div>;
+        }
 
-    if (session.status === 'unauthenticated') {
-        router.replace('/signin');
-        return null;
-    }
+        if (session.status === 'unauthenticated') {
+            router.replace('/signin');
+            return null;
+        }
 
-    if (session.status === 'authenticated' && !session.data.user.roles.includes('Admin')) {
-        router.replace('/unauthorized');
-        return null;
-    }
+        if (session.status === 'authenticated' && !session.data.user.roles.includes('Admin')) {
+            router.replace('/unauthorized');
+            return null;
+        }
 
-    if (Component.prototype && Component.prototype.render) {
-        return <Component session={session} {...props} />;
-    }
+        if (Component.prototype && Component.prototype.render) {
+            return <Component session={session} {...props} />;
+        }
 
-    throw new Error(
-        [
-            "You passed a function component, `withSession` is not needed.",
-            "You can `useSession` directly in your component.",
-        ].join("\n")
-    );
+        throw new Error(
+            [
+                "You passed a function component, `withSession` is not needed.",
+                "You can `useSession` directly in your component.",
+            ].join("\n")
+        );
+    };
+    WrappedComponent.displayName = `withSession(${Component.displayName || Component.name || "Component"})`;
+    return WrappedComponent;
 };
 
 type ArticleBlock = {

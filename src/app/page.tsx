@@ -180,7 +180,7 @@ class PageTemplate extends Component {
 
   fetchLastNews = async () => {
     const response = await ApiClient.get<any>('/article/list?pageSize=2');
-    let data = response.data?.data || [];
+    const data = response.data?.data || [];
     this.setState({ newsItems: data });
   };
 

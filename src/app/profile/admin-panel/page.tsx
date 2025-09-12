@@ -7,32 +7,36 @@ import Image from "next/image";
 import Link from "next/link";
 
 // HOC to inject session into class components
-const withSession = (Component: React.ComponentType<any>) => (props: any) => {
-    const session = useSession();
+const withSession = (Component: React.ComponentType<any>) => {
+    const WrappedComponent = (props: any) => {
+        const session = useSession();
 
-    if( session.status === 'loading' ) {
-        return <div>Loading...</div>;
-    }
+        if( session.status === 'loading' ) {
+            return <div>Loading...</div>;
+        }
 
-    if( session.status === 'unauthenticated' ) {
-        location.href = '/signin';
-    }
+        if( session.status === 'unauthenticated' ) {
+            location.href = '/signin';
+        }
 
-    if( session.status === 'authenticated' && !session.data.user.roles.includes('Admin') ) {
-        location.href = '/unauthorized';
-    }
+        if( session.status === 'authenticated' && !session.data.user.roles.includes('Admin') ) {
+            location.href = '/unauthorized';
+        }
 
-    // Only allow class components
-    if (Component.prototype && Component.prototype.render) {
-        return <Component session={session} {...props} />;
-    }
+        // Only allow class components
+        if (Component.prototype && Component.prototype.render) {
+            return <Component session={session} {...props} />;
+        }
 
-    throw new Error(
-        [
-            "You passed a function component, `withSession` is not needed.",
-            "You can `useSession` directly in your component.",
-        ].join("\n")
-    );
+        throw new Error(
+            [
+                "You passed a function component, `withSession` is not needed.",
+                "You can `useSession` directly in your component.",
+            ].join("\n")
+        );
+    };
+    WrappedComponent.displayName = `withSession(${Component.displayName || Component.name || 'Component'})`;
+    return WrappedComponent;
 };
 
 // Example usage with a class component

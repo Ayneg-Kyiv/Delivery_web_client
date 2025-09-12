@@ -14,7 +14,7 @@ export class HelpPage extends Component<{}, HelpPageState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            expanded: {},
+            expanded: {} as { [key: number]: number | null },
             search: '',
         };
     }

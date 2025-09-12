@@ -13,30 +13,33 @@ import { StarHalf } from "lucide-react";
 
 
 // HOC to inject session into class components
-const withSession = (Component: React.ComponentType<any>) => (props: any) => {
-    const session = useSession();
+const withSession = (Component: React.ComponentType<any>) => {
+    const WrappedWithSession = (props: any) => {
+        const session = useSession();
 
-    if (session.status === 'loading') {
-        return <div>Loading...</div>;
-    }
+        if (session.status === 'loading') {
+            return <div>Loading...</div>;
+        }
 
-    if (session.status === 'unauthenticated') {
-        location.href = '/signin';
-    }
+        if (session.status === 'unauthenticated') {
+            location.href = '/signin';
+        }
 
-    // Only allow class components
-    if (Component.prototype && Component.prototype.render) {
-        return <Component session={session} {...props} />;
-    }
+        // Only allow class components
+        if (Component.prototype && Component.prototype.render) {
+            return <Component session={session} {...props} />;
+        }
 
-    throw new Error(
-        [
-            "You passed a function component, `withSession` is not needed.",
-            "You can `useSession` directly in your component.",
-        ].join("\n")
-    );
+        throw new Error(
+            [
+                "You passed a function component, `withSession` is not needed.",
+                "You can `useSession` directly in your component.",
+            ].join("\n")
+        );
+    };
+    WrappedWithSession.displayName = `withSession(${Component.displayName || Component.name || 'Component'})`;
+    return WrappedWithSession;
 };
-
 
 class AddVehiclePage extends React.Component<AddVehicleProps, AddVehicleState> {
     constructor(props: AddVehicleProps) {

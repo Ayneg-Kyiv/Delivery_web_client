@@ -277,7 +277,7 @@ const handler = NextAuth({
 
     async signOut({ token }) {
       try {
-        let refreshToken = (await cookies()).get('refreshToken')?.value;
+        const refreshToken = (await cookies()).get('refreshToken')?.value;
         
         if (!refreshToken) {
 
