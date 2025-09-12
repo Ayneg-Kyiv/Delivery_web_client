@@ -10,8 +10,8 @@ interface HelpPageState {
     search: string;
 }
 
-export class HelpPage extends Component<{}, HelpPageState> {
-    constructor(props: {}) {
+export class HelpPage extends Component<Record<string, never>, HelpPageState> {
+    constructor(props: Record<string, never>) {
         super(props);
         this.state = {
             expanded: {} as { [key: string]: number | null },

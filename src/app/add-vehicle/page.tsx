@@ -4,11 +4,8 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import { ApiClient } from "@/app/api-client";
 import Image from "next/image";
-import Link from "next/link";
 import ContentBox from "@/components/ui/content-box";
 import TextInputGroup from "@/components/ui/text-input-group";
-import Button from "@/components/ui/button";
-import { StarHalf } from "lucide-react";
 
 
 

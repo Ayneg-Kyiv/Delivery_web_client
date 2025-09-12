@@ -9,35 +9,39 @@ import Link from "next/link";
 import Image from "next/image";
 import TextAreaGroup from "@/components/ui/text-area-group";
 
-const withSession = (Component: React.ComponentType<any>) => (props: any) => {
-    const session = useSession();
-    const searchParams = useSearchParams();
+const withSession = (Component: React.ComponentType<any>) => {
+    const WrappedComponent = (props: any) => {
+        const session = useSession();
+        const searchParams = useSearchParams();
 
-    const articleId = searchParams.get('articleId');
+        const articleId = searchParams.get('articleId');
 
-    if (session.status === 'loading') {
-        return <div>Loading...</div>;
-    }
+        if (session.status === 'loading') {
+            return <div>Loading...</div>;
+        }
 
-    if (session.status === 'unauthenticated') {
-        location.href = '/signin';
-    }
+        if (session.status === 'unauthenticated') {
+            location.href = '/signin';
+        }
 
-    if (session.status === 'authenticated' && !session.data.user.roles.includes('Admin')) {
-        location.href = '/unauthorized';
-    }
+        if (session.status === 'authenticated' && !session.data.user.roles.includes('Admin')) {
+            location.href = '/unauthorized';
+        }
 
-    // Only allow class components
-    if (Component.prototype && Component.prototype.render) {
-        return <Component session={session} articleId={articleId} {...props} />;
-    }
+        // Only allow class components
+        if (Component.prototype && Component.prototype.render) {
+            return <Component session={session} articleId={articleId} {...props} />;
+        }
 
-    throw new Error(
-        [
-            "You passed a function component, `withSession` is not needed.",
-            "You can `useSession` directly in your component.",
-        ].join("\n")
-    );
+        throw new Error(
+            [
+                "You passed a function component, `withSession` is not needed.",
+                "You can `useSession` directly in your component.",
+            ].join("\n")
+        );
+    };
+    WrappedComponent.displayName = `withSession(${Component.displayName || Component.name || "Component"})`;
+    return WrappedComponent;
 };
 
 class EditArticlePage extends React.Component<EditArticlePageProps, EditArticlePageState> {
