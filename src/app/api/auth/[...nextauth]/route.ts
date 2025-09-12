@@ -4,7 +4,6 @@ import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
 import { error } from "console";
-import { Session } from "inspector/promises";
  
 
 
@@ -103,8 +102,6 @@ async function refreshAccessToken(token: JWT) {
 
     if (!response.success){
 
-      sessionStorage.clear();
-
       return {
         ...token,
         error: "Error refreshing access token"
@@ -125,8 +122,6 @@ async function refreshAccessToken(token: JWT) {
     };
   }
   catch (error: unknown) {
-
-    sessionStorage.clear();
 
     return {
       ...token,
@@ -265,18 +260,14 @@ const handler = NextAuth({
       // If the token is still valid, return it
       if (token.accessTokenExpires && Date.now() < token.accessTokenExpires)
         return token;
-        
-
+      
       return refreshAccessToken(token);
     },
  
     async session({ session, token }) {
-
-      // Attach the access token and user information to the session object
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.error = token.error;
-     
 
       return session;
     }
@@ -287,8 +278,6 @@ const handler = NextAuth({
     async signOut({ token }) {
       try {
         let refreshToken = (await cookies()).get('refreshToken')?.value;
-
-        console.log("Signing out, refresh token:", refreshToken);
         
         if (!refreshToken) {
 
@@ -299,10 +288,9 @@ const handler = NextAuth({
           });
         }
 
+        (await cookies()).delete('refreshToken');
         (await cookies()).delete('rememberMe'); 
-        sessionStorage.removeItem("next-auth.session-token");
-        sessionStorage.removeItem("next-auth.csrf-token");
-        sessionStorage.removeItem("next-auth.callback-url");
+        sessionStorage.clear();
 
        
       } catch (error) {

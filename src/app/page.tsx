@@ -427,8 +427,10 @@ class PageTemplate extends Component {
                   Автоматичні сповіщення тримають вас у курсі нових запитів та статусу виконання.
                 </p>
 
-                <Button className="h-[76px] mb-8 w-full lg:w-[320px] bg-[#d9d9d9] rounded-xl md:place-self-center" onClick={() => console.log("Learn more clicked!")}
-                  text="Дізнатися більше"/>
+                <Link href='/help/driver' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
+                  Дізнатися більше
+                </Link>
+
               </div>
             </div>
 
@@ -444,14 +446,15 @@ class PageTemplate extends Component {
                   Переваги для відправника
                 </h3>
 
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
+                <p className="[font-fam</a>ily:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
                     Знаходьте перевірених водіїв для швидкої та надійної доставки в кілька кліків.
                     Гнучкі тарифи та рейтинг водіїв гарантують оптимальне співвідношення ціни й якості.
                     Всі комунікації, підтвердження та оплати відбуваються в додатку — без зайвої бюрократії.
                 </p>
 
-                <Button className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center" onClick={() => console.log("Learn more clicked!")}
-                text="Дізнатися більше" />
+                <Link href='/help/sender' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
+                  Дізнатися більше
+                </Link>
 
                 <Card className="flex hidden md:block w-full bg-[#d9d9d9] rounded-xl ">
                   <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>

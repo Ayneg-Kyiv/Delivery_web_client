@@ -60,7 +60,7 @@ export class HelpPage extends Component<{}, HelpPageState> {
         return (
             <div className='py-10 px-8 md:px-10 lg:px-[190px] flex flex-col pt-40 '>
                 <div className='flex-1 flex flex-col w-full gap-6 items-center'>
-                    <h1 className='text-7xl'>Допомога та FAQ для Водіїв</h1>
+                    <h1 className='text-7xl'>Допомога та Чапи для Водіїв</h1>
                     <div className='w-full flex justify-center mt-6 px-8 md:px-20 lg:px-40'>
                         <input
                             type="text"
@@ -103,7 +103,7 @@ export class HelpPage extends Component<{}, HelpPageState> {
                                                     <div>{expanded ? '▲' : '▼'}</div>
                                                 </div>
                                                 <div
-                                                    className={`mt-2 text-gray-400 transition-all duration-300 overflow-hidden`}
+                                                    className={`text-gray-400 transition-all duration-300 overflow-hidden`}
                                                     style={{
                                                         maxHeight: expanded ? 500 : 0,
                                                         opacity: expanded ? 1 : 0,

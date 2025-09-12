@@ -11,7 +11,6 @@ import { HelpCircle, Settings, Star } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 
 export default function Profile(): React.JSX.Element {
   // State for user data
@@ -20,7 +19,7 @@ export default function Profile(): React.JSX.Element {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const {data: session} = useSession();
+
 
   // Load user data on component mount with normalization and console logs
   useEffect(() => {
