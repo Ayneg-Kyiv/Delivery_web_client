@@ -27,7 +27,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         try {
             await ApiClient.get<null>('/csrf');
         } catch (error) {
-            console.error('Error fetching CSRF token:', error);
+            this.setState({ error: `Failed to initialize sign-in. ${error} Please try again.` });
         }
     }
 
@@ -35,7 +35,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         const email = e.target.value;
         this.setState({ email });
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) 
+
+        if (!emailRegex.test(email) && email.length > 0) 
             this.setState({ emailError: true });
         else 
             this.setState({ emailError: false });
@@ -44,12 +45,15 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const password = e.target.value;
         this.setState({ password });
-        if (password.length < 8) 
+
+        if (password.length < 8 || password.length > 0) 
             this.setState({ passwordError: true });
         else 
             this.setState({ passwordError: false, error: undefined });
+
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
-        if (!passwordRegex.test(password)) {
+        
+        if (!passwordRegex.test(password) && password.length > 0) {
             this.setState({ passwordError: true });
         } else {
             this.setState({ passwordError: false });
@@ -110,6 +114,16 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                 placeholder=""
                             />
                         </div>
+
+                        <div className='h-8'>
+                            {
+                                this.state.error !== undefined &&
+                                <div className="text-[#ED2B2B] text-3xl">
+                                    Неправильний email або пароль
+                                </div>
+                            }
+                        </div>
+
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">

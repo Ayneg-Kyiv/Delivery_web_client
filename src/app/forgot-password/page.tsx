@@ -31,9 +31,12 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
     
     handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const email = e.target.value;
+        
         this.setState({ email });
+        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) 
+
+        if (!emailRegex.test(email) && email.length > 0) 
             this.setState({ emailError: true });
         else 
             this.setState({ emailError: false });
@@ -46,7 +49,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         const { email } = this.state;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
-        if (!emailRegex.test(email)) {
+        if (!emailRegex.test(email) && email.length > 0) {
             this.setState({ error: 'Invalid email format', success: undefined });
             return;
         }

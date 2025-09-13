@@ -169,6 +169,10 @@ button{
 /*  */
 
 /* background colors */
+.bg-default{
+  background: var(--background);
+}
+
 .bg-lighter{
   background: var(--background-lighter);
 }

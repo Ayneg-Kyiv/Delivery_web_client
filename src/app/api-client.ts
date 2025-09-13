@@ -27,6 +27,7 @@ export const ApiClient = {
       ),
     };
 
+    console.log("Session in ApiClient:", session);
     if (session?.accessToken) headers['Authorization'] = `Bearer ${session.accessToken}`;
 
     // Add CSRF token for mutating requests
@@ -52,7 +53,7 @@ export const ApiClient = {
     try {
       const response = await axios({
         url: finalUrl,
-        withCredentials: config.withCredentials ?? false,
+        withCredentials: true,
         method: config.method || 'get',
         data: config.data,
         params: config.params,

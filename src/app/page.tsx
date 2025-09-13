@@ -5,9 +5,13 @@ import Card from "@/components/ui/card";
 import CardContent from "@/components/ui/card-content";
 import React, { Component, ChangeEvent } from "react";
 import { ArrowLeft, ArrowRight} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { ApiClient } from "./api-client";
 
 class PageTemplate extends Component {
   state: {
+    newsItems: [{id?: number; createdAt?: string; imagePath?: string; title?: string; content?: string;}];
     from: string;
     to: string;
     weight: string; // kg
@@ -23,6 +27,7 @@ class PageTemplate extends Component {
       suggestion: string;
     };
   } = {
+    newsItems: [{}],
     from: "",
     to: "",
     weight: "",
@@ -30,6 +35,10 @@ class PageTemplate extends Component {
     transferType: "",
     estimate: null,
   };
+
+  async componentDidMount(): Promise<void> {
+    await this.fetchLastNews();
+  }
 
   cityCoords: Record<string, { lat: number; lon: number }> = {
     "київ": { lat: 50.4501, lon: 30.5234 },
@@ -169,22 +178,11 @@ class PageTemplate extends Component {
     },
   ];
 
-  newsItems = [
-    {
-      category: "Новини",
-      date: "01/01/2025",
-      title: "Lorem ipsum dolor sit amet, consectetur....",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi fringilla sit amet...",
-    },
-    {
-      category: "Новини",
-      date: "01/01/2025",
-      title: "Lorem ipsum dolor sit amet, consectetur....",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi fringilla sit amet...",
-    },
-  ];
+  fetchLastNews = async () => {
+    const response = await ApiClient.get<any>('/article/list?pageSize=2');
+    const data = response.data?.data || [];
+    this.setState({ newsItems: data });
+  };
 
   galleryImages = [
   { src: '/3.jpg', alt: 'Передача посилки' },
@@ -208,7 +206,7 @@ class PageTemplate extends Component {
                 {this.heroData.tagline}
               </p>
 
-              <h1 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl max-w-[580px] mb-8">
+              <h1 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl max-w-[580px] mb-8">
                 {this.heroData.title}
               </h1>
 
@@ -216,7 +214,7 @@ class PageTemplate extends Component {
                 {this.heroData.subtitle}
               </p>
 
-              <div className="flex gap-5">
+              <div className="flex sm:flex-row flex-col gap-5">
                 {this.heroData.buttons.map((button, index) => (
                   <Button
                     onClick={button.onclick}
@@ -231,7 +229,7 @@ class PageTemplate extends Component {
         </section>
 
         {/* How it works section */}
-        <section className="w-full mt-24 px-8 md:px-20 xl:px-40 py-24 bg-gradient-to-b from-[#18121f] to-[#100d14] relative overflow-hidden">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-24 bg-gradient-to-b from-[#18121f] to-[#100d14] relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 20% 30%, #3d2a5a 0, transparent 60%), radial-gradient(circle at 80% 70%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative">
             <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-4xl md:text-5xl text-center mb-10 md:mb-16">
@@ -272,12 +270,12 @@ class PageTemplate extends Component {
         </section>
 
         {/* Ecological delivery section */}
-        <section className="w-full h-[1080px] bg-darker px-[450px] py-[159px]">
-          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl mb-10">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-24 bg-darker mx-auto ">
+          <h2 className="w-full [font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
             Робимо доставку екологічною та швидкою
           </h2>
 
-          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-16">
+          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-8">
               Наш сервіс об’єднує тих, хто хоче відправити речі,
               і водіїв, які вже прямують у потрібному напрямку. 
               Використовуючи вільне місце в багажнику,
@@ -297,15 +295,24 @@ class PageTemplate extends Component {
             спілкуйтеся з водієм через чат і залишайте відгук після успішної доставки.
           </p>
 
-          <Card className="w-full h-[200px] bg-[#d9d9d9] rounded-xl mb-8">
-            <Button
-              onClick={() => console.log("Learn more clicked!")}
-              text="Illustration + Button"
-              className="flex items-center justify-center h-full text-5xl text-center"
-            />
+          <Card className="h-[200px] bg-[#d9d9d9] rounded-xl items-center justify-center mb-8 relative">
+            <p className="absolute inset-0 flex pl-4 pt-4 font-subtitle-1 text-center">
+              Швидка доставка
+            </p>
+            <Link href={"/"}>
+              <Image
+                src="/Fast.png"
+                alt="Ecological Delivery"
+                // Responsive sizes for sm, md, lg
+                width={600}
+                height={200}
+                className="object-cover w-full h-full rounded-xl h-full"
+              />
+            </Link>
           </Card>
 
-          <div className="flex justify-between items-center">
+          {/* Add when have more information to show */}
+          {/* <div className="flex justify-between items-center">
             <Button onClick={() => console.log("Previous clicked!")} className="p-0"
               text="">
               <ArrowLeft className="w-10 h-10" />
@@ -314,19 +321,19 @@ class PageTemplate extends Component {
               text="">
               <ArrowRight className="w-10 h-10" />
             </Button>
-          </div>
+          </div> */}
 
         </section>
 
         {/* Mission section (rewritten) */}
-        <section className="w-full px-[190px] py-20 relative overflow-hidden">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-20 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 10% 20%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 90% 80%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[34px] mb-5 tracking-wide uppercase">
               Наша місія
             </h3>
 
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-6xl md:text-7xl leading-[1.05] max-w-[920px] mx-auto mb-14">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[920px] mx-auto mb-14">
               Робимо доставку людяною, доступною та<br className="hidden md:block"/> екологічно відповідальною
             </h2>
 
@@ -392,8 +399,8 @@ class PageTemplate extends Component {
         </section>
 
         {/* Earn with us section */}
-        <section className="w-full px-[190px] py-16">
-          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl mb-4">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-24">
+          <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl lg:text-7xl mb-4">
             Заробляйте разом з Cargix
           </h2>
 
@@ -403,10 +410,10 @@ class PageTemplate extends Component {
             Використовуйте додаток для зручної комунікації з відправниками та прозорих виплат без зайвої паперової тяганини.
           </p>
 
-          <div className="flex flex-col gap-20">
-            <div className="flex gap-20">
-              <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent source="/EarnImage1.png" className="flex items-center justify-center h-full w-full"/>
+          <div className="flex flex-col lg:flex-row md:gap-20">
+            <div className="flex-1 flex flex-col gap-10 md:gap-20">
+              <Card className=" w-full  bg-[#d9d9d9] rounded-xl">
+                <CardContent source="/EarnImage1.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
               </Card>
 
               <div className="flex flex-col justify-center">
@@ -420,43 +427,52 @@ class PageTemplate extends Component {
                   Автоматичні сповіщення тримають вас у курсі нових запитів та статусу виконання.
                 </p>
 
-                <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
-                  text="Дізнатися більше"/>
+                <Link href='/help/driver' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
+                  Дізнатися більше
+                </Link>
+
               </div>
             </div>
 
-            <div className="flex gap-20">
-              <div className="flex flex-col justify-center">
+            <div className="h w-[1px] bg-white/20 rounded-sm"></div>
+
+            <div className="flex-1 flex flex-col gap-10 md:gap-20">
+              <Card className="flex md:hidden w-full bg-[#d9d9d9] rounded-xl ">
+                <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
+              </Card>
+
+              <div className="flex flex-col justify-center ">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
                   Переваги для відправника
                 </h3>
 
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
+                <p className="[font-fam</a>ily:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
                     Знаходьте перевірених водіїв для швидкої та надійної доставки в кілька кліків.
                     Гнучкі тарифи та рейтинг водіїв гарантують оптимальне співвідношення ціни й якості.
                     Всі комунікації, підтвердження та оплати відбуваються в додатку — без зайвої бюрократії.
                 </p>
 
-                <Button className="h-[76px] w-60 bg-[#d9d9d9] rounded-xl" onClick={() => console.log("Learn more clicked!")}
-                  text="Дізнатися більше" />
-              </div>
+                <Link href='/help/sender' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
+                  Дізнатися більше
+                </Link>
 
-              <Card className="w-[630px] h-[700px] bg-[#d9d9d9] rounded-xl">
-                <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full"/>
-              </Card>
+                <Card className="flex hidden md:block w-full bg-[#d9d9d9] rounded-xl ">
+                  <CardContent source="/EarnImage2.png" className="flex items-center justify-center h-full w-full rounded-xl object-cover"/>
+                </Card>
+              </div>
             </div>
           </div>
 
         </section>
 
         {/* Calculate delivery section (restyled) */}
-        <section className="w-full px-[190px] py-24 relative overflow-hidden">
+        <section className="w-full px-8 md:px-20 xl:px-40 py-24 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 14% 22%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 88% 78%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[30px] md:text-[34px] mb-5 tracking-wide uppercase">
               Швидкий розрахунок
             </h3>
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-6xl md:text-7xl leading-[1.05] max-w-[980px] mx-auto mb-10">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[980px] mx-auto mb-10">
               Розрахуй доставку за кілька секунд
             </h2>
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[900px] mx-auto mb-14 leading-relaxed">
@@ -536,74 +552,72 @@ class PageTemplate extends Component {
         </section>
 
         {/* News section */}
-        <section className="px-[190px] py-16">
+        <section className="px-8 md:px-20 xl:px-40 py-16">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-7xl">
+            <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:lg:text-7xl">
               Новини та оновлення
             </h2>
           </div>
 
-          <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[1020px] mb-8">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque volutpat efficitur rutrum. Aenean finibus nulla a est
-            vestibulum suscipit. Integer sodales laoreet nunc, at convallis nisi
-            fringilla sit amet.
-          </p>
+            <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[1020px] mb-8">
+            Тут ви знайдете останні новини, оновлення сервісу та корисні поради щодо доставки.
+            Слідкуйте за змінами, щоб бути в курсі нових можливостей та акцій на платформі Cargix.
+            </p>
 
-          <Button className="h-[70px] w-60 bg-[#d9d9d9] rounded-xl mb-8" onClick={() => console.log("View all news clicked!")} 
-            text="Переглянути всі новини"/>
+          <Button className="h-[70px] w-full md:w-60 button-type-1 rounded-xl mb-8">
+            <Link href={'/news'} className="w-full h-full flex items-center justify-center">Переглянути всі новини</Link>
+          </Button>
 
-          <div className="flex gap-5 mb-8">
-            {this.newsItems.map((item, index) => (
+          <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
+            {this.state.newsItems.map((item, index) => (
               <div
                 key={index}
-                className="w-[760px] h-[350px] bg-[#231d2d] rounded-xl flex"
+                className="flex-1 md:lg:w-[760px] md:lg:h-[350px] bg-[#231d2d] rounded-xl flex flex-col lg:flex-row border border-[#3d2a5a] hover:border-[#c84cd8]/70 transition-colors"
               >
-                {/* переробити під card */}
-                <div className="w-[370px] h-[350px] bg-[#ababab] rounded-[12px_0px_0px_12px] flex items-center justify-center">
-                  <span className="rotate-[-43.80deg] [font-family:'Bahnschrift-Regular',Helvetica] text-black text-5xl text-center">
-                    Illustration
-                  </span>
-                </div>
+                  <Image
+                    src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + item.imagePath || '/dummy.png'}
+                    alt={item.title || 'No title'}
+                    width={370}
+                    height={350}
+                    className="w-full rounded-lg object-cover"
+                  />
 
-                <div className="flex-1 p-5 relative">
-                  <div className="flex justify-between items-center">
+                <div className=" p-4 flex flex-col ">
+                  <div className="flex sm:flex-col justify-between items-center">
                     <span className="[font-family:'Inter-Regular',Helvetica] text-base">
-                      {item.category}
+                      Новини
                     </span>
                     <span className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xs">
-                      {item.date}
+                      {item.createdAt}
                     </span>
                   </div>
 
-                  <h3 className="[font-family:'Bahnschrift-Regular',Helvetica]text-[26px] mt-12 mb-4 max-w-[260px]">
+                  <h3 className="flex h-[30px] [font-family:'Bahnschrift-Regular',Helvetica] text-[26px] my-2 overflow-hidden w-full ">
                     {item.title}
                   </h3>
 
-                  <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base max-w-[350px]">
+                  <p className="flex-1 flex [font-family:'Inter-Regular',Helvetica] fg-secondary text-base overflow-hidden my-2">
                     {item.content}
                   </p>
-
-                  {/* Коли буде готовий функціонал то переробити під некстові лінки */}
-                  <a
-                    href="#"
-                    className="[font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline absolute bottom-5"
-                  >
-                    Дивитися далі
-                  </a>
+                  
+                  <Link href={`/article/?id=${item.id}`}
+                    className="flex [font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline bottom-5 h-[10%]">
+                      Дивитися далі
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex justify-between items-center">
+          {/* add when have animation */}
+          {/* <div className="flex justify-between items-center">
             <Button className="p-0" onClick={() => console.log("Previous clicked!")} text="">
               <ArrowLeft className="w-10 h-10 text-white" />
             </Button>
             <Button className="p-0" onClick={() => console.log("Next clicked!")} text="">
               <ArrowRight className="w-10 h-10 text-white" />
             </Button>
-          </div>
+          </div> */}
         </section>
 
       </main>

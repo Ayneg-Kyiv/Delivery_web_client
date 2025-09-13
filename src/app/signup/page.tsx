@@ -52,7 +52,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         this.setState({ email });
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) 
+        if (!emailRegex.test(email) && email.length > 0) 
             this.setState({ emailError: true });
         else 
             this.setState({ emailError: false });
@@ -61,12 +61,12 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     handlePasswordChange = (password: string) => {
         this.setState({ password });
 
-        if (password.length < 8) 
+        if (password.length < 8 && password.length > 0) 
             this.setState({ error: 'Password must be at least 8 characters long' });
         else 
             this.setState({ error: undefined });
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
-            if (!passwordRegex.test(password)) {
+            if (!passwordRegex.test(password) && password.length > 0) {
                 this.setState({ passwordError: true });
             } else {
                 this.setState({ passwordError: false });
@@ -86,7 +86,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     handleBirthDateChange = (birthDate: string) => {
         this.setState({ birthDate });
 
-        if (birthDate < '1900-01-01') {
+        if (birthDate < '1900-01-01' ) {
             this.setState({ birthDateError: true });
         } else {
             this.setState({ birthDateError: false });
@@ -105,7 +105,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         this.setState({ phoneNumber });
 
         const phoneNumberRegex = /^\+?[0-9]\d{1,14}$/;
-        if (!phoneNumberRegex.test(phoneNumber)) {
+        if (!phoneNumberRegex.test(phoneNumber) && phoneNumber.length > 0) {
             this.setState({ phoneNumberError: true });
         } else {
             this.setState({ phoneNumberError: false });
@@ -373,7 +373,7 @@ renderContentForStage4 = () =>{
                 </div>
                 <div className="flex-1 w-full max-w-[500px]">
                     <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                        <Link href='' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]">Головна</Link>
+                        <Link href='/' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Головна</Link>
                     </div>
                 </div>
             </div>
