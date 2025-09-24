@@ -52,7 +52,7 @@ export const ApiClient = {
     try {
       const response = await axios({
         url: finalUrl,
-        withCredentials: config.withCredentials ?? false,
+        withCredentials: true,
         method: config.method || 'get',
         data: config.data,
         params: config.params,
