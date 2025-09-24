@@ -36,7 +36,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
         const password = e.target.value;
         this.setState({ password });
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*]).{8,}$/;
-        if (!passwordRegex.test(password)) {
+        if (!passwordRegex.test(password) && password.length > 0) {
             this.setState({ passwordError: true });
         } else {
             this.setState({ passwordError: false });

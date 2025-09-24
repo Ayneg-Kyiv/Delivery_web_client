@@ -1,80 +1,74 @@
 import React from "react";
-// import Image from 'next/image'
+import Image from 'next/image'
 import Link from "next/link";
 
-    // <footer className="w-full h-[395px] bg-[#0e1010] px-[450px] pt-10 pb-6 relative">
-    //       <div className="grid grid-cols-7 gap-[130px] mb-10">
-    //         {footerLinks.map((column, colIndex) => (
-    //           <div key={colIndex} className="flex flex-col gap-2">
-    //             <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-white text-base mb-4">
-    //               {column.title}
-    //             </h4>
-    //             {column.links.map((link, linkIndex) => (
-    //               <a
-    //                 key={linkIndex}
-    //                 href="#"
-    //                 className="[font-family:'Inter-Regular',Helvetica] text-[#e4e4e4] text-xs"
-    //               >
-    //                 {link}
-    //               </a>
-    //             ))}
-    //           </div>
-    //         ))}
-    //       </div>
-
-    //       <div className="w-full h-px bg-white/20 mb-5" />
-
-    //       <div className="flex items-center gap-8 mb-10">
-    //         <div className="flex items-center">
-    //             <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
-    //                 <Image width={14} height={14} alt="English flag" src="/worldicon.png" />
-    //             </div>
-    //           <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-[#c5c2c2] text-base">
-    //             EN
-    //           </span>
-    //         </div>
-
-    //         <div className="h-7 bg-white/20" />
-
-    //         <div className="flex items-center">
-    //           <div className="w-[30px] h-[22px] icon-light-yellow rounded-md overflow-hidden">
-    //             <div className="h-[11px] icon-light-blue rounded-[6px_6px_0px_0px]" />
-    //           </div>
-    //           <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-white text-base">
-    //             UA
-    //           </span>
-    //         </div>
-    //       </div>
-
-    //       <div className="[font-family:'Bahnschrift-Regular',Helvetica] text-white text-base">
-    //         Logo
-    //       </div>
-
-    //       <div className="absolute top-[134px] right-[190px] [font-family:'Bahnschrift-Regular',Helvetica] text-white text-base">
-    //         Demo demo
-    //       </div>
-    //     </footer>
-// 
 const Footer: React.FC = () => (
-  <footer className="w-full h-[125px] px-[190px] footer">
-    <div className="flex flex-col items-center justify-center h-full">
-      <div className="w-full h-[1px] bg-white/20 rounded-sm">
+  <footer className="w-full  px-8 md:px-8 lg:px-[190px] footer">
+    <div className="flex-1 flex flex-col " >
+
+      <div className="w-full flex flex-col ">
+        {/* Image href */}
+        <div className='h-full flex items-center pt-4 pb-2'>
+          <Link href="/" className="py-4">
+            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+          </Link>
+        </div>
+
+        {/* href's to most common pages on the site */}
+        <div className="flex flex-col md:flex-row lg:flex-row md:lg:justify-between  gap-8 pb-10">
+          <div>
+            <h2 className="mb-2 text-2xl font-semibold">Сервіс</h2>
+
+            <div className="flex flex-col text-lg fg-secondary">
+              <Link href="/about" className="">Про нас</Link>
+              <Link href="/policy" className="mt-2">Політика конфіденційності</Link>
+              <Link href="/terms" className="mt-2">Умови користування</Link>
+            </div>
+          </div>
+          
+          <div>
+            <h2 className="mb-2 text-2xl font-semibold">Сервіс</h2>
+
+            <div className="flex flex-col text-lg fg-secondary">
+              <Link href="/about" className="">Про нас</Link>
+              <Link href="/policy" className="mt-2">Політика конфіденційності</Link>
+              <Link href="/terms" className="mt-2">Умови користування</Link>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-2xl font-semibold">Сервіс</h2>
+
+            <div className="flex flex-col text-lg fg-secondary">
+              <Link href="/about" className="">Про нас</Link>
+              <Link href="/policy" className="mt-2">Політика конфіденційності</Link>
+              <Link href="/terms" className="mt-2">Умови користування</Link>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="w-full flex flex-row justify-between">
 
-        <div className="flex h-[45px] items-end">
-          <p>
-            © 2025 Cargix.
-          </p>
+      {/* Footer Links */}
+      <div className="flex flex-col md:space-y-2 items-center justify-center h-full mb-4">
+        <div className="w-full h-[1px] bg-white/20 rounded-sm mb-4"></div>
+        
+        <div className="w-full flex md:flex-row justify-between">
+          <div className="w-full flex flex-col md:flex-row md:space-x-4 items-center justify-center md:justify-between text-center fg-secondary text-sm">
+            <div className="flex md:h-[45px] items-end">
+              <p>
+                © 2025 Cargix.
+              </p>
+            </div>
+
+            <div className="flex h-[45px] space-x-2 md:space-x-4 items-end">
+              <Link href="/terms">Умови користування</Link>
+              <Link href="/cookies">Кукі</Link>
+              <Link href="/policy">Політика</Link>
+              <Link href="/security">Безпека</Link>
+            </div>
+          </div>
+
         </div>
-
-        <div className="flex h-[45px] space-x-4 items-end">
-          <Link href="/terms">Terms & Conditions</Link>
-          <Link href="/cookies">Cookies</Link>
-          <Link href="/policy">Policy</Link>
-          <Link href="/security">Security</Link>
-        </div>
-
       </div>
     </div>
   </footer>

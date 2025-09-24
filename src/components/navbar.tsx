@@ -1,19 +1,20 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { AuthService } from '../app/auth-service';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Button from './ui/button';
 import dynamic from 'next/dynamic';
+import { isMobile } from 'react-device-detect';
 
 const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
 
 export default function Navbar() {
-  const router = useRouter();
   const pathname = usePathname();
+
+  const [windowWidth, setWindowWidth] = React.useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,14 +22,16 @@ export default function Navbar() {
 
   const handleMenuToggle = () => setMenuOpen((open) => !open);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
-  const handleSignOut = async () => {
-    await AuthService.logout();
-    router.push('/');
-  };
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const handleLanguageChange = (langCode: string) => {
     setSelectedLanguage(langCode);
@@ -36,16 +39,16 @@ export default function Navbar() {
   };
 
   const authNavigation = (
-    <nav className="h-[78px] max-w-screen w-full ">
+    <nav className="h-[78px] w-screen w-full ">
       <div className="h-full mx-auto flex items-center justify-between">
         
         <div className='h-full flex items-center justify-between '>
-          <Link href="/" className="pl-[190px]">
+          <Link href="/" className="pl-8 md:pl-10 lg:pl-[190px]">
             <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
           </Link>
         </div>
 
-        <div className='h-full flex items-center justify-between pr-[190px]'>
+        <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
           <div className="flex items-center gap-2">
             <Button className="flex items-center" onClick={() => handleLanguageChange("EN")} text=''>
               <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
@@ -69,12 +72,12 @@ export default function Navbar() {
           </div>
 
           <div className='flex items-center'>
-            <Link href='help' className='ml-[20px] w-[79px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Help</Link>
+            <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
             { 
               session?.user && (
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
                   </Link>
                 </>
@@ -96,18 +99,17 @@ export default function Navbar() {
   );
 
   const standardNavigation = (
-    <nav className="h-[78px] max-w-screen w-full ">
-      
+    <nav className="h-[78px] max-w-screen w-full items-center">
       <div className="h-full mx-auto flex items-center justify-between">
         
         <div className='h-full flex items-center justify-between '>
-          <Link href="/" className="pl-[190px]">
+          <Link href="/" className="pl-8 md:pl-10 lg:pl-[190px]">
             <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
           </Link>
         </div>
 
-        <div className='h-full flex items-center justify-between pr-[190px]'>
-          <div className="flex items-center gap-2">
+        <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
+          <div className="flex items-center ">
             <Button className="flex items-center" onClick={() => handleLanguageChange("EN")} text=''>
               <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
                 <Image width={14} height={14} alt="English flag" src="/worldicon.png" />
@@ -130,13 +132,13 @@ export default function Navbar() {
           </div>
 
           <div className='flex items-center '>
-            <Link href='help' className='ml-[20px] w-[89px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+            <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
 
             { 
               session?.user && (
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
                   </Link>
                 </>
@@ -144,8 +146,8 @@ export default function Navbar() {
             {
               !session?.user && (
                 <>
-                  <Link href='signup' className='ml-[20px] w-[129px] h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
-                  <Link href='signin' className='ml-[20px] w-[89px] h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
+                  <Link href='/signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
+                  <Link href='/signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
                 </>
             )}
           </div>
@@ -162,13 +164,35 @@ export default function Navbar() {
     </nav>
   );
 
+  const phoneNavigation =  (
+    <nav className="h-[78px] max-w-screen w-full flex items-center">
+      <div className='flex flex-1 flex-row justify-between h-full'>
+        
+        <div className='flex-1 h-full flex items-center justify-between pl-[20px]'>
+          <Link href="/" className="">
+            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+          </Link>
+        </div>
+
+        <div className=' h-full flex items-center justify-between pr-[20px]'>
+          <button
+            className="ml-[10px] text-3xl focus:outline-none"
+            onClick={handleMenuToggle}
+            aria-label="Toggle menu">
+            &#9776;
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+
   return (
     <>
-      {pathname === '/signin' || pathname === '/signup' ? (
-        authNavigation
-      ) : (
-        standardNavigation
-      )}
+      { windowWidth <= 512
+        ? phoneNavigation
+        : pathname === '/signin' || pathname === '/signup' && !isMobile
+          ? authNavigation
+          : standardNavigation}
       {menuOpen && <BurgerMenu onClose={() => setMenuOpen(false)} />}
     </>
   )

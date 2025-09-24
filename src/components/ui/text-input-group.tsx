@@ -3,6 +3,7 @@ import React from 'react';
 type TextInputGroupProps = {
     label: string;
     value: string;
+    required?: boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     inputClassName?: string;
@@ -15,6 +16,7 @@ const TextInputGroup: React.FC<TextInputGroupProps> = ({
     label,
     value,
     onChange,
+    required = true,
     className = '',
     inputClassName = '',
     labelClassName = '',
@@ -28,7 +30,7 @@ const TextInputGroup: React.FC<TextInputGroupProps> = ({
             value={value}
             onChange={onChange}
             className={`floating-input ${inputClassName}`}
-            required
+            required={required}
             id={label}
             autoComplete={type}
             placeholder={placeholder}

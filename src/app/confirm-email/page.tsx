@@ -73,11 +73,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
     const { status, message } = this.state;
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold">Email Confirmation</h1>
-
+      <>
               {status === 'loading' && (
                 <div className="mt-4">
                   <div className="w-12 h-12 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto"></div>
@@ -102,7 +98,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
                     </div>
                     <div className="flex-1 w-full max-w-[500px]">
                         <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                            <Link href='/signin' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]">Ввійти</Link>
+                            <Link href='/signin' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Ввійти</Link>
                         </div>
                     </div>
                 </div>
@@ -160,9 +156,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
                 </div>
             </ContentBox>
               )}
-            </div>
-          </div>
-      </div>
+              </>
     );
   }
 }

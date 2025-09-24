@@ -20,6 +20,8 @@ export const ApiClient = {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       ...Object.fromEntries(
         Object.entries(config.headers ?? {}).filter(
           ([, value]) => typeof value === 'string' && value !== null
@@ -27,6 +29,7 @@ export const ApiClient = {
       ),
     };
 
+    console.log("Session in ApiClient:", session);
     if (session?.accessToken) headers['Authorization'] = `Bearer ${session.accessToken}`;
 
     // Add CSRF token for mutating requests
