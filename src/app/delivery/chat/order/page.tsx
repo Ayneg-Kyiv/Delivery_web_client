@@ -8,72 +8,6 @@ import { format } from 'date-fns';
 import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
 
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type UserShort = {
-    id: string;
-    name: string;
-    email?: string;
-    phoneNumber?: string;
-    rating?: number;
-    imagePath?: string;
-};
-
-type DeliveryOrder = {
-    id: string;
-    tripId: string;
-    trip?: any;
-    senderId?: string;
-    sender: UserShort;
-    driver: UserShort;
-    deliverySlotId: string;
-    deliverySlot?: DeliverySlot;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    senderName: string;
-    senderPhoneNumber: string;
-    senderEmail?: string;
-    receiverName: string;
-    receiverPhoneNumber: string;
-    comment?: string;
-    isAccepted: boolean;
-    isDeclined: boolean;
-    isPickedUp: boolean;
-    isDelivered: boolean;
-};
-
-type MessageDto = {
-    id: number;
-    senderId: string;
-    receiverId: string;
-    deliveryOrderId?: string;
-    text: string;
-    sentAt: string;
-    seenAt?: string;
-};
-
-type CreateMessageDto = {
-    senderId: string;
-    receiverId: string;
-    deliveryOrderId: string;
-    text: string;
-};
-
 const SIGNALR_URL = (process.env.NEXT_PUBLIC_SIGNALR_URL || '') + '/messagingHub';
 
 const fetchOrder = async (orderId: string): Promise<DeliveryOrder> => {
@@ -81,7 +15,7 @@ const fetchOrder = async (orderId: string): Promise<DeliveryOrder> => {
     return res.data;
 };
 
-const fetchUser = async (id: string): Promise<UserShort> => {
+const fetchUser = async (id: string): Promise<shortUserInfo> => {
     const res = await ApiClient.get<any>(`/account/short/${id}`);
     return res.data;
 };
@@ -91,7 +25,7 @@ const ChatOrderPage: React.FC = () => {
     const session = useSession();
     const orderId = params.get('orderId') || '';
     const [order, setOrder] = useState<DeliveryOrder | null>(null);
-    const [me, setMe] = useState<UserShort | null>(null);
+    const [me, setMe] = useState<shortUserInfo | null>(null);
     const [role, setRole] = useState<'driver' | 'sender' | null>(null);
     const [messages, setMessages] = useState<MessageDto[]>([]);
     const [input, setInput] = useState('');
@@ -109,7 +43,7 @@ const ChatOrderPage: React.FC = () => {
         setLoading(true);
         Promise.all([fetchOrder(orderId), fetchUser(userId)]).then(([order, user]) => {
             setOrder(order);
-            if (userId === order.driver.id) setRole('driver');
+            if (userId === order.driver?.id) setRole('driver');
             else setRole('sender');
             setMe(user);
             setLoading(false);
@@ -146,10 +80,10 @@ const ChatOrderPage: React.FC = () => {
 
     const sendMessage = async () => {
         if (!input.trim() || !connection || !me || !order) return;
-        const receiverId = me.id === order.driver.id ? order.sender.id : order.driver.id;
+        const receiverId = me.id === order.driver?.id ? order.sender?.id : order.driver?.id;
         const message: CreateMessageDto = {
             senderId: me.id,
-            receiverId,
+            receiverId : receiverId || '',
             deliveryOrderId: order.id,
             text: input.trim(),
         };
@@ -171,25 +105,25 @@ const ChatOrderPage: React.FC = () => {
                 <div className="flex items-center gap-4 bg-[#2d1857] rounded-t-2xl px-6 py-4 border-b border-[#7c3aed]">
                     <Image
                         src={
-                            otherUser.imagePath
+                            otherUser?.imagePath
                                 ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + otherUser.imagePath
                                 : '/dummy.png'
                         }
-                        alt={otherUser.name}
+                        alt={otherUser?.name ?? 'dummy.png'}
                         width={60}
                         height={60}
                         className="rounded-full object-cover"
                     />
                     <div>
-                        <div className="font-bold text-white text-lg">{otherUser.name}</div>
+                        <div className="font-bold text-white text-lg">{otherUser?.name}</div>
                         <div className="text-[#b6a7e6] text-sm">{role === 'driver' ? 'Відправник' : 'Водій'}</div>
                         <div className="flex items-center gap-2 text-yellow-400 text-sm">
-                            {'★'.repeat(Math.round(otherUser.rating || 0))}
-                            <span className="text-white ml-2">{otherUser.rating?.toFixed(1)}</span>
+                            {'★'.repeat(Math.round(otherUser?.rating || 0))}
+                            <span className="text-white ml-2">{otherUser?.rating?.toFixed(1)}</span>
                         </div>
                     </div>
                     <div className="ml-auto flex gap-4">
-                        {otherUser.phoneNumber && (
+                        {otherUser?.phoneNumber && (
                             <a href={`tel:${otherUser.phoneNumber}`} className="text-[#7c3aed] text-xl" title="Call">
                                 <svg width="24" height="24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z" /></svg>
                             </a>
@@ -220,11 +154,11 @@ const ChatOrderPage: React.FC = () => {
                                     {!isMe && (
                                         <Image
                                             src={
-                                                otherUser.imagePath
+                                                otherUser?.imagePath
                                                     ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + otherUser.imagePath
                                                     : '/dummy.png'
                                             }
-                                            alt={otherUser.name ?? 'dummy.png'}
+                                            alt={otherUser?.name ?? 'dummy.png'}
                                             width={32}
                                             height={32}
                                             className="rounded-full object-cover mr-2"
@@ -327,22 +261,22 @@ const ChatOrderPage: React.FC = () => {
                 <div className="flex flex-col items-center">
                     <Image
                         src={
-                            otherUser.imagePath
+                            otherUser?.imagePath
                                 ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + otherUser.imagePath
                                 : '/dummy.png'
                         }
-                        alt={otherUser.name}
+                        alt={otherUser?.name ?? 'dummy.png'}
                         width={120}
                         height={120}
                         className="rounded-full object-cover"
                     />
-                    <div className="font-bold text-[#18102a] text-xl mt-4">{otherUser.name}</div>
-                    <div className="text-[#18102a] text-lg mt-2">{otherUser.email}</div>
+                    <div className="font-bold text-[#18102a] text-xl mt-4">{otherUser?.name}</div>
+                    <div className="text-[#18102a] text-lg mt-2">{otherUser?.email}</div>
                     <div className="flex items-center gap-2 text-yellow-400 text-sm mt-1">
-                        {'★'.repeat(Math.round(otherUser.rating || 0))}
-                        <span className="text-[#18102a] ml-2">{otherUser.rating?.toFixed(1)}</span>
+                        {'★'.repeat(Math.round(otherUser?.rating || 0))}
+                        <span className="text-[#18102a] ml-2">{otherUser?.rating?.toFixed(1)}</span>
                     </div>
-                    <div className="text-[#18102a] text-lg">{otherUser.phoneNumber}</div>
+                    <div className="text-[#18102a] text-lg">{otherUser?.phoneNumber}</div>
                 </div>
                 <hr className="my-4 border-[#b6a7e6]" />
                 <div className="flex flex-col gap-4">

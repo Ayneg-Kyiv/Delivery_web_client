@@ -9,25 +9,6 @@ import { DeliveryOffer, User } from '@/app/profile/components/my-offers'; // Reu
 import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
 
-type MessageDto = {
-    id: number;
-    senderId: string;
-    receiverId: string;
-    deliveryOrderId?: string;
-    deliveryOfferId?: string;
-    text: string;
-    sentAt: string;
-    seenAt?: string;
-};
-
-type CreateMessageDto = {
-    senderId: string;
-    receiverId: string;
-    deliveryOrderId?: string;
-    deliveryOfferId?: string;
-    text: string;
-};
-
 const SIGNALR_URL = process.env.NEXT_PUBLIC_SIGNALR_URL + '/messagingHub' || '';
 
 const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {

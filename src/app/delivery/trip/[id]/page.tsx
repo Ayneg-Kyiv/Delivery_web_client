@@ -6,91 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type Vehicle = {
-    id: string;
-    type: string;
-    brand: string;
-    model: string;
-    color: string;
-    numberPlate: string;
-    imagePath: string;
-    imagePathBack: string;
-    createdAt: string;
-    updatedAt: string;
-};
-type ReviewDto = {
-    id: number;
-    rating: number;
-    text: string;
-    userId: string;
-};
-
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type DeliveryOrder = {
-    id: string;
-    tripId: string;
-    senderId?: string;
-    sender: {
-        id: string;
-        name: string;
-        email?: string;
-        phoneNumber?: string;
-        // Add other properties from GetApplicationUserForTripDto if needed
-    };
-    deliverySlotId: string;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    senderName: string;
-    senderPhoneNumber: string;
-    senderEmail?: string;
-    receiverName: string;
-    receiverPhoneNumber: string;
-    comment?: string;
-    isAccepted: boolean;
-    isPickedUp: boolean;
-    isDelivered: boolean;
-};
-
-type Trip = {
-    id: string;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    vehicle: Vehicle;
-    deliverySlots: DeliverySlot[];
-    deliveryOrders: DeliveryOrder[];
-    driverId: string;
-    driver: {
-        email: string;
-        name: string;
-        rating: number;
-        imagePath?: string;
-        reviews: ReviewDto[];
-    };
-    price: number;
-    fullName: string;
-    email: string;
-    phoneNumber: string;
-    cargoType: string;
-    isStarted: boolean;
-    isCompleted: boolean;
-};
+import TravelPathMap from '@/components/other/travel-path-map';
 
 const TripDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -136,7 +52,7 @@ const TripDetailPage: React.FC = () => {
                     fill
                     className="object-cover"
                 />
-                <div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center">
+                <div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center px-8">
                     <h1 className="text-4xl font-bold mb-4 text-white">
                         Деталі поїздки
                     </h1>
@@ -145,9 +61,17 @@ const TripDetailPage: React.FC = () => {
                         <span>-</span>
                         <span>{trip.endLocation.city}</span>
                     </div>
-                    <div className="mt-2 text-white">
-                        Відбуття: {trip.startLocation.dateTime} | Прибуття: {trip.endLocation.dateTime}
-                    </div>
+					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
+						<div className="mt-2 text-white">
+							Відправка: {trip.startLocation.dateTime} 
+						</div>
+						<div className='hidden md:block'>
+							|
+						</div>
+						<div className="mt-2 text-white">
+							Доставка: {trip.endLocation.dateTime}
+						</div>
+					</div>
                 </div>
             </div>
             <div className="flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full">
@@ -189,23 +113,37 @@ const TripDetailPage: React.FC = () => {
                 </div>
                 {/* Trip Details */}
                 <div className="flex-1 flex flex-col gap-6">
-                    <div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
-                        <div className="text-lg font-bold mb-2">Маршрут</div>
-                        <div className="mb-2">
-                            <span className="font-bold">Звідки:</span> {trip.startLocation.address}, {trip.startLocation.city}
+                    <div className='w-full flex justify-between gap-6 flex-col md:flex-row bg-[#2d1857]'>
+
+                        <div className=" rounded-xl p-6 shadow-lg text-white">
+                            <div className="text-lg font-bold mb-2">Маршрут</div>
+                            <div className="mb-2">
+                                <span className="font-bold">Звідки:</span> {trip.startLocation.address}, {trip.startLocation.city}
+                            </div>
+                            <div className="mb-2">
+                                <span className="font-bold">Куди:</span> {trip.endLocation.address}, {trip.endLocation.city}
+                            </div>
+                            <div className="mb-2">
+                                <span className="font-bold">Дата відбуття:</span> {trip.startLocation.dateTime}
+                            </div>
+                            <div className="mb-2">
+                                <span className="font-bold">Дата прибуття:</span> {trip.endLocation.dateTime}
+                            </div>
+                            <div className="mb-2">
+                                <span className="font-bold">Тип транспорту:</span> {trip.vehicle.type}
+                            </div>
                         </div>
-                        <div className="mb-2">
-                            <span className="font-bold">Куди:</span> {trip.endLocation.address}, {trip.endLocation.city}
-                        </div>
-                        <div className="mb-2">
-                            <span className="font-bold">Дата відбуття:</span> {trip.startLocation.dateTime}
-                        </div>
-                        <div className="mb-2">
-                            <span className="font-bold">Дата прибуття:</span> {trip.endLocation.dateTime}
-                        </div>
-                        <div className="mb-2">
-                            <span className="font-bold">Тип транспорту:</span> {trip.vehicle.type}
-                        </div>
+                        <TravelPathMap 
+                            start={{ 
+                                latitude: trip.startLocation.latitude ?? 0, 
+                                longitude: trip.startLocation.longitude ?? 0 
+                            }} 
+                            end={{ 
+                                latitude: trip.endLocation.latitude ?? 0, 
+                                longitude: trip.endLocation.longitude ?? 0 
+                            }} 
+                            className="w-full md:w-2/3 p-8 rounded-xl shadow-lg"
+                        />
                     </div>
                     <div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
                         <div className="text-lg font-bold mb-2">Автомобіль</div>

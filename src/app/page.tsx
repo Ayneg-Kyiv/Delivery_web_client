@@ -507,7 +507,7 @@ class PageTemplate extends Component {
         </section>
 
         {/* Calculate delivery section (restyled) */}
-        <section className="w-full px-8 md:px-20 xl:px-40 py-24 relative overflow-hidden">
+        <section id="calculate-delivery" className="w-full px-8 md:px-20 xl:px-40 py-24 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 14% 22%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 88% 78%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[30px] md:text-[34px] mb-5 tracking-wide uppercase">
@@ -546,7 +546,7 @@ class PageTemplate extends Component {
               />
             </div>
 
-            <div id="map-container" className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10">
+            <div className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10">
               <div className="grid md:grid-cols-2 gap-10">
                 <div className="flex flex-col gap-5">
                   <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">Вхідні дані</h4>

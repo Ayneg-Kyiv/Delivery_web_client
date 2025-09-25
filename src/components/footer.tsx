@@ -8,29 +8,33 @@ const Footer: React.FC = () => (
 
       <div className="w-full flex flex-col ">
         {/* Image href */}
-        <div className='h-full flex items-center pt-4 pb-2'>
+        <div className='h-full flex flex-col items-start pt-4 pb-10'>
           <Link href="/" className="py-4">
             <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+          </Link>
+
+          <Link href="/help" className="underline text-lg fg-secondary ">
+            Відвідайти центр допомоги
           </Link>
         </div>
 
         {/* href's to most common pages on the site */}
         <div className="flex flex-col md:flex-row lg:flex-row md:lg:justify-between  gap-8 pb-10">
           <div>
-            <h2 className="mb-2 text-2xl font-semibold">Сервіс</h2>
+            <h2 className="mb-2 text-2xl font-semibold">Доставка</h2>
 
             <div className="flex flex-col text-lg fg-secondary">
-              <Link href="/about" className="">Про нас</Link>
-              <Link href="/policy" className="mt-2">Політика конфіденційності</Link>
-              <Link href="/terms" className="mt-2">Умови користування</Link>
+                <Link href="/#calculate-delivery" className="">Розрахувати вартість</Link>
+              <Link href="/delivery/request/list" className="mt-2">Список запитів</Link>
+              <Link href="/delivery/trip/list" className="mt-2">Список Поїздок</Link>
             </div>
           </div>
           
           <div>
-            <h2 className="mb-2 text-2xl font-semibold">Сервіс</h2>
+            <h2 className="mb-2 text-2xl font-semibold">Цікавинки</h2>
 
             <div className="flex flex-col text-lg fg-secondary">
-              <Link href="/about" className="">Про нас</Link>
+              <Link href="/news" className="">Останні новини</Link>
               <Link href="/policy" className="mt-2">Політика конфіденційності</Link>
               <Link href="/terms" className="mt-2">Умови користування</Link>
             </div>

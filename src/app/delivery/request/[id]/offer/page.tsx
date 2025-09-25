@@ -8,42 +8,6 @@ import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 
-type LocationState = {
-	country: string;
-	city: string;
-	address: string;
-    dateTime: string;
-	latitude: number | null;
-	longitude: number | null;
-};
-
-type Sender = {
-	id: string;
-	name: string;
-	email?: string;
-	phoneNumber?: string;
-	imagePath?: string;
-};
-
-type DeliveryRequest = {
-	id: string;
-	tripId: string;
-	sender: Sender;
-	deliverySlotId: string;
-	startLocation: LocationState;
-	endLocation: LocationState;
-	senderName: string;
-	senderPhoneNumber: string;
-	senderEmail?: string;
-	receiverName: string;
-	receiverPhoneNumber: string;
-	estimatedPrice?: number;
-	comment?: string;
-	isAccepted: boolean;
-	isPickedUp: boolean;
-	isDelivered: boolean;
-};
-
 const OfferDeliveryPage: React.FC = () => {
 	const { id: deliveryRequestId } = useParams<{ id: string }>();
 	const router = useRouter();
@@ -82,6 +46,7 @@ const OfferDeliveryPage: React.FC = () => {
 			setPrice(request.estimatedPrice.toString());
 		}
 	}, [useSuggestedPrice, request]);
+	
     useEffect(() => {
         if (request && useRequestCollection) {
             const collectionDateTime = request.startLocation.dateTime || '';

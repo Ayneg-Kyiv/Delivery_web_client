@@ -43,54 +43,6 @@ const withSession = (Component: React.ComponentType<any>) => {
     return WrappedComponent;
 };
 
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type Vehicle = {
-    id: string;
-    type: string;
-    brand: string;
-    model: string;
-    color: string;
-    numberPlate: string;
-    imagePath: string;
-    imagePathBack: string;
-    createdAt: string;
-    updatedAt: string;
-};
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type Trip = {
-    id: string;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    vehicle: Vehicle;
-    deliverySlots: DeliverySlot[];
-    driver: {
-        email: string;
-        name: string;
-        rating: number;
-        imagePath?: string;
-    };
-    price: number;
-    fullName: string;
-    email: string;
-    phoneNumber: string;
-    cargoType: string;
-};
-
 type TripFilters = {
     cityFrom: string;
     cityTo: string;
@@ -201,238 +153,236 @@ class TripListPage extends React.Component<any, TripListState> {
     render() {
         const { trips, filters, currentPage, totalPages, loading } = this.state;
         return (
-            <div className="flex flex-col w-full min-h-screen bg-[#1a093a]">
-                <div className="relative w-full h-[500px]">
-                    <Image
-                        src="/Rectangle47.png"
-                        alt="Delivery"
-                        fill
-                        className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center">
-                        <h1 className="  text-4xl font-bold mb-4">Відправляй свою посилку вже зараз</h1>
-                        <div className="flex rounded-lg gap-4">
-                            <select
-                                name="cityFrom"
-                                value={filters.cityFrom}
-                                onChange={this.handleFilterChange}
-                                className="px-4 py-2 rounded-lg text-black w-[200px]"
-                                style={{
-                                    border: '1px solid #ccc',
-                                    backgroundColor: 'white',
-                                    color: 'black',
-                                }}
-                            >
-                                <option value="">Звідки</option>
-                                {this.state.cities.map(city => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
-                            </select>
-                            <select
-                                name="cityTo"
-                                value={filters.cityTo}
-                                onChange={this.handleFilterChange}
-                                className="px-4 py-2 rounded-lg text-black w-[200px]"
-                                style={{
-                                    border: '1px solid #ccc',
-                                    backgroundColor: 'white',
-                                    color: 'black',
-                                }}
-                            >
-                                <option value="">Куди</option>
-                                {this.state.cities.map(city => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
-                            </select>
-                            <input
-                                name="dateFrom"
-                                type="date"
-                                value={filters.dateFrom}
-                                onChange={this.handleFilterChange}
-                                className="px-4 py-2 rounded-lg text-black"
-                                style={{
-                                    border: '1px solid #ccc',
-                                    backgroundColor: 'white',
-                                    color: 'black',
-                                }}
-                            />
-                            <select
-                                name="cargoType"
-                                value={filters.cargoType}
-                                onChange={this.handleFilterChange}
-                                className="px-4 py-2 rounded-lg text-black"
-                                style={{
-                                    border: '1px solid #ccc',
-                                    backgroundColor: 'white',
-                                    color: 'black',
-                                }}
-                            >
-                                <option value="">Розмір</option>
-                                <option value="XS">XS до 1 кг</option>
-                                <option value="S">S до 5 кг</option>
-                                <option value="M">M до 15 кг</option>
-                                <option value="L">L до 30 кг</option>
-                                <option value="XL">XL до 60 кг</option>
-                                <option value="XXL">XXL від 61 кг</option>
-                            </select>
-                        </div>
-                        <div className='mt-6 flex flex-row items-center justify-center'>
-                            <button
-                                className="bg-[#7c3aed] button-type-1 py-4 w-[252px] rounded-lg font-bold"
-                                onClick={() => this.fetchTrips(1)}
+            <div className='w-full relative'>
+                <div className="h-[600px] md:h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
+                    <div className="w-full h-[600px] md:h-[500px] bg-[#00000099]">
+                        <div className="flex flex-col justify-center items-center absolute top-0 left-0 right-0 z-10 h-[500px] px-8 md:px-10 lg:px-20">
+                            <h1 className="pt-18 text-2xl md:text-4xl font-bold mb-4 text-center">Відправляй свою посилку вже зараз</h1>
+                            <div className="flex flex-col md:flex-row rounded-lg gap-4">
+                                <select
+                                    name="cityFrom"
+                                    value={filters.cityFrom}
+                                    onChange={this.handleFilterChange}
+                                    className="px-4 py-5 rounded-lg text-black w-[200px]"
+                                    style={{
+                                        border: '1px solid #ccc',
+                                        backgroundColor: 'white',
+                                        color: 'black',
+                                    }}
                                 >
-                                Знайти попутника
-                            </button>
-                            {
-                                this.props.session?.data?.user?.roles.includes('Driver') &&
-                                <Link href="/delivery/trip/add" className="button-type-2 py-4 w-[252px] rounded-lg flex items-center justify-center font-bold ml-6">
-                                    Додати поїздку
-                                </Link>
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div className='flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
-                    <div className="flex flex-col p-4 rounded-lg w-1/4 bg-[#ffffff]">
-                    {/* Filters Sidebar */}
-                        <h2 className="text-black text-xl font-bold mb-4">Фільтри</h2>
-                        <div className="mb-4">
-                            <label className="text-black">Ціна</label>
-                            <div className="flex flex-col gap-2 mt-2">
-                                <input
-                                    name="priceFrom"
-                                    type="number"
-                                    value={filters.priceFrom}
+                                    <option value="">Звідки</option>
+                                    {this.state.cities.map(city => (
+                                        <option key={city} value={city}>{city}</option>
+                                    ))}
+                                </select>
+                                <select
+                                    name="cityTo"
+                                    value={filters.cityTo}
                                     onChange={this.handleFilterChange}
-                                    placeholder="Від"
-                                    className="px-2 py-1 rounded"
+                                    className="px-4 py-5 rounded-lg text-black w-[200px]"
                                     style={{
                                         border: '1px solid #ccc',
+                                        backgroundColor: 'white',
+                                        color: 'black',
+                                    }}
+                                >
+                                    <option value="">Куди</option>
+                                    {this.state.cities.map(city => (
+                                        <option key={city} value={city}>{city}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    name="dateFrom"
+                                    type="date"
+                                    value={filters.dateFrom}
+                                    onChange={this.handleFilterChange}
+                                    className="px-4 py-5 rounded-lg text-black"
+                                    style={{
+                                        border: '1px solid #ccc',
+                                        backgroundColor: 'white',
                                         color: 'black',
                                     }}
                                 />
-                                <input
-                                    name="priceTo"
-                                    type="number"
-                                    value={filters.priceTo}
+                                <select
+                                    name="cargoType"
+                                    value={filters.cargoType}
                                     onChange={this.handleFilterChange}
-                                    placeholder="До"
-                                    className="px-2 py-1 rounded "
+                                    className="px-4 py-5 rounded-lg text-black"
                                     style={{
                                         border: '1px solid #ccc',
+                                        backgroundColor: 'white',
                                         color: 'black',
                                     }}
-                                />
+                                >
+                                    <option value="">Розмір</option>
+                                    <option value="XS">XS до 1 кг</option>
+                                    <option value="S">S до 5 кг</option>
+                                    <option value="M">M до 15 кг</option>
+                                    <option value="L">L до 30 кг</option>
+                                    <option value="XL">XL до 60 кг</option>
+                                    <option value="XXL">XXL від 61 кг</option>
+                                </select>
+                            </div>
+                            <div className='mt-6 w-full flex flex-col md:flex-row gap-4 items-center justify-center'>
+                                <button
+                                    className="w-full bg-[#7c3aed] button-type-1 py-4 md:w-[252px] rounded-lg font-bold"
+                                    onClick={() => this.fetchTrips(1)}
+                                    >
+                                    Знайти попутника
+                                </button>
+                                {
+                                    this.props.session?.data?.user?.roles.includes('Driver') &&
+                                    <Link href="/delivery/trip/add" className="button-type-2 py-4 w-full md:w-[252px] rounded-lg flex items-center justify-center font-bold md:ml-6">
+                                        Додати поїздку
+                                    </Link>
+                                }
                             </div>
                         </div>
-                        <div className="mb-4">
-                            <label className="text-black">Рейтинг водія</label>
-                            <input
-                                name="driverRatingFrom"
-                                type="number"
-                                min={1}
-                                max={5}
-                                step={0.1}
-                                value={filters.driverRatingFrom}
-                                onChange={this.handleFilterChange}
-                                placeholder="Від"
-                                className="px-2 py-1 text-black rounded w-full mt-2"
-                                    style={{
-                                        border: '1px solid #ccc',
-                                        color: 'black',
-                                    }}
-                            />
-                        </div>
-                        {/* Add more filters as needed */}
-                    </div>
-                    {/* Trips List */}
-                    <div className="flex-1 flex flex-col gap-6">
-                        {loading ? (
-                            <div className="text-white text-center py-20">Завантаження...</div>
-                        ) : trips.length === 0 ? (
-                            <div className="text-white text-center py-20">Немає доступних поїздок</div>
-                        ) : (
-                            trips.map(trip => (
-                                <div key={trip.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
-                                    <Image
-                                        src={trip.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
-                                        alt={trip.fullName}
-                                        width={80}
-                                        height={80}
-                                        className="rounded-full object-cover"
+                </div>
+            </div>
+                <div className='flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
+                        <div className="flex flex-col p-4 rounded-lg md:w-1/4 bg-[#ffffff]">
+                        {/* Filters Sidebar */}
+                            <h2 className="text-black text-xl font-bold mb-4">Фільтри</h2>
+                            <div className="mb-4">
+                                <label className="text-black">Ціна</label>
+                                <div className="flex flex-col gap-2 mt-2">
+                                    <input
+                                        name="priceFrom"
+                                        type="number"
+                                        value={filters.priceFrom}
+                                        onChange={this.handleFilterChange}
+                                        placeholder="Від"
+                                        className="px-2 py-1 rounded"
+                                        style={{
+                                            border: '1px solid #ccc',
+                                            color: 'black',
+                                        }}
                                     />
-                                    <div className="flex-1 flex flex-col px-6">
-                                        <div className="flex gap-2 items-center text-white text-lg font-bold">
-                                            {trip.startLocation.city} - {trip.endLocation.city}
-                                        </div>
-                                        <div className="flex flex-col gap-4 text-white mt-2">
-                                            <span>
-                                                відбуття: {trip.startLocation.dateTime} 
-                                            </span>
-                                            <span>
-                                                прибуття: {trip.endLocation.dateTime}
-                                            </span>
-                                        </div>
-                                        <div className="flex gap-2 items-center text-white mt-2">
+                                    <input
+                                        name="priceTo"
+                                        type="number"
+                                        value={filters.priceTo}
+                                        onChange={this.handleFilterChange}
+                                        placeholder="До"
+                                        className="px-2 py-1 rounded "
+                                        style={{
+                                            border: '1px solid #ccc',
+                                            color: 'black',
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <label className="text-black">Рейтинг водія</label>
+                                <input
+                                    name="driverRatingFrom"
+                                    type="number"
+                                    min={1}
+                                    max={5}
+                                    step={0.1}
+                                    value={filters.driverRatingFrom}
+                                    onChange={this.handleFilterChange}
+                                    placeholder="Від"
+                                    className="px-2 py-1 text-black rounded w-full mt-2"
+                                        style={{
+                                            border: '1px solid #ccc',
+                                            color: 'black',
+                                        }}
+                                />
+                            </div>
+                            {/* Add more filters as needed */}
+                        </div>
+                        {/* Trips List */}
+                        <div className="flex-1 flex flex-col gap-6">
+                            {loading ? (
+                                <div className="text-white text-center py-20">Завантаження...</div>
+                            ) : trips.length === 0 ? (
+                                <div className="text-white text-center py-20">Немає доступних поїздок</div>
+                            ) : (
+                                trips.map(trip => (
+                                    <div key={trip.id} className="bg-[#2d1857] w-full rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
+                                        <div className=" flex flex-col items-center justify-center mr-6 pb-10 md:pb-0 gap-2">
+                                            <Image
+                                            src={trip.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
+                                            alt={trip.fullName}
+                                            width={80}
+                                            height={80}
+                                            className="rounded-full object-cover"
+                                        />
                                             <span>Водій: {trip.fullName}</span>
                                             <span className="font-bold">{trip.driver.email}</span>
                                             <span className="text-yellow-400">★ {trip.driver.rating.toFixed(1)}</span>
                                         </div>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-2">
-                                        <div className="bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
-                                            {trip.deliverySlots.length > 0
-                                                ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
-                                                : trip.price}грн
+
+                                        <div className="w-full pb-10 md:pb-0 flex-1 flex flex-col md:px-6">
+                                            <div className="flex gap-2 items-center text-white text-lg font-bold">
+                                                {trip.startLocation.city} - {trip.endLocation.city}
+                                            </div>
+                                            <div className="flex flex-col gap-4 text-white mt-2">
+                                                <span>
+                                                    відбуття: {trip.startLocation.dateTime} 
+                                                </span>
+                                                <span>
+                                                    прибуття: {trip.endLocation.dateTime}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="text-white text-xs">Ціна може змінюватись від розміру посилки</div>
-                                        <Link href={`/delivery/trip/${trip.id}`}>
-                                            <button className="bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Обрати</button>
-                                        </Link>
+
+                                        <div className="w-full md:w-[30%] flex flex-col items-end gap-2">
+                                            <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
+                                                {trip.deliverySlots.length > 0
+                                                    ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
+                                                    : trip.price}грн
+                                            </div>
+                                            <div className="text-white text-xs">Ціна може змінюватись від розміру посилки</div>
+                                            <Link href={`/delivery/trip/${trip.id}`} className='w-full flex'>
+                                                <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Обрати</button>
+                                            </Link>
+                                        </div>
                                     </div>
+                                ))
+                            )}
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center items-center mt-10 gap-2 text-lg">
+                                    <button
+                                        className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                                        onClick={() => this.setState({ currentPage: 1 })}
+                                        disabled={currentPage === 1}
+                                    >
+                                        1
+                                    </button>
+                                    {currentPage > 2 && (
+                                        <button
+                                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg"
+                                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                                        >
+                                            {currentPage - 1}
+                                        </button>
+                                    )}
+                                    <span className="px-6 py-2 bg-[#7c3aed] text-white rounded-lg">{currentPage}</span>
+                                    {currentPage < totalPages - 1 && (
+                                        <button
+                                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg"
+                                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                                        >
+                                            {currentPage + 1}
+                                        </button>
+                                    )}
+                                    <button
+                                        className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                                        onClick={() => this.setState({ currentPage: totalPages })}
+                                        disabled={currentPage === totalPages}
+                                    >
+                                        {totalPages}
+                                    </button>
                                 </div>
-                            ))
-                        )}
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div className="flex justify-center items-center mt-10 gap-2 text-lg">
-                                <button
-                                    className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
-                                    onClick={() => this.setState({ currentPage: 1 })}
-                                    disabled={currentPage === 1}
-                                >
-                                    1
-                                </button>
-                                {currentPage > 2 && (
-                                    <button
-                                        className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg"
-                                        onClick={() => this.setState({ currentPage: currentPage - 1 })}
-                                    >
-                                        {currentPage - 1}
-                                    </button>
-                                )}
-                                <span className="px-6 py-2 bg-[#7c3aed] text-white rounded-lg">{currentPage}</span>
-                                {currentPage < totalPages - 1 && (
-                                    <button
-                                        className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg"
-                                        onClick={() => this.setState({ currentPage: currentPage + 1 })}
-                                    >
-                                        {currentPage + 1}
-                                    </button>
-                                )}
-                                <button
-                                    className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
-                                    onClick={() => this.setState({ currentPage: totalPages })}
-                                    disabled={currentPage === totalPages}
-                                >
-                                    {totalPages}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                    
+                            )}
+                        </div>
+                        
                 </div>
-            </div>
+                </div>
         );
     }
 }

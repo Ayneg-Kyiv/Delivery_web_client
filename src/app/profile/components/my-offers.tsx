@@ -6,63 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 
-// Location model
-export type Location = {
-    id: string;
-    country: string;
-    city: string;
-    address: string;
-    dateTime: string;
-    latitude?: number;
-    longitude?: number;
-};
-
-// User model
-export type User = {
-    id: string;
-    email: string;
-    name: string;
-    rating: number;
-    imagePath?: string;
-};
-
-// DeliveryRequest model
-export type DeliveryRequest = {
-    id: string;
-    startLocation: Location;
-    endLocation: Location;
-    senderName: string;
-    senderPhoneNumber: string;
-    senderEmail?: string;
-    senderId: string;
-    sender: User;
-    receiverName: string;
-    receiverPhoneNumber: string;
-    objectName: string;
-    cargoSlotType: string;
-    objectWeight: number;
-    objectDescription?: string;
-    comment?: string;
-    estimatedPrice?: number;
-    isAccepted: boolean;
-    isPickedUp: boolean;
-    isDelivered: boolean;
-};
-
-// Offer model
-export type DeliveryOffer = {
-    id: string;
-    deliveryRequestId: string;
-    deliveryRequest: DeliveryRequest;
-    price: number;
-    driverId: string;
-    driver: User;
-    estimatedCollectionTime: string;
-    estimatedDeliveryTime: string;
-    isAccepted: boolean;
-    isDeclined: boolean;
-};
-
 const batchSize = 10;
 
 interface MyReviewsProps {

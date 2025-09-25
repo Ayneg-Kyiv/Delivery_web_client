@@ -245,14 +245,14 @@ export default function Profile(): React.JSX.Element {
   }
 
   return (
-    <main className="bg-[#130c1f] grid justify-items-center w-full">
-      <div className="bg-[#130c1f] w-full max-w-[1920px] relative pb-6">
+    <main className="flex bg-[#130c1f] justify-items-center w-full px-4 md:px-20 lg:px-40">
+      <div className="bg-[#130c1f] w-full pb-6">
 
         {/* Profile header card */}
-        <Card className="w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
-          <CardContent className="grid grid-cols-2 gap-[100px] p-[100px]">
+        <div className="max-w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
+          <div className="flex flex-col md:flex-row justify-between md:p-10 lg:p-[100px] px-10 md:px-0">
             {/* Profile avatar and name */}
-            <div className="flex flex-col items-center justify-center">
+            <div className=" flex flex-col items-center justify-center pt-10">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
                 {previewUrl || userData?.imagePath ? (
                   <Image
@@ -331,7 +331,7 @@ export default function Profile(): React.JSX.Element {
               </div>
 
               {/* Edit Profile Button */}
-              <div className="mt-8">
+              <div className="mt-8 mb-8 ">
                 <Button
                   className="w-full bg-[#7f51b3] text-white py-3 rounded-lg hover:bg-[#6a4399] transition-colors"
                   onClick={() => window.location.href = '/edit-profile'}
@@ -340,11 +340,11 @@ export default function Profile(): React.JSX.Element {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Navigation tabs */}
-        <Tabs defaultValue="tab1" className=" w-[1080px] flex h-[78px] mx-auto">
+        <Tabs defaultValue="tab1" className=" max-w-[1080px] flex h-[78px] mx-auto">
           <TabsList className="overflow-y-hidden overflow-x-scroll  flex flex-row justify-start items-start custom-scrollbar scroll-smooth w-full h-[83px] bg-[#2c1b48] rounded-[0px_0px_8px_8px] p-2.5 pt-0 justify-start gap-4">
             <Button className="w-[60px] h-[60px] bg-[#7f51b3] rounded-lg p-0 flex items-center justify-center">
               <Settings className="w-[34px] h-[34px]" />
@@ -367,7 +367,7 @@ export default function Profile(): React.JSX.Element {
         {/* Profile form section */}
         {
           selectedTab === "user" && (
-            <Card className="w-[1080px] mt-[20px] mb-[50px] mx-auto bg-[#0f0e10] border-0 rounded-none">
+            <Card className="max-w-[1080px] mt-[20px] mb-[50px] mx-auto bg-[#0f0e10] border-0 rounded-none">
               <CardContent className="pt-[39px] px-[68px]">
                 <Separator className="w-[965px] h-px mb-[20px]" />
 
@@ -414,35 +414,35 @@ export default function Profile(): React.JSX.Element {
 
         {
           selectedTab === "trips" && (
-          <div className="w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyTrips />
           </div>)
         }
 
         {
           selectedTab === "orders" && (
-          <div className="w-[1080px] mx-auto mt-[20px] mb-[50px]">
-            <MyOrders />
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyOrders id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "reviews" && (
-          <div className="w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyReviews id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "requests" && (
-          <div className="w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyRequests id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "offers" && (
-          <div className="w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyOffers id={session?.data?.user?.id ?? ""} />
           </div>)
         }

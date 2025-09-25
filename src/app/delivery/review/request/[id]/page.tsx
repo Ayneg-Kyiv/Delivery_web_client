@@ -5,14 +5,6 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ApiClient } from '@/app/api-client';
 
-type CreateReviewDto = {
-    rating: number;
-    text: string;
-    deliveryRequestId?: string;
-    reviewerId?: string;
-    userId?: string;
-};
-
 const ReviewRequestPage: React.FC = () => {
     const searchParams = useSearchParams();
     const userId = searchParams.get('userId');

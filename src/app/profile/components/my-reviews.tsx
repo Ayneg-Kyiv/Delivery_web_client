@@ -4,25 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 
-type Reviewer = {
-    userName: string;
-    email: string;
-    imagePath?: string;
-    rating: number;
-};
-
-type ReviewDto = {
-    id: string;
-    rating: number;
-    text: string;
-    shippingOrderId?: string;
-    deliveryOrderId?: string;
-    deliveryRequestId?: string;
-    userId: string;
-    reviewerId: string;
-    reviewer?: Reviewer;
-};
-
 const batchSize = 10;
 
 interface MyReviewsProps {

@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import { ApiClient } from '@/app/api-client';
+import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 // HOC to inject session into class components
 const withSession = (Component: React.ComponentType<any>) => {
@@ -43,30 +44,6 @@ const withSession = (Component: React.ComponentType<any>) => {
     return WrappedComponent;
 };
 
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type Vehicle = {
-    id: string;
-    type: string;
-    brand: string;
-    model: string;
-    color: string;
-    numberPlate: string;
-    imagePath: string;
-    imagePathBack: string;
-    createdAt: string;
-    updatedAt: string;
-};
-
 // Add this to your file, above the class
 const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
     XS: { MaxWeight: "1kg", MaxVolume: "0.5L" },
@@ -77,52 +54,41 @@ const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
     XXL: { MaxWeight: "10kg+", MaxVolume: "2L+" }
 };
 
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type AddTripState = {
-    startLocation: LocationState;
-    endLocation: LocationState;
-    slots: DeliverySlot[];
-    newSlot: {
-        cargoSlotTypeName: string;
-        approximatePrice: string;
-    };
-    fullName: string;
-    email: string;
-    phoneNumber: string;
-    vehicleId: string;
-    vehicles: Vehicle[];
-    loadingVehicles: boolean;
-};
 
 class AddTripPage extends React.Component<any, AddTripState> {
     constructor(props: any) {
         super(props);
         this.state = {
             startLocation: {
-                country: '',
-                city: '',
-                address: '',
+                country: 'Україна',
+                state: 'Місто Київ',
+                city: 'Місто Київ',
+                address: 'Вулиця Хрещатик',
+                houseNumber: '1',
                 date: '',
                 time: '',
                 dateTime: '',
-                latitude: null,
-                longitude: null
+                latitude: 50.450001,
+                longitude: 30.523333
             },
+            startTime: '',
+            startDate: '',
+
             endLocation: {
                 country: '',
+                state: '',
                 city: '',
                 address: '',
+                houseNumber: '',
                 date: '',
                 time: '',
                 dateTime: '',
-                latitude: null,
-                longitude: null
+                latitude: 50.450001,
+                longitude: 30.523333
             },
+            endTime: '',
+            endDate: '',
+
             slots: [],
             newSlot: {
                 cargoSlotTypeName: '',
@@ -195,6 +161,29 @@ class AddTripPage extends React.Component<any, AddTripState> {
             slots: prevState.slots.filter(slot => slot.id !== id)
         }));
     };
+    
+    handleStartLocationSelect = (location: LocationState) => {
+        this.setState(prev => ({
+            ...prev,
+            startLocation: {
+                ...prev.startLocation,
+                ...location,
+            }
+        }));
+
+        console.log(location);
+    };
+
+    handleEndLocationSelect = (location: LocationState) => {
+        this.setState(prev => ({
+            ...prev,
+            endLocation: {
+                ...prev.endLocation,
+                ...location,
+            }
+        }));
+        console.log(location);
+    };
 
     handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -206,21 +195,23 @@ class AddTripPage extends React.Component<any, AddTripState> {
             return `${date}T${time}`;
         };
 
-        const startDateTime = combineDateTime(this.state.startLocation.date, this.state.startLocation.time);
-        const endDateTime = combineDateTime(this.state.endLocation.date, this.state.endLocation.time);
+        const startDateTime = combineDateTime(this.state.startDate, this.state.startTime);
+        const endDateTime = combineDateTime(this.state.endDate, this.state.endTime);
+
+        console.log(this.state.startLocation, this.state.endLocation);
 
         // Check required fields
-        const requiredFields = [
+            const requiredFields = [
             this.state.startLocation.country,
             this.state.startLocation.city,
             this.state.startLocation.address,
-            this.state.startLocation.date,
-            this.state.startLocation.time,
+            this.state.startDate,
+            this.state.startTime,
             this.state.endLocation.country,
             this.state.endLocation.city,
             this.state.endLocation.address,
-            this.state.endLocation.date,
-            this.state.endLocation.time,
+            this.state.endDate,
+            this.state.endTime,
             this.state.fullName,
             this.state.email,
             this.state.phoneNumber,
@@ -269,8 +260,8 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
     render() {
         return (
-            <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-120">
-                <div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]'>
+            <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
+                <div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff] max-w-[540px]'>
                     <h1 className='text-2xl font-bold py-3 text-[#724C9D]'>Оформлення маршруту</h1>
 
                     <form className="w-full max-w-lg mt-6" onSubmit={this.handleSubmit}>
@@ -278,57 +269,41 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         {/* Start Location */}
                         <div className="mb-6">
-                            <h2 className="text-xl font-semibold mb-4 text-black">Початкова локація</h2>
+                            <h2 className="text-xl font-semibold mb-4 text-black"></h2>
+
+                            <div className="mb-8">
+                                <h2 className="text-xl font-semibold mb-4 text-black">Виберіть точки на карті</h2>
+                                <DeliveryMapToSelect
+                                    startLocation={this.state.startLocation}
+                                    endLocation={this.state.endLocation}
+                                    onStartLocationSelect={this.handleStartLocationSelect}
+                                    onEndLocationSelect={this.handleEndLocationSelect}
+                                    className="w-full h-[350px] mb-4"
+                                />
+                                <div className="text-sm text-gray-500">
+                                    Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.
+                                </div>
+                            </div>
                             
                             <div className='h-[2px] bg-lighter rounded-sm my-4 mb-6'></div>
 
                             <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Країна"
-                                    value={this.state.startLocation.country}
-                                    onChange={e => this.setState({ startLocation: { ...this.state.startLocation, country: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.startLocation.country ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
-                            <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Місто"
-                                    value={this.state.startLocation.city}
-                                    onChange={e => this.setState({ startLocation: { ...this.state.startLocation, city: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.startLocation.city ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
-                            <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Адреса"
-                                    value={this.state.startLocation.address}
-                                    onChange={e => this.setState({ startLocation: { ...this.state.startLocation, address: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.startLocation.address ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
-                            <div className="flex flex-col mb-2">
-                                <label className=" font-semibold text-black">Дата</label>
+                                <label className=" font-semibold text-black">Дата виїзду</label>
                                 <DateInputGroup
                                     label=""
-                                    value={this.state.startLocation.date}
-                                    onChange={e => this.setState({ startLocation: { ...this.state.startLocation, date: e.target.value } })}
+                                    value={this.state.startDate}
+                                    onChange={e => this.setState({ startDate: e.target.value })}
                                     inputClassName="floating-input-black"
-                                    labelClassName={this.state.startLocation.date ? 'filled' : ''}
+                                    labelClassName={this.state.startDate ? 'filled' : ''}
                                 />
                             </div>
 
                             <div className="flex flex-col mb-2">
-                                <label className=" font-semibold text-black">Час</label>
+                                <label className=" font-semibold text-black">Час виїзду</label>
                                 <input
                                     type="time"
-                                    value={this.state.startLocation.time}
-                                    onChange={e => this.setState({ startLocation: { ...this.state.startLocation, time: e.target.value } })}
+                                    value={this.state.startTime}
+                                    onChange={e => this.setState({ startTime: e.target.value })}
                                     className="floating-input-black"
                                 />
                             </div>
@@ -339,44 +314,15 @@ class AddTripPage extends React.Component<any, AddTripState> {
                         {/* End Location */}
                         <div className="mb-6">
                             <h2 className="text-xl font-semibold mb-4 text-black">Кінцева локація</h2>
-                            <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Країна"
-                                    value={this.state.endLocation.country}
-                                    onChange={e => this.setState({ endLocation: { ...this.state.endLocation, country: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.endLocation.country ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
-                            <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Місто"
-                                    value={this.state.endLocation.city}
-                                    onChange={e => this.setState({ endLocation: { ...this.state.endLocation, city: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.endLocation.city ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
-                            <div className="flex flex-col mb-2">
-                                <TextInputGroup
-                                    label="Адреса"
-                                    value={this.state.endLocation.address}
-                                    onChange={e => this.setState({ endLocation: { ...this.state.endLocation, address: e.target.value } })}
-                                    inputClassName="floating-input-black"
-                                    labelClassName={this.state.endLocation.address ? 'filled' : ''}
-                                    type="text"
-                                />
-                            </div>
+                            
                             <div className="flex flex-col mb-2">
                                 <label className="mb-2 font-semibold text-black">Дата і час</label>
                                 <DateInputGroup
                                     label=""
-                                    value={this.state.endLocation.date}
-                                    onChange={e => this.setState({ endLocation: { ...this.state.endLocation, date: e.target.value } })}
+                                    value={this.state.endDate}
+                                    onChange={e => this.setState({ endDate: e.target.value })}
                                     inputClassName="floating-input-black"
-                                    labelClassName={this.state.endLocation.date ? 'filled' : ''}
+                                    labelClassName={this.state.endDate ? 'filled' : ''}
                                 />
                             </div>
 
@@ -384,8 +330,8 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                 <label className="mb-2 font-semibold text-black">Час</label>
                                 <input
                                     type="time"
-                                    value={this.state.endLocation.time}
-                                    onChange={e => this.setState({ endLocation: { ...this.state.endLocation, time: e.target.value } })}
+                                    value={this.state.endTime}
+                                    onChange={e => this.setState({ endTime: e.target.value })}
                                     className="floating-input-black"
                                 />
                             </div>
@@ -459,14 +405,14 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         <div className='h-[2px] bg-lighter rounded-sm my-2'></div>
                             {/* Delivery Slots Section */}
-                            <div className="mb-2">
-                                <h2 className="text-xl font-semibold mb-4 text-[#724C9D]">Додати слоти для доставки</h2>
-                                <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
+                            <div className="w-full mb-2">
+                                <h2 className="w-full text-xl font-semibold mb-4 text-[#724C9D]">Додати слоти для доставки</h2>
+                                <div className="w-full flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
                                     <select
                                         id='slotType'
                                         value={this.state.newSlot.cargoSlotTypeName}
                                         onChange={this.handleSlotTypeChange}
-                                        className="px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#724C9D]"
+                                        className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#724C9D]"
                                     >
                                         <option value="">Оберіть тип слота</option>
                                         {Object.entries(SLOT_TYPES).map(([key, val]) => (

@@ -1,7 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
 import https from 'https';
-import { TResponse } from './response';
 
 function getCsrfTokenSync(): string | null {
   if (typeof window !== "undefined") {

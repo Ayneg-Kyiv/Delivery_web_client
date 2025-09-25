@@ -6,89 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type Vehicle = {
-    id: string;
-    type: string;
-    brand: string;
-    model: string;
-    color: string;
-    numberPlate: string;
-    imagePath: string;
-    imagePathBack: string;
-    createdAt: string;
-    updatedAt: string;
-};
-
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type Trip = {
-    id: string;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    vehicle: Vehicle;
-    driver: {
-        email: string;
-        name: string;
-        rating: number;
-        imagePath?: string;
-    };
-    price: number;
-    fullName: string;
-    email: string;
-    phoneNumber: string;
-    cargoType: string;
-    status?: string;
-};
-
-type DeliveryOrder = {
-    id: string;
-    tripId: string;
-    senderId?: string;
-    sender: {
-        id: string;
-        name: string;
-        email?: string;
-        phoneNumber?: string;
-    };
-    driver: {
-        id: string;
-        name: string;
-        email: string;
-        rating: number;
-        imagePath?: string;
-    };
-    deliverySlotId: string;
-    deliverySlot: DeliverySlot;
-    startLocation: LocationState;
-    endLocation: LocationState;
-    senderName: string;
-    senderPhoneNumber: string;
-    senderEmail?: string;
-    receiverName: string;
-    receiverPhoneNumber: string;
-    comment?: string;
-    isAccepted: boolean;
-    isDeclined: boolean;
-    isPickedUp: boolean;
-    isDelivered: boolean;
-    trip?: Trip;
-};
-
 const batchSize = 10;
 
 interface MyOrdersProps {
@@ -134,7 +51,7 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                     orders.map(order => (
                         <div key={order.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
                             <Image
-                                src={order.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + order.driver.imagePath : '/dummy.png'}
+                                src={order.driver?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + order.driver.imagePath : '/dummy.png'}
                                 alt={order.trip?.fullName || 'Водій'}
                                 width={80}
                                 height={80}
@@ -153,9 +70,9 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                     </span>
                                 </div>
                                 <div className="flex gap-2 items-center text-white mt-2">
-                                    <span>Водій: {order.driver.name}</span>
-                                    <span className="font-bold">{order.driver.email}</span>
-                                    <span className="text-yellow-400">★ {order.driver.rating?.toFixed(1)}</span>
+                                    <span>Водій: {order.driver?.name}</span>
+                                    <span className="font-bold">{order.driver?.email}</span>
+                                    <span className="text-yellow-400">★ {order.driver?.rating?.toFixed(1)}</span>
                                 </div>
                                 <div className="flex flex-col gap-2 mt-4">
                                     <div className="text-white font-bold">Статус замовлення:</div>
@@ -215,7 +132,7 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                 </Link>
                                 {
                                     order.isDelivered && (
-                                        <Link href={`/delivery/review/order/${order.id}/?userId=${order.driver.id}`} className='w-full'>
+                                        <Link href={`/delivery/review/order/${order.id}/?userId=${order.driver?.id}`} className='w-full'>
                                             <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Залишити відгук</button>
                                         </Link>
                                     )

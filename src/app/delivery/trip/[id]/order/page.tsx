@@ -7,45 +7,6 @@ import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 
-type LocationState = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    dateTime: string;
-    latitude: number | null;
-    longitude: number | null;
-};
-
-type DeliverySlot = {
-    id: string;
-    cargoSlotTypeName: string;
-    approximatePrice: number;
-};
-
-type Trip = {
-    id: string;
-    startLocationId: string;
-    startLocation: LocationState;
-    endLocationId: string;
-    endLocation: LocationState;
-    deliverySlots: DeliverySlot[];
-    fullName: string;
-    email: string;
-    phoneNumber: string;
-};
-
-type CreateLocationDto = {
-    country: string;
-    city: string;
-    address: string;
-    date: string;
-    time: string;
-    latitude?: number | null;
-    longitude?: number | null;
-};
-
 const OrderDeliveryPage: React.FC = () => {
     const { id: tripId } = useParams<{ id: string }>();
     const router = useRouter();
@@ -60,17 +21,23 @@ const OrderDeliveryPage: React.FC = () => {
 
     const [startLocation, setStartLocation] = useState<CreateLocationDto>({
         country: '',
+        state: '',
         city: '',
         address: '',
+        houseNumber: '',
         date: '',
         time: '',
+        dateTime: '',
     });
     const [endLocation, setEndLocation] = useState<CreateLocationDto>({
         country: '',
+        state: '',
         city: '',
         address: '',
+        houseNumber: '',
         date: '',
         time: '',
+        dateTime: '',
     });
 
     const [senderName, setSenderName] = useState('');
@@ -94,19 +61,25 @@ const OrderDeliveryPage: React.FC = () => {
         if (trip && useTripStartLocation) {
             setStartLocation({
                 country: trip.startLocation.country,
+                state: trip.startLocation.state,
                 city: trip.startLocation.city,
                 address: trip.startLocation.address,
+                houseNumber: trip.startLocation.houseNumber,
                 date: trip.startLocation.date,
                 time: trip.startLocation.time,
+                dateTime: trip.startLocation.dateTime,
             });
         }
         if (trip && useTripEndLocation) {
             setEndLocation({
                 country: trip.endLocation.country,
+                state: trip.endLocation.state,
                 city: trip.endLocation.city,
                 address: trip.endLocation.address,
+                houseNumber: trip.endLocation.houseNumber,
                 date: trip.endLocation.date,
                 time: trip.endLocation.time,
+                dateTime: trip.endLocation.dateTime,
             });
         }
     }, [trip, useTripStartLocation, useTripEndLocation]);
@@ -154,13 +127,15 @@ const OrderDeliveryPage: React.FC = () => {
         if (useTripStartLocation) {
             payload.startLocationId = trip.startLocationId;
             payload.startLocation = undefined;
-        } else {
+        } else {;
+            startLocation.dateTime = `${startLocation.date}T${startLocation.time}`;
             payload.startLocation = startLocation;
         }
         if (useTripEndLocation) {
             payload.endLocationId = trip.endLocationId;
             payload.endLocation = undefined;
         } else {
+            endLocation.dateTime = `${endLocation.date}T${endLocation.time}`;
             payload.endLocation = endLocation;
         }
 

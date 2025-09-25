@@ -6,24 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-
-type LocationState = {
-	country: string;
-	city: string;
-	address: string;
-	date: string;
-	time: string;
-	dateTime: string;
-	latitude: number | null;
-	longitude: number | null;
-};
-
-type ReviewDto = {
-	id: number;
-	rating: number;
-	text: string;
-	userId: string;
-};
+import TravelPathMap from '@/components/other/travel-path-map';
 
 type Sender = {
 	id: string;
@@ -32,25 +15,6 @@ type Sender = {
 	phoneNumber?: string;
 	imagePath?: string;
 	reviews?: ReviewDto[];
-};
-
-type DeliveryRequest = {
-	id: string;
-    senderId: string;
-	sender: Sender;
-	deliverySlotId: string;
-	startLocation: LocationState;
-	endLocation: LocationState;
-	senderName: string;
-	senderPhoneNumber: string;
-	senderEmail?: string;
-	receiverName: string;
-	receiverPhoneNumber: string;
-    estimatedPrice?: number;
-	comment?: string;
-	isAccepted: boolean;
-	isPickedUp: boolean;
-	isDelivered: boolean;
 };
 
 const DeliveryRequestDetailPage: React.FC = () => {
@@ -94,8 +58,8 @@ const DeliveryRequestDetailPage: React.FC = () => {
 					fill
 					className="object-cover"
 				/>
-				<div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center">
-					<h1 className="text-4xl font-bold mb-4 text-white">
+				<div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center px-4">
+					<h1 className="text-2xl md:text-4xl font-bold mb-4 text-white">
 						Деталі запиту на доставку
 					</h1>
 					<div className="flex gap-4 text-white text-xl font-bold">
@@ -103,8 +67,16 @@ const DeliveryRequestDetailPage: React.FC = () => {
 						<span>-</span>
 						<span>{request.endLocation.city}</span>
 					</div>
-					<div className="mt-2 text-white">
-						Відправка: {request.startLocation.dateTime} | Доставка: {request.endLocation.dateTime}
+					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
+						<div className="mt-2 text-white">
+							Відправка: {request.startLocation.dateTime} 
+						</div>
+						<div className='hidden md:block'>
+							|
+						</div>
+						<div className="mt-2 text-white">
+							Доставка: {request.endLocation.dateTime}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -142,23 +114,38 @@ const DeliveryRequestDetailPage: React.FC = () => {
 				</div>
 				{/* Request Details */}
 				<div className="flex-1 flex flex-col gap-6">
-					<div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
-						<div className="text-lg font-bold mb-2">Маршрут</div>
-						<div className="mb-2">
-							<span className="font-bold">Звідки:</span> {request.startLocation.address}, {request.startLocation.city}
+                    <div className='w-full flex justify-stretch gap-6 flex-col md:flex-row bg-[#2d1857]'>
+						<div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
+							<div className="text-lg font-bold mb-2">Маршрут</div>
+							<div className="mb-2">
+								<span className="font-bold">Звідки:</span> {request.startLocation.address}, {request.startLocation.city}
+							</div>
+							<div className="mb-2">
+								<span className="font-bold">Куди:</span> {request.endLocation.address}, {request.endLocation.city}
+							</div>
+							<div className="mb-2">
+								<span className="font-bold">Дата відправки:</span> {request.startLocation.dateTime}
+							</div>
+							<div className="mb-2">
+								<span className="font-bold">Дата доставки:</span> {request.endLocation.dateTime}
+							</div>
+							<div className="mb-2">
+								<span className="font-bold">Коментар:</span> {request.comment || '—'}
+							</div>
 						</div>
-						<div className="mb-2">
-							<span className="font-bold">Куди:</span> {request.endLocation.address}, {request.endLocation.city}
-						</div>
-						<div className="mb-2">
-							<span className="font-bold">Дата відправки:</span> {request.startLocation.dateTime}
-						</div>
-						<div className="mb-2">
-							<span className="font-bold">Дата доставки:</span> {request.endLocation.dateTime}
-						</div>
-						<div className="mb-2">
-							<span className="font-bold">Коментар:</span> {request.comment || '—'}
-						</div>
+						
+						<TravelPathMap 
+                            start={{ 
+                                latitude: request.startLocation.latitude ?? 0, 
+                                longitude: request.startLocation.longitude ?? 0 
+                            }} 
+                            end={{ 
+                                latitude: request.endLocation.latitude ?? 0, 
+                                longitude: request.endLocation.longitude ?? 0 
+                            }} 
+                            className="w-full md:w-2/3 p-8 rounded-xl shadow-lg"
+                        />
+
 					</div>
 					<div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
 						<div className="text-lg font-bold mb-2">Статус доставки: {request.isAccepted ? 'Прийнято' : 'Пошук водія'}</div>

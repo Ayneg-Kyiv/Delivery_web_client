@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import { ApiClient } from '@/app/api-client';
+import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
 	XS: { MaxWeight: "1kg", MaxVolume: "0.5L" },
@@ -15,33 +16,6 @@ const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
 	XXL: { MaxWeight: "10kg+", MaxVolume: "2L+" }
 };
 
-type LocationState = {
-	country: string;
-	city: string;
-	address: string;
-	date: string;
-	time: string;
-	dateTime: string;
-	latitude: number | null;
-	longitude: number | null;
-};
-
-type AddRequestState = {
-	startLocation: LocationState;
-	endLocation: LocationState;
-	senderName: string;
-	senderPhoneNumber: string;
-	senderEmail: string;
-	objectName: string;
-	cargoSlotType: string;
-	objectWeight: string;
-	objectDescription: string;
-	estimatedPrice: string;
-	receiverName: string;
-	receiverPhoneNumber: string;
-	comment: string;
-	submitting: boolean;
-};
 
 const withSession = (Component: React.ComponentType<any>) => {
 	const WrappedComponent = (props: any) => {
@@ -66,25 +40,35 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		super(props);
 		this.state = {
 			startLocation: {
-				country: '',
-				city: '',
-				address: '',
-				date: '',
-				time: '',
-				dateTime: '',
-				latitude: null,
-				longitude: null
+                country: 'Україна',
+                state: 'Місто Київ',
+                city: 'Місто Київ',
+                address: 'Вулиця Хрещатик',
+                houseNumber: '1',
+                date: '',
+                time: '',
+                dateTime: '',
+                latitude: 50.450001,
+                longitude: 30.523333
 			},
+			startTime: '',
+			startDate: '',
+
 			endLocation: {
-				country: '',
-				city: '',
-				address: '',
-				date: '',
-				time: '',
-				dateTime: '',
-				latitude: null,
-				longitude: null
+                country: '',
+                state: '',
+                city: '',
+                address: '',
+                houseNumber: '',
+                date: '',
+                time: '',
+                dateTime: '',
+                latitude: 50.450001,
+                longitude: 30.523333
 			},
+			endTime: '',
+			endDate: '',
+
 			senderName: '',
 			senderPhoneNumber: '',
 			senderEmail: '',
@@ -110,21 +94,21 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 			return `${date}T${time}`;
 		};
 
-		const startDateTime = combineDateTime(this.state.startLocation.date, this.state.startLocation.time);
-		const endDateTime = combineDateTime(this.state.endLocation.date, this.state.endLocation.time);
+		const startDateTime = combineDateTime(this.state.startDate, this.state.startTime);
+		const endDateTime = combineDateTime(this.state.endDate, this.state.endTime);
 
 		// Validate required fields
 		const requiredFields = [
 			this.state.startLocation.country,
 			this.state.startLocation.city,
 			this.state.startLocation.address,
-			this.state.startLocation.date,
-			this.state.startLocation.time,
+			this.state.startDate,
+			this.state.startTime,
 			this.state.endLocation.country,
 			this.state.endLocation.city,
 			this.state.endLocation.address,
-			this.state.endLocation.date,
-			this.state.endLocation.time,
+			this.state.endDate,
+			this.state.endTime,
 			this.state.senderName,
 			this.state.senderPhoneNumber,
 			this.state.objectName,
@@ -182,35 +166,68 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		this.setState({ submitting: false });
 	};
 
+    handleStartLocationSelect = (location: LocationState) => {
+        this.setState(prev => ({
+            ...prev,
+            startLocation: {
+                ...prev.startLocation,
+                ...location,
+            }
+        }));
+
+        console.log(location);
+    };
+
+    handleEndLocationSelect = (location: LocationState) => {
+        this.setState(prev => ({
+            ...prev,
+            endLocation: {
+                ...prev.endLocation,
+                ...location,
+            }
+        }));
+        console.log(location);
+    };
+
 	render() {
 		return (
-			<div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-120">
-				<div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]'>
+			<div className="flex flex-col w-full justify-center items-center min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-80">
+				<div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]  max-w-[540px]'>
 					<h1 className='text-2xl font-bold py-3 text-[#724C9D]'>Створити запит на доставку</h1>
 					<form className="w-full max-w-lg mt-6" onSubmit={this.handleSubmit}>
+						{/* Map Selection */}
+                        <div className="mb-8">
+                            <h2 className="text-xl font-semibold mb-4 text-black">Виберіть точки на карті</h2>
+                            <DeliveryMapToSelect
+                                startLocation={this.state.startLocation}
+                                endLocation={this.state.endLocation}
+                                onStartLocationSelect={this.handleStartLocationSelect}
+                                onEndLocationSelect={this.handleEndLocationSelect}
+                                className="w-full h-[350px] mb-4"
+                            />
+                            <div className="text-sm text-gray-500">
+                                Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.
+                            </div>
+                        </div>
 						{/* Start Location */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Початкова локація</h2>
+							<h2 className="text-xl font-semibold mb-4 text-black">Дата і час отримання</h2>
 							<div className='h-[2px] bg-lighter rounded-sm my-4 mb-6'></div>
-							<TextInputGroup label="Країна" value={this.state.startLocation.country} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.country ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Місто" value={this.state.startLocation.city} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.city ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Адреса" value={this.state.startLocation.address} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.address ? 'filled' : ''} type="text" />
+							
 							<label className="font-semibold text-black">Дата</label>
-							<DateInputGroup label="" value={this.state.startLocation.date} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, date: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.date ? 'filled' : ''} />
+							<DateInputGroup label="" value={this.state.startDate} onChange={e => this.setState({ startDate: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.startDate ? 'filled' : ''} />
 							<label className="font-semibold text-black">Час</label>
-							<input type="time" value={this.state.startLocation.time} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, time: e.target.value } })} className="floating-input-black" />
+							<input type="time" value={this.state.startTime} onChange={e => this.setState({ startTime: e.target.value })} className="floating-input-black" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* End Location */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Кінцева локація</h2>
-							<TextInputGroup label="Країна" value={this.state.endLocation.country} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.country ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Місто" value={this.state.endLocation.city} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.city ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Адреса" value={this.state.endLocation.address} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.address ? 'filled' : ''} type="text" />
+							<h2 className="text-xl font-semibold mb-4 text-black">Дата і час доставки</h2>
+							
 							<label className="font-semibold text-black">Дата</label>
-							<DateInputGroup label="" value={this.state.endLocation.date} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, date: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.date ? 'filled' : ''} />
+							<DateInputGroup label="" value={this.state.endDate} onChange={e => this.setState({ endDate: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.endDate ? 'filled' : ''} />
 							<label className="font-semibold text-black">Час</label>
-							<input type="time" value={this.state.endLocation.time} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, time: e.target.value } })} className="floating-input-black" />
+							<input type="time" value={this.state.endTime} onChange={e => this.setState({ endTime: e.target.value })} className="floating-input-black" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Sender Info */}
@@ -248,7 +265,7 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Comment */}
 						<div className="mb-6">
-							<TextInputGroup label="Коментар" value={this.state.comment} required={false} onChange={e => this.setState({ comment: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.comment ? 'filled' : ''} type="text" />
+							<TextInputGroup label="Коментар" value={this.state.comment ?? ""} required={false} onChange={e => this.setState({ comment: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.comment ? 'filled' : ''} type="text" />
 						</div>
 						<div className="flex justify-end">
 							<button type="submit" className="w-full px-6 py-6 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors" disabled={this.state.submitting}>

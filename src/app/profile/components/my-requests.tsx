@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -7,64 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 
-// Location model
-type Location = {
-    id: string;
-    country: string;
-    city: string;
-    address: string;
-    dateTime: string;
-    latitude?: number;
-    longitude?: number;
-};
-
-// Request model
-type DeliveryRequest = {
-    id: string;
-    startLocation: Location;
-    endLocation: Location;
-    senderName: string;
-    senderPhoneNumber: string;
-    senderEmail?: string;
-    sender: {
-        email: string;
-        name: string;
-        rating: number;
-        imagePath?: string;
-    };
-    receiverName: string;
-    receiverPhoneNumber: string;
-    objectName: string;
-    cargoSlotType: string;
-    objectWeight: number;
-    objectDescription?: string;
-    comment?: string;
-    estimatedPrice?: number;
-    deliveryOfferID ?: string;
-    offers ?: DeliveryOffer[];
-    isAccepted: boolean;
-    isPickedUp: boolean;
-    isDelivered: boolean;
-};
-
-// Offer model
-type DeliveryOffer = {
-    id: string;
-    deliveryRequestId: string;
-    deliveryRequest: DeliveryRequest;
-    price: number;
-    driverId: string;
-    driver: {
-        email: string;
-        name: string;
-        rating: number;
-        imagePath?: string;
-    };
-    estimatedCollectionTime: string;
-    estimatedDeliveryTime: string;
-    isAccepted: boolean;
-    isDeclined: boolean;
-};
 
 const batchSize = 10;
 
