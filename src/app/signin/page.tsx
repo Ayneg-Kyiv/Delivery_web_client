@@ -8,6 +8,7 @@ import Button from '@/components/ui/button';
 import TextInputGroup from '@/components/ui/text-input-group';
 import ContentBox from '@/components/ui/content-box';
 import Image from 'next/image';
+import { signIn } from 'next-auth/react';
 
 class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     constructor(props: SignInPageProps) {
@@ -82,7 +83,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     renderContent = () => {
         return (
             <ContentBox height='860px' lheight='800px'>
-                <form className="flex-1 pt-20 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
+                <form className="flex-1 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
                         
                     <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
 
@@ -158,8 +159,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                     <span className="font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
                                     Увійти за допомогою:
                                     </span>
-                                    <Button onClick={() => console.log('Sign up with Google')} text='' className="p-0 h-auto">
-                                        {/* <Google className="h-5 w-5 text-white" /> */}
+                                    <Button onClick={()  => { signIn('google') }} text='' className="p-0 h-auto">
+                                        <Image src='/google-icon-logo-svgrepo-com.svg' alt="Google" width={32} height={32}/>
                                     </Button>
                                 </div>
 

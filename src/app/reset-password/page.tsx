@@ -83,7 +83,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
     renderContent = () => {
         return (
             <ContentBox>
-                <form className='flex-1 p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+                <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">

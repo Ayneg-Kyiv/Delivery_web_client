@@ -220,6 +220,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
             const articleId = response.data;
 
             for (const block of article.articleBlocks) {
+                //test it as it previously used form
                 const blockFormData = new FormData();
 
                 blockFormData.append('articleId', articleId);
@@ -228,7 +229,12 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 if (block.content) blockFormData.append('content', block.content);
                 if (block.image) blockFormData.append('image', block.image);
 
-                await ApiClient.post(`/article/block/create`, blockFormData, {
+                await ApiClient.post(`/article/block/create`,{
+                  "articleId": articleId,
+                  "title": (block.title ? block.title : null),
+                  "content": (block.content ? block.content: null),
+                  "image" : (block.image ? block.image : null)
+                }, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
             }

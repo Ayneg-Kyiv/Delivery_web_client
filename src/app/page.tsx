@@ -4,10 +4,11 @@ import Button from "@/components/ui/button";
 import Card from "@/components/ui/card";
 import CardContent from "@/components/ui/card-content";
 import React, { Component, ChangeEvent } from "react";
-import { ArrowLeft, ArrowRight} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ApiClient } from "./api-client";
+import { MapsService } from "@/components/other/google-maps-component";
+import DeliveryMap from "@/components/other/delivery-map";
 
 class PageTemplate extends Component {
   state: {
@@ -38,7 +39,17 @@ class PageTemplate extends Component {
 
   async componentDidMount(): Promise<void> {
     await this.fetchLastNews();
+    MapsService.init();
   }
+
+  handleOriginSelect = (address: string) => {
+    this.setState({ from: address });
+  }
+  
+  handleDestinationSelect = (address: string) => {
+    this.setState({ to: address });
+  }
+
 
   cityCoords: Record<string, { lat: number; lon: number }> = {
     "київ": { lat: 50.4501, lon: 30.5234 },
@@ -77,18 +88,39 @@ class PageTemplate extends Component {
     return { l: nums[0], w: nums[1], h: nums[2] };
   }
 
-  estimateDelivery = () => {
-    const from = this.state.from.trim().toLowerCase();
-    const to = this.state.to.trim().toLowerCase();
+  estimateDelivery = async () => {
+    const from = this.state.from.trim();
+    const to = this.state.to.trim();
+
     const weightKg = parseFloat(this.state.weight.replace(',', '.')) || 0;
     const dims = this.parseDims(this.state.dims);
     const transferType = this.state.transferType.toLowerCase();
 
+    this.setState({ isCalculating: true });
+
+
     let distanceKm = 0;
-    if (from && to && this.cityCoords[from] && this.cityCoords[to]) {
-      distanceKm = this.haversineKm(this.cityCoords[from], this.cityCoords[to]);
-      // Add 8% detour factor
-      distanceKm *= 1.08;
+    let timeMinutes = 0;
+    let timeText = "";
+
+    if (from && to) {
+      try{
+        const result = await MapsService.getDistanceAndTime(from, to);
+
+        if (result) 
+          {
+            distanceKm = result.distance;
+            timeMinutes = result.duration;
+            timeText = "";
+          }
+        else {
+          // call haversine fallback
+          distanceKm = this.haversineKm(this.cityCoords[from], this.cityCoords[to]);
+        }
+
+      } catch (error) {
+        console.error("Error fetching distance and time:", error);
+      }
     }
 
     // If unknown distance fallback heuristic using weight (very rough)
@@ -96,6 +128,7 @@ class PageTemplate extends Component {
 
     // Volume in liters
     let volumeLiters = 0;
+
     if (dims) {
       volumeLiters = (dims.l * dims.w * dims.h) / 1000; // cm^3 to liters
     }
@@ -103,13 +136,16 @@ class PageTemplate extends Component {
     const trunkCapacityLiters = 450; // typical sedan
     const fillPercent = volumeLiters ? Math.min(100, (volumeLiters / trunkCapacityLiters) * 100) : 0;
 
-    const basePerKm = 0.55; // грн / км
+    const basePerKm = 0.35; // грн / км
     const volumeAdj = volumeLiters ? (volumeLiters / 50) * 0.02 : 0; // small uplift
     const weightAdj = weightKg * 0.15; // per kg uplift to base per km equivalent
     const effectiveRate = basePerKm + volumeAdj + weightAdj;
+    
     let coreCost = distanceKm * effectiveRate;
     // Add handling cost based on weight & volume
+    
     coreCost += weightKg * 4 + volumeLiters * 0.03;
+    
     // Transfer type adjustments
     if (transferType.includes('точка')) coreCost *= 0.95; // drop-off discount
     if (transferType.includes('особист')) coreCost *= 1.02; // personal handover slight premium
@@ -123,12 +159,14 @@ class PageTemplate extends Component {
     const timeHours = Math.max(0.5, timeHoursRaw);
 
     let suggestion = "";
+    
     if (fillPercent > 60) suggestion = "Розгляньте об’єднання з іншим запитом або гнучкішу дату.";
     else if (fillPercent === 0) suggestion = "Додайте габарити для точнішої оцінки.";
     else if (transferType.includes('точка')) suggestion = "Передача на точці вже знизила вартість.";
     else suggestion = "Спробуйте гнучку дату або точку збору для потенційної економії.";
-
+    
     this.setState({
+      isCalculating: false,
       estimate: {
         distanceKm: Math.round(distanceKm),
         volumeLiters: Math.round(volumeLiters),
@@ -136,6 +174,8 @@ class PageTemplate extends Component {
         costMin: Math.round(costMin),
         costMax: Math.round(costMax),
         timeHours: parseFloat(timeHours.toFixed(1)),
+        timeMinutes: Math.round(timeMinutes),
+        timeText: timeText, // Store the formatted time text from Google
         suggestion,
       },
     });
@@ -148,7 +188,7 @@ class PageTemplate extends Component {
   heroData = {
     tagline: "Доставка від людей для людей",
     title: "Відправляй куди та як завгодно",
-    subtitle: "Cargix - робе це можливим",
+    subtitle: "Cargix - робить це можливим",
     buttons: [
       { text: "Відправити зараз", onclick: () => console.log("Send Now clicked!"), 
         className: "button-type-1 w-[242px] h-12 rounded-lg text-2xl" },
@@ -160,21 +200,21 @@ class PageTemplate extends Component {
   howItWorksSteps = [
     {
       number: "1",
-  title: "Створіть запит",
-  description: "Опишіть посилку (тип, вага, орієнтовні габарити), вкажіть маршрут та бажану дату. Додайте фото — так водії швидше відгукнуться.",
-  image: "/how-step-1.svg",
+      title: "Створіть запит",
+      description: "Опишіть посилку (тип, вага, орієнтовні габарити), вкажіть маршрут та бажану дату. Додайте фото — так водії швидше відгукнуться.",
+      image: "/how-step-1.svg",
     },
     {
       number: "2",
-  title: "Обирайте перевізника",
-  description: "Перегляньте профілі водіїв, їх рейтинг, попередні відгуки та запропоновану ціну. Уточніть деталі в чаті перед підтвердженням.",
-  image: "/how-step-2.svg",
+      title: "Обирайте перевізника",
+      description: "Перегляньте профілі водіїв, їх рейтинг, попередні відгуки та запропоновану ціну. Уточніть деталі в чаті перед підтвердженням.",
+      image: "/how-step-2.svg",
     },
     {
       number: "3",
-  title: "Передача і доставка",
-  description: "Зустріньтеся у погодженому місці або передайте на точці збору. Слідкуйте за статусом. Після отримання — залиште відгук та оцінку.",
-  image: "/how-step-3.svg",
+      title: "Передача і доставка",
+      description: "Зустріньтеся у погодженому місці або передайте на точці збору. Слідкуйте за статусом. Після отримання — залиште відгук та оцінку.",
+      image: "/how-step-3.svg",
     },
   ];
 
@@ -198,7 +238,7 @@ class PageTemplate extends Component {
       <main>
         {/* Hero Section */}
         <section className="w-full relative h-[500px]">
-          <div className="h-[500px] bg-[url('/Rectangle47.png')] z-[-1] bg-cover bg-[50%_50%] relative top-0 left-0">
+          <div className="h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
             <div className="h-[500px] bg-[#00000099]" />
 
             <div className="flex flex-col items-center justify-center h-full text-center px-4 absolute top-0 left-0 right-0">
@@ -214,15 +254,16 @@ class PageTemplate extends Component {
                 {this.heroData.subtitle}
               </p>
 
-              <div className="flex sm:flex-row flex-col gap-5">
-                {this.heroData.buttons.map((button, index) => (
-                  <Button
-                    onClick={button.onclick}
-                    text={button.text}
-                    className={button.className}
-                    key={index}
-                  />
-                ))}
+              <div className="z-10 flex sm:flex-row flex-col gap-5">
+
+                <Link href={'/delivery/request/list'} className="z-10 button-type-1 w-[242px] h-12 rounded-lg text-2xl flex items-center justify-center">
+                  Відправити зараз
+                </Link>
+
+                <Link href={'/delivery/trip/list'} className="z-10 button-type-2 w-[242px] h-12 rounded-lg text-2xl flex items-center justify-center">
+                  Знайти попутника
+                </Link>
+
               </div>
             </div>
           </div>
@@ -494,19 +535,22 @@ class PageTemplate extends Component {
               </div>
             </div>
 
-            <div className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10">
+            <div className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10 mb-20">
+              <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl ">Вкажіть точки на карті</h4>
+              <DeliveryMap 
+                origin={this.state.from} 
+                destination={this.state.to} 
+                className="h-[600px] w-full"
+                onOriginSelect={this.handleOriginSelect}
+                onDestinationSelect={this.handleDestinationSelect}
+              />
+            </div>
+
+            <div id="map-container" className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10">
               <div className="grid md:grid-cols-2 gap-10">
                 <div className="flex flex-col gap-5">
                   <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">Вхідні дані</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-sm fg-secondary">Звідки</label>
-                      <input value={this.state.from} onChange={this.handleInput('from')} placeholder="Місто / індекс" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-sm fg-secondary">Куди</label>
-                      <input value={this.state.to} onChange={this.handleInput('to')} placeholder="Місто / індекс" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
-                    </div>
                     <div className="flex flex-col gap-2">
                       <label className="text-sm fg-secondary">Вага (кг)</label>
                       <input value={this.state.weight} onChange={this.handleInput('weight')} placeholder="Напр. 4.5" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />

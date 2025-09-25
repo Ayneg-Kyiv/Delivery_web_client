@@ -32,7 +32,7 @@ export default function RootLayout({
         <AuthProvider>
             <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
               <Navbar />
-              <main className="flex-1 flex flex-col min-h-[900px] sm:w-full md:w-full lg:w-full">
+              <main className="flex-1 mt-[2px] flex flex-col min-h-[900px] sm:w-full md:w-full lg:w-full">
                 {children}
               </main>
             </Suspense>

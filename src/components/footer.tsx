@@ -64,7 +64,7 @@ const Footer: React.FC = () => (
               <Link href="/terms">Умови користування</Link>
               <Link href="/cookies">Кукі</Link>
               <Link href="/policy">Політика</Link>
-              <Link href="/security">Безпека</Link>
+              <Link href="/policy#data-collected">Безпека</Link>
             </div>
           </div>
 

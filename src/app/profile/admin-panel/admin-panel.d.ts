@@ -28,7 +28,12 @@ interface AdminPanelState {
         applications: {
             id: string;
             vehicleId: string;
-            Vehicle: {
+
+            imagePath: string;
+            driverLicenseImagePath: string;
+            email: string;
+
+            vehicle: {
                 id: number;
                 ownerId: string;
                 brand?: string;
@@ -38,8 +43,9 @@ interface AdminPanelState {
                 color: string;
                 imagePath?: string;
                 imagePathBack?: string;
-            };}[];
-            
+            };
+        }[];
+
         currentPage: number;
         totalPages: number;
         batchSize: number;

@@ -16,7 +16,7 @@ export default function TermsPage(): React.JSX.Element {
     const { data: session } = useSession();
 
     return (
-        <main className="bg-[#130c1f] w-full flex justify-center text-white py-16 px-4 md:px-10">
+        <main className="bg-[#130c1f] w-full flex justify-center text-white py-16 px-8 md:px-10 lg:px-20">
             <div className="w-full max-w-5xl space-y-16">
                 {/* Hero */}
                 <header className="text-center space-y-6">
