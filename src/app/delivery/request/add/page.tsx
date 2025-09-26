@@ -126,16 +126,20 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		const payload = {
 			StartLocation: {
 				country: this.state.startLocation.country,
+				state: this.state.startLocation.state,
 				city: this.state.startLocation.city,
 				address: this.state.startLocation.address,
+				houseNumber: this.state.startLocation.houseNumber,
 				dateTime: startDateTime,
 				latitude: this.state.startLocation.latitude,
 				longitude: this.state.startLocation.longitude,
 			},
 			EndLocation: {
 				country: this.state.endLocation.country,
+				state: this.state.endLocation.state,
 				city: this.state.endLocation.city,
 				address: this.state.endLocation.address,
+				houseNumber: this.state.endLocation.houseNumber,
 				dateTime: endDateTime,
 				latitude: this.state.endLocation.latitude,
 				longitude: this.state.endLocation.longitude,
@@ -206,7 +210,7 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
                                 className="w-full h-[350px] mb-4"
                             />
                             <div className="text-sm text-gray-500">
-                                Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.
+                                Натисніть &quot;Вказати початок&quot; або &quot;Вказати кінець&quot;, потім виберіть точку на карті.
                             </div>
                         </div>
 						{/* Start Location */}

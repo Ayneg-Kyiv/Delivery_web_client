@@ -64,15 +64,15 @@ const MyTrips: React.FC = () => {
                     <div className="text-white text-center py-20">Немає поїздок</div>
                 ) : (
                     trips.map(trip => (
-                        <div key={trip.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
+                        <div key={trip.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
                             <Image
                                 src={trip.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
                                 alt={trip.fullName}
                                 width={80}
                                 height={80}
-                                className="self-start rounded-full object-cover"
+                                className="md:self-start rounded-full object-cover mb-4 md:mb-0"
                             />
-                            <div className="flex-1 flex flex-col px-6">
+                            <div className="flex-1 flex flex-col px-4 md:px-6">
                                 <div className="flex gap-2 items-center text-white text-lg font-bold">
                                     {trip.startLocation.city} - {trip.endLocation.city}
                                 </div>
@@ -84,12 +84,11 @@ const MyTrips: React.FC = () => {
                                         прибуття: {trip.endLocation.dateTime}
                                     </span>
                                 </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
+                                <div className="flex flex-col md:flex-row gap-2 items-start md:items-center text-white mt-2">
                                     <span>Водій: {trip.fullName}</span>
-                                    <span className="font-bold">{trip.driver.email}</span>
-                                    <span className="text-yellow-400">★ {trip.driver.rating.toFixed(1)}</span>
                                 </div>
-                                <div className="flex flex-col gap-2 mt-4">
+                                
+                                <div className="flex flex-col gap-2 mt-4 pt-10 md:pt-2">
                                     <div className="text-white font-bold">Замовлення:</div>
                                     {trip.deliveryOrders.length === 0 ? (
                                         <div className="text-white text-sm">Немає замовлень</div>
@@ -127,7 +126,7 @@ const MyTrips: React.FC = () => {
                                                     )}
                                                     {
                                                         order.isDelivered && (
-                                                            <Link href={`/delivery/review/order/${order.id}/?userId=${order.sender.id}`} className='w-full'>
+                                                            <Link href={`/delivery/review/order/${order.id}/?userId=${order.sender?.id}`} className='w-full'>
                                                                 <button className="bg-white text-[#7c3aed] px-4 py-2 rounded-lg font-bold">Залишити відгук</button>
                                                             </Link>
                                                         )
@@ -138,8 +137,8 @@ const MyTrips: React.FC = () => {
                                     )}
                                 </div>
                             </div>
-                            <div className="self-start flex flex-col items-end gap-2">
-                                <div className="bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
+                            <div className="w-full md:w-1/3 pt-10 md:pt-0 md:self-start flex flex-col md:items-end gap-2">
+                                <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
                                     Мінімальна вартість: {trip.deliverySlots.length > 0
                                         ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
                                         : trip.price}грн
@@ -149,7 +148,7 @@ const MyTrips: React.FC = () => {
                                     <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Деталі</button>
                                 </Link>
 
-                                <div className="flex gap-2 mt-2">
+                                <div className="w-full flex gap-2 mt-2">
                                     {!trip.isStarted  && (
                                         <button
                                             className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-bold"

@@ -49,15 +49,19 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                     <div className="text-white text-center py-20">Немає замовлень</div>
                 ) : (
                     orders.map(order => (
-                        <div key={order.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
-                            <Image
-                                src={order.driver?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + order.driver.imagePath : '/dummy.png'}
-                                alt={order.trip?.fullName || 'Водій'}
-                                width={80}
-                                height={80}
-                                className="self-start rounded-full object-cover"
-                            />
-                            <div className="flex-1 flex flex-col px-6">
+                        <div key={order.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
+                            
+                            <div className="flex flex-col items-center gap-4 mb-2">
+                                <Image
+                                    src={order.driver?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + order.driver.imagePath : '/dummy.png'}
+                                    alt={order.trip?.fullName || 'Водій'}
+                                    width={60}
+                                    height={60}
+                                    className="md:self-start rounded-full object-cover mb-4 md:mb-0"
+                                />
+                            </div>
+
+                            <div className="flex-1 flex flex-col px-4 md:px-6 mb-10 md:mb-0">
                                 <div className="flex gap-2 items-center text-white text-lg font-bold">
                                     {order.startLocation.city} - {order.endLocation.city}
                                 </div>
@@ -69,12 +73,10 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                         прибуття: {formatDateTime(order.endLocation.dateTime)}
                                     </span>
                                 </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
+                                <div className="flex flex-col md:flex-row gap-2 items-center text-white mt-2">
                                     <span>Водій: {order.driver?.name}</span>
-                                    <span className="font-bold">{order.driver?.email}</span>
-                                    <span className="text-yellow-400">★ {order.driver?.rating?.toFixed(1)}</span>
                                 </div>
-                                <div className="flex flex-col gap-2 mt-4">
+                                <div className="flex flex-col gap-2 mt-10">
                                     <div className="text-white font-bold">Статус замовлення:</div>
                                     <div className="text-white text-sm">
                                         {order.isDeclined
@@ -91,34 +93,35 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                         <div className="text-white text-xs mt-2">Коментар: {order.comment}</div>
                                     )}
                                 </div>
-                            <div className="flex gap-2 mt-2">
-                                {!order.isPickedUp && order.isAccepted && !order.isDeclined && (
-                                    <button
-                                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold"
-                                        onClick={async () => {
-                                            setLoading(true);
-                                            await ApiClient.put(`/trip/order/pickup/${order.id}`);
-                                            await fetchOrders(currentPage);
-                                        }}
-                                    >
-                                        Передана водієві
-                                    </button>
-                                )}
-                                {order.isPickedUp && !order.isDelivered && (
-                                    <button
-                                        className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold"
-                                        onClick={async () => {
-                                            setLoading(true);
-                                            await ApiClient.put(`/trip/order/deliver/${order.id}`);
-                                            await fetchOrders(currentPage);
-                                        }}
-                                    >
-                                        Доставлено одержувачу
-                                    </button>
-                                )}
+
+                                <div className="flex gap-2 mt-2">
+                                    {!order.isPickedUp && order.isAccepted && !order.isDeclined && (
+                                        <button
+                                            className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold"
+                                            onClick={async () => {
+                                                setLoading(true);
+                                                await ApiClient.put(`/trip/order/pickup/${order.id}`);
+                                                await fetchOrders(currentPage);
+                                            }}
+                                        >
+                                            Передана водієві
+                                        </button>
+                                    )}
+                                    {order.isPickedUp && !order.isDelivered && (
+                                        <button
+                                            className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold"
+                                            onClick={async () => {
+                                                setLoading(true);
+                                                await ApiClient.put(`/trip/order/deliver/${order.id}`);
+                                                await fetchOrders(currentPage);
+                                            }}
+                                        >
+                                            Доставлено одержувачу
+                                        </button>
+                                    )}
+                                </div>
                             </div>
-                            </div>
-                            <div className="self-start flex flex-col items-end gap-2">
+                            <div className="w-full md:w-1/3 md:self-start flex flex-col md:items-end gap-2">
                                 <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
                                     Вартість: {order.deliverySlot
                                         ? order.deliverySlot.approximatePrice

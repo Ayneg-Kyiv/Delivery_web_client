@@ -281,7 +281,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                     className="w-full h-[350px] mb-4"
                                 />
                                 <div className="text-sm text-gray-500">
-                                    Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.
+                                    Натисніть &quot;Вказати початок&quot; або &quot;Вказати кінець&quot;, потім виберіть точку на карті.
                                 </div>
                             </div>
                             

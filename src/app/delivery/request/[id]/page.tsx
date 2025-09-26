@@ -81,6 +81,7 @@ const DeliveryRequestDetailPage: React.FC = () => {
 				</div>
 			</div>
 			<div className="flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full">
+				
 				{/* Sender Info */}
 				<div className="flex flex-col p-6 rounded-lg w-full md:w-1/3 bg-[#ffffff] items-center">
 					<Image
@@ -112,16 +113,17 @@ const DeliveryRequestDetailPage: React.FC = () => {
 						)}
 					</div>
 				</div>
+
 				{/* Request Details */}
 				<div className="flex-1 flex flex-col gap-6">
                     <div className='w-full flex justify-stretch gap-6 flex-col md:flex-row bg-[#2d1857]'>
 						<div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
 							<div className="text-lg font-bold mb-2">Маршрут</div>
 							<div className="mb-2">
-								<span className="font-bold">Звідки:</span> {request.startLocation.address}, {request.startLocation.city}
+								<span className="font-bold">Звідки:</span> {request.startLocation.address} {request.startLocation.houseNumber}, {request.startLocation.state}, {request.startLocation.city}
 							</div>
 							<div className="mb-2">
-								<span className="font-bold">Куди:</span> {request.endLocation.address}, {request.endLocation.city}
+								<span className="font-bold">Куди:</span> {request.endLocation.address} {request.endLocation.houseNumber}, {request.endLocation.state}, {request.endLocation.city}
 							</div>
 							<div className="mb-2">
 								<span className="font-bold">Дата відправки:</span> {request.startLocation.dateTime}
@@ -158,7 +160,7 @@ const DeliveryRequestDetailPage: React.FC = () => {
                         {
                             session.data?.user?.roles.includes('Driver') 
                             && !request.isAccepted && !request.isPickedUp && !request.isDelivered 
-                            // && request.senderId !== session.data?.user?.id
+                            && request.senderId !== session.data?.user?.id
                             && (
                                 <Link href={`/delivery/request/${request.id}/offer`} className='w-full md:w-auto'>
                                     <button className="w-full bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold text-lg">

@@ -118,10 +118,10 @@ const TripDetailPage: React.FC = () => {
                         <div className=" rounded-xl p-6 shadow-lg text-white">
                             <div className="text-lg font-bold mb-2">Маршрут</div>
                             <div className="mb-2">
-                                <span className="font-bold">Звідки:</span> {trip.startLocation.address}, {trip.startLocation.city}
+                                <span className="font-bold">Звідки:</span> {trip.startLocation.address} {trip.startLocation.houseNumber}, {trip.startLocation.state}, {trip.startLocation.city}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Куди:</span> {trip.endLocation.address}, {trip.endLocation.city}
+                                <span className="font-bold">Куди:</span> {trip.endLocation.address} {trip.endLocation.houseNumber}, {trip.endLocation.state}, {trip.endLocation.city}
                             </div>
                             <div className="mb-2">
                                 <span className="font-bold">Дата відбуття:</span> {trip.startLocation.dateTime}

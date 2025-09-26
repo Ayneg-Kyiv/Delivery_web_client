@@ -238,7 +238,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
                             <div className="text-white text-center py-20">Немає доступних запитів</div>
                         ) : (
                             requests.map(request => (
-                                <div key={request.id} className="bg-[#2d1857] w-full rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
+                                <div key={request.id} className="bg-[#2d1857] w-full rounded-xl flex flex-col md:flex-row items-center mb-10 p-6 shadow-lg">
                                     <div className=" flex flex-col items-center justify-center mr-6 pb-10 md:pb-0">
                                         <Image
                                             src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}

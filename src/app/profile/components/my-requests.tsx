@@ -50,22 +50,25 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                 ) : (
                     requests.map(request => (
                         <div key={request.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
-                            <div className="self-start flex flex-col items-center justify-center mr-6">
+                            <div className=" flex flex-col items-center justify-center md:mr-6 mb-2">
                                 <Image
                                     src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
                                     alt={request.sender?.name || request.senderName}
                                     width={80}
                                     height={80}
-                                    className="rounded-full object-cover"
+                                    className="md:self-start rounded-full object-cover"
                                 />
-                                <span className="text-white text-xs mt-2">{request.sender?.name || request.senderName}</span>
-                                {request.sender?.rating && (
-                                    <span className="text-yellow-400">★ {request.sender.rating.toFixed(1)}</span>
-                                )}
+                                <span className="text-white text-xs mt-2">{request.sender?.name || request.senderName}</span>   
                             </div>
-                            <div className="flex-1 flex flex-col px-6">
-                                <div className="flex gap-2 items-center text-white text-lg font-bold">
-                                    {request.startLocation.city} {request.startLocation.address} - {request.endLocation.city} {request.endLocation.address}
+                            <div className="flex-1 flex flex-col ">
+                                <div className="flex flex-col md:flex-row gap-2 items-center text-white text-lg font-bold mb-2">
+                                    <span>
+                                        Відправка: {request.startLocation.city} {request.startLocation.address} {request.startLocation.houseNumber}
+                                    </span>
+                                    <span className='hidden md:block'> - </span>
+                                    <span>
+                                        Прибуття: {request.endLocation.city} {request.endLocation.address} {request.endLocation.houseNumber}
+                                    </span>
                                 </div>
                                 <div className="flex flex-col gap-4 text-white mt-2">
                                     <span>
@@ -74,11 +77,6 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                     <span>
                                         прибуття: {formatDateTime(request.endLocation.dateTime)}
                                     </span>
-                                </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
-                                    <span>Відправник: {request.senderName}</span>
-                                    <span className="font-bold">{request.senderPhoneNumber}</span>
-                                    {request.senderEmail && <span>{request.senderEmail}</span>}
                                 </div>
                                 <div className="flex gap-2 items-center text-white mt-2">
                                     <span>Вантаж: {request.objectName}</span>
@@ -94,7 +92,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                     <div className="text-white mt-2">Коментар: {request.comment}</div>
                                 )}
                                 {/* Status and action buttons */}
-                                <div className="flex items-center gap-4 mb-2">
+                                <div className="flex items-center gap-4 mt-4 mb-2">
                                     <span className="text-white font-bold">Статус: {request.isDelivered ? 'Доставлено' : request.isPickedUp ? 'Забрано' : 'Очікує'}</span>
                                     <button
                                         className="bg-blue-500 text-white px-3 py-1 rounded-lg font-bold disabled:bg-gray-600"
@@ -119,7 +117,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         Доставлено
                                     </button>
                                 </div>
-                                <div className="flex flex-col gap-2 mt-4">
+                                <div className="flex flex-col gap-2 mt-4 mb-4">
                                     <div className="text-white font-bold">Пропозиції водіїв:</div>
                                     {request.offers && request.offers.length ? (
                                         request.offers.map(offer => (
@@ -188,7 +186,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                     )}
                                 </div>
                             </div>
-                            <div className="self-start flex flex-col justify-end items-end gap-2">
+                            <div className="w-full md:w-1/3 self-start flex flex-col justify-end items-end gap-2">
                                 <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
                                     {request.estimatedPrice ? `${request.estimatedPrice} грн` : 'Ціна не вказана'}
                                 </div>
