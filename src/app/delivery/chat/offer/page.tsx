@@ -5,7 +5,6 @@ import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signal
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
-import { DeliveryOffer, User } from '@/app/profile/components/my-offers'; // Reuse models
 import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
 
@@ -17,7 +16,7 @@ const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {
     return res.data;
 };
 
-const fetchUser = async (id: string): Promise<User> => {
+const fetchUser = async (id: string): Promise<shortUserInfo> => {
     const res = await ApiClient.get<any>(`/account/short/${id}`);
     console.log('Fetched user:', res.data);
     return res.data;
@@ -28,7 +27,7 @@ const ChatPage: React.FC = () => {
     const session = useSession();
     const offerId = params.get('offerId') || '';
     const [offer, setOffer] = useState<DeliveryOffer | null>(null);
-    const [me, setMe] = useState<User | null>(null);
+    const [me, setMe] = useState<shortUserInfo | null>(null);
     const [role , setRole] = useState<'driver' | 'sender' | null>(null);
     const [messages, setMessages] = useState<MessageDto[]>([]);
     const [input, setInput] = useState('');
