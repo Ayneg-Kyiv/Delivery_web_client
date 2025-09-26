@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+    width: 0px; /* Customize width */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: theme('colors.gray.200'); /* Use Tailwind colors */
+    height: 2px;
+    border-radius: 0px 0px 20px 20px; /* Full border-radius */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.500'); /* Use Tailwind colors */
+    height: 4px;
+    border-radius: 9999px;
+    border: 2px solid theme('colors.gray.200'); /* Add a border */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    height: 4px;
+    background: theme('colors.purple.300'); /* Hover effect */
+  }
+}
+
 :root {
   --background: #ffffff;
 
@@ -283,6 +307,16 @@ input::placeholder {
   border: 2px solid #c5c2c2;
   border-radius: 8px;
   color: #fff;
+}
+
+.floating-input-black {
+  width: 100%;
+  padding: 18px 12px 6px 12px;
+  font-size: 1.2rem;
+  background: transparent;
+  border: 2px solid #c5c2c2;
+  border-radius: 8px;
+  color: #000;
 }
 
 .floating-label {

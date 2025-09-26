@@ -61,27 +61,46 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           </button>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 md:space-y-2 ">
           { session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
                 Профіль
               </Link>
-              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/" onClick={onClose}>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/delivery/request/list" onClick={onClose}>
                 Дошка замовлення
+              </Link>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/delivery/trip/list" onClick={onClose}>
+                Список поїздок
               </Link>
             </>
           )}
+
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/about" onClick={onClose}>
             Про нас
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/policy" onClick={onClose}>
             Політика
           </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/help" onClick={onClose}>
+            Центр допомоги
+          </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/news" onClick={onClose}>
+            Останні новини
+          </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/terms" onClick={onClose}>
+            Умови користування
+          </Link> 
+          
           { !session?.user && (
-            <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
-              Увійти
-            </Link>
+            <>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
+                Увійти
+              </Link>
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signup" onClick={onClose}>
+                Реєстрація
+              </Link>
+            </>
           )}
 
           { session?.user && (

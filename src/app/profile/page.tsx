@@ -11,14 +11,22 @@ import { HelpCircle, Settings, Star } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
 import Image from "next/image";
+import MyTrips from "./components/my-trips";
+import MyOrders from "./components/my-orders";
+import MyReviews from "./components/my-reviews";
+import MyRequests from "./components/my-requests";
+import MyOffers from "./components/my-offers";
+import { useSession } from "next-auth/react";
 
 export default function Profile(): React.JSX.Element {
   // State for user data
+  const [selectedTab, setSelectedTab] = useState("user");
   const [userData, setUserData] = useState<ApplicationUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const session = useSession();
 
 
   // Load user data on component mount with normalization and console logs
@@ -27,13 +35,20 @@ export default function Profile(): React.JSX.Element {
       setLoading(true);
       try {
         const response = await ProfileService.getUserProfile();
+        
         console.log('Profile API response:', response);
+        
         const success = (response as any)?.Success ?? (response as any)?.success;
         const payload = (response as any)?.Data ?? (response as any)?.data ?? {};
+        
         const raw = Array.isArray(payload) ? payload[0] : payload;
+        
         console.log('Profile payload:', payload);
+        
         if (success && raw) {
+          
           const normalized: ApplicationUser = {
+            id: raw?.id ?? raw?.Id ?? "",
             firstName: raw?.firstName ?? raw?.FirstName ?? "",
             middleName: raw?.middleName ?? raw?.MiddleName ?? "",
             lastName: raw?.lastName ?? raw?.LastName ?? "",
@@ -46,7 +61,9 @@ export default function Profile(): React.JSX.Element {
             imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
             rating: raw?.rating ?? raw?.Rating ?? 0,
           };
+
           console.log('Normalized profile data:', normalized);
+          
           setUserData(normalized);
         } else {
           console.warn('Profile load not successful:', response);
@@ -65,14 +82,18 @@ export default function Profile(): React.JSX.Element {
   // Get display name
   const getDisplayName = () => {
     if (!userData) return "Name Second name";
+    
     const parts = [userData.firstName, userData.middleName, userData.lastName].filter(Boolean);
+    
     return parts.length > 0 ? parts.join(' ') : "Не вказано";
   };
 
   const getInitials = () => {
     if (!userData) return "";
+    
     const first = userData.firstName?.[0] ?? "";
     const last = userData.lastName?.[0] ?? "";
+    
     return `${first}${last}`.toUpperCase() || "U";
   };
 
@@ -81,17 +102,22 @@ export default function Profile(): React.JSX.Element {
   // Build absolute URL for image if backend returns relative path
   const resolveImageSrc = (path?: string | null) => {
     if (!path) return undefined;
+
     const p = String(path);
+
+    // If already absolute or data/blob, return as-is
     if (/^(https?:)?\/\//i.test(p) || p.startsWith('data:') || p.startsWith('blob:')) return p;
-    const filesBase = (process.env.NEXT_PUBLIC_FILES_BASE_URL || '').replace(/\/+$/, '');
-    const apiBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+
+    // Use NEXT_PUBLIC_FILES_URL for consistency with your example
+    const filesUrl = (process.env.NEXT_PUBLIC_FILES_URL || '').replace(/\/+$/, '');
     const clean = p.replace(/^\/+/, '');
-    if (filesBase) return `${filesBase}/${clean}`;
-    return apiBase ? `${apiBase}/${clean}` : `/${clean}`;
+
+    return filesUrl ? `${filesUrl}/${clean}` : '/dummy.png';
   };
 
   const testImageLoad = (src: string) => new Promise<boolean>((resolve) => {
     const img = typeof window !== "undefined" ? new (window.Image as { new (): HTMLImageElement })() : {} as HTMLImageElement;
+    
     img.onload = () => resolve(true);
     img.onerror = () => resolve(false);
     img.src = src;
@@ -105,22 +131,31 @@ export default function Profile(): React.JSX.Element {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !userData?.email) return;
+    
     setUploading(true);
     // Show instant preview
+    
     try {
+      
       const localUrl = URL.createObjectURL(file);
+      
       setPreviewUrl(prev => {
         if (prev) URL.revokeObjectURL(prev);
         return localUrl;
       });
     } catch {}
+
     try {
+      
       const result = await ProfileService.updateProfileImage(userData.email, file);
       console.log('Update profile image result:', result);
+      
       // Try to update local avatar if API returns a path; otherwise refetch profile
       const newPath = (result?.data?.imagePath) || (result?.Data?.ImagePath) || (result?.imagePath) || null;
+      
       if (newPath) {
         const remote = resolveImageSrc(newPath);
+        
         if (remote && await testImageLoad(remote)) {
           setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
           setPreviewUrl(null);
@@ -128,6 +163,7 @@ export default function Profile(): React.JSX.Element {
           // Keep preview if remote not available yet (eventual consistency)
           setUserData(prev => prev ? { ...prev, imagePath: newPath } : prev);
         }
+
       } else {
         // fallback: reload profile
         try {
@@ -135,8 +171,10 @@ export default function Profile(): React.JSX.Element {
           const success = (refreshed as any)?.Success ?? (refreshed as any)?.success;
           const payload = (refreshed as any)?.Data ?? (refreshed as any)?.data ?? {};
           const raw = Array.isArray(payload) ? payload[0] : payload;
+          
           if (success && raw) {
             const normalized: ApplicationUser = {
+              id: raw?.id ?? raw?.Id ?? "",
               firstName: raw?.firstName ?? raw?.FirstName ?? "",
               middleName: raw?.middleName ?? raw?.MiddleName ?? "",
               lastName: raw?.lastName ?? raw?.LastName ?? "",
@@ -148,7 +186,9 @@ export default function Profile(): React.JSX.Element {
               imagePath: raw?.imagePath ?? raw?.ImagePath ?? "",
               rating: raw?.rating ?? raw?.Rating ?? 0,
             };
+
             const remote = resolveImageSrc(normalized.imagePath);
+            
             if (remote && await testImageLoad(remote)) {
               setUserData(normalized);
               setPreviewUrl(null);
@@ -170,7 +210,14 @@ export default function Profile(): React.JSX.Element {
   };
 
   // Navigation items
-  const navItems = ["Text", "Text", "Text", "Text"];
+  const navItems = [
+    { label: "Профіль", value: "user" },
+    { label: "Поїздки", value: "trips" },
+    { label: "Замовлення", value: "orders" },
+    { label: "Відгуки", value: "reviews" },
+    { label: "Запити ", value: "requests" },
+    { label: "Пропозиції", value: "offers" },
+  ];
 
   // Form fields with dynamic data (only existing/available fields)
   const formFields = [
@@ -198,21 +245,21 @@ export default function Profile(): React.JSX.Element {
   }
 
   return (
-    <main className="bg-[#130c1f] grid justify-items-center w-full">
-      <div className="bg-[#130c1f] w-full max-w-[1920px] relative pb-6">
-        {/* Top separator */}
-        <Separator className="w-full h-px mt-[95px]" />
+    <main className="flex bg-[#130c1f] justify-items-center w-full px-4 md:px-20 lg:px-40">
+      <div className="bg-[#130c1f] w-full pb-6">
 
         {/* Profile header card */}
-  <Card className="w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none">
-          <CardContent className="grid grid-cols-2 gap-[100px] p-[100px]">
+        <div className="max-w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
+          <div className="flex flex-col md:flex-row justify-between md:p-10 lg:p-[100px] px-10 md:px-0">
             {/* Profile avatar and name */}
-            <div className="flex flex-col items-center justify-center">
+            <div className=" flex flex-col items-center justify-center pt-10">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
                 {previewUrl || userData?.imagePath ? (
                   <Image
                     src={previewUrl || resolveImageSrc(userData?.imagePath) || ''}
                     alt="avatar"
+                    width={150}
+                    height={150}
                     className="w-full h-full object-cover"
                     onError={async (e) => {
                       // Avoid loops on preview
@@ -284,7 +331,7 @@ export default function Profile(): React.JSX.Element {
               </div>
 
               {/* Edit Profile Button */}
-              <div className="mt-8">
+              <div className="mt-8 mb-8 ">
                 <Button
                   className="w-full bg-[#7f51b3] text-white py-3 rounded-lg hover:bg-[#6a4399] transition-colors"
                   onClick={() => window.location.href = '/edit-profile'}
@@ -293,71 +340,112 @@ export default function Profile(): React.JSX.Element {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Navigation tabs */}
-        <Tabs defaultValue="tab1" className="w-[1080px] mx-auto">
-          <TabsList className="w-full h-[83px] bg-[#2c1b48] rounded-[8px_8px_0px_0px] p-2.5 justify-start gap-4">
+        <Tabs defaultValue="tab1" className=" max-w-[1080px] flex h-[78px] mx-auto">
+          <TabsList className="overflow-y-hidden overflow-x-scroll  flex flex-row justify-start items-start custom-scrollbar scroll-smooth w-full h-[83px] bg-[#2c1b48] rounded-[0px_0px_8px_8px] p-2.5 pt-0 justify-start gap-4">
             <Button className="w-[60px] h-[60px] bg-[#7f51b3] rounded-lg p-0 flex items-center justify-center">
               <Settings className="w-[34px] h-[34px]" />
             </Button>
 
             {navItems.map((item, index) => (
-              <TabsTrigger
-                key={`tab-${index}`}
-                value={`tab${index + 1}`}
-                className="w-[210px] h-[60px] font-['Bahnschrift-SemiBold',Helvetica] font-semibold text-white text-2xl bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-white"
-              >
-                {item}
-              </TabsTrigger>
+              <div onClick={() => setSelectedTab(item.value)} key={index}>
+                <TabsTrigger
+                  key={item.label}
+                  value={item.value}
+                  className="w-[234px] h-[60px] font-['Bahnschrift-SemiBold',Helvetica] button-type-3 font-semibold text-white text-2xl data-[state=active]:bg-transparent data-[state=active]:text-white"
+                  >
+                  {item.label}
+                </TabsTrigger>
+              </div>
             ))}
           </TabsList>
         </Tabs>
 
         {/* Profile form section */}
-  <Card className="w-[1080px] mx-auto bg-[#0f0e10] border-0 rounded-none">
-          <CardContent className="pt-[39px] px-[68px]">
-            <Separator className="w-[965px] h-px mb-[20px]" />
+        {
+          selectedTab === "user" && (
+            <Card className="max-w-[1080px] mt-[20px] mb-[50px] mx-auto bg-[#0f0e10] border-0 rounded-none">
+              <CardContent className="pt-[39px] px-[68px]">
+                <Separator className="w-[965px] h-px mb-[20px]" />
 
-            <div className="w-[682px] mx-auto mt-[20px]">
-              {formFields.map((field, index) => (
-                <div key={field.key} className="mb-[56px]">
-                  <div className="flex justify-between">
-                    <label className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
-                      {field.label}
-                    </label>
-                  </div>
-
-                  <div className="relative mt-1">
-                    {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
-                      <Textarea
-                        className="w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
-                        value={(field.value as string) || ''}
-                        readOnly
-                      />
-                    ) : (
-                      <Input
-                        className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
-                        value={(field.value as string) || ''}
-                        type="text"
-                        readOnly
-                      />
-                    )}
-
-                    {field.hasHelp && (
-                      <div className="absolute right-[-20px] top-[10px]">
-                        <div className="w-5 h-5 rounded-[10px] bg-[#d9d9d9] flex items-center justify-center">
-                          <HelpCircle className="w-4 h-4 text-[#4d4d4d]" />
-                        </div>
+                <div className="w-[682px] mx-auto mt-[20px]">
+                  {formFields.map((field, index) => (
+                    <div key={field.key} className="mb-[56px]">
+                      <div className="flex justify-between">
+                        <label className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
+                          {field.label}
+                        </label>
                       </div>
-                    )}
-                  </div>
+
+                      <div className="relative mt-1">
+                        {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
+                          <Textarea
+                            className="w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            value={(field.value as string) || ''}
+                            readOnly
+                          />
+                        ) : (
+                          <Input
+                            className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            value={(field.value as string) || ''}
+                            type="text"
+                            readOnly
+                          />
+                        )}
+
+                        {field.hasHelp && (
+                          <div className="absolute right-[-20px] top-[10px]">
+                            <div className="w-5 h-5 rounded-[10px] bg-[#d9d9d9] flex items-center justify-center">
+                              <HelpCircle className="w-4 h-4 text-[#4d4d4d]" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )
+        }
+
+        {
+          selectedTab === "trips" && (
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyTrips />
+          </div>)
+        }
+
+        {
+          selectedTab === "orders" && (
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyOrders id={session?.data?.user?.id ?? ""} />
+          </div>)
+        }
+
+        {
+          selectedTab === "reviews" && (
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyReviews id={session?.data?.user?.id ?? ""} />
+          </div>)
+        }
+
+        {
+          selectedTab === "requests" && (
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyRequests id={session?.data?.user?.id ?? ""} />
+          </div>)
+        }
+
+        {
+          selectedTab === "offers" && (
+          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+            <MyOffers id={session?.data?.user?.id ?? ""} />
+          </div>)
+        }
       </div>
     </main>
   );

@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Button from './ui/button';
 import dynamic from 'next/dynamic';
-import { isMobile } from 'react-device-detect';
+import { se } from 'date-fns/locale';
 
 const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
 
@@ -23,6 +23,7 @@ export default function Navbar() {
   const handleMenuToggle = () => setMenuOpen((open) => !open);
 
   useEffect(() => {
+    console.log(session);
     setMenuOpen(false);
   }, [pathname]);
 
@@ -94,7 +95,7 @@ export default function Navbar() {
           </div>
 
       </div>
-      <div className='h-[2px] navbar-underline' />
+      <div className='h-[2px] navbar-underline z-10' />
     </nav>
   );
 
@@ -160,7 +161,7 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      <div className='h-[2px] navbar-underline' />
+      <div className='h-[2px] navbar-underline z-10' />
     </nav>
   );
 
@@ -187,13 +188,12 @@ export default function Navbar() {
   );
 
   return (
-    <>
-      { windowWidth <= 512
-        ? phoneNavigation
-        : pathname === '/signin' || pathname === '/signup' && !isMobile
-          ? authNavigation
-          : standardNavigation}
+    <div>
+      <div className='hidden md:block'>{
+        (pathname === '/signin' || pathname === '/signup') ? authNavigation : standardNavigation}</div>
+      <div className='md:hidden'>{phoneNavigation}</div>
+
       {menuOpen && <BurgerMenu onClose={() => setMenuOpen(false)} />}
-    </>
+    </div>
   )
 }

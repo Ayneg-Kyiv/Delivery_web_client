@@ -6,14 +6,14 @@ import Link from 'next/link';
 class CookiesPage extends Component {
     render() {
         return (
-            <div className='flex-1 flex-col w-full flex py-20 sm:px-8 md:px-20 lg:px-40'>
+            <div className='flex-1 flex-col w-full flex py-20 px-8 md:px-20 lg:px-40'>
                 <div className='w-full flex flex-row'>
                     <Link href='/' className=' hover:underline pr-4'>Головна</Link>
                     <p> {' > '} </p>
                     <Link href='/news' className='pl-4 hover:underline'>Кукі</Link>
                 </div>
-                <div className='flex-1 w-full flex flex-col pt-6'>
-                    <h1 className='text-5xl font-bold pt-10'>Політика використання файлів cookie</h1>
+                <div className='flex-1 w-full flex flex-col pt-6]'>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Політика використання файлів cookie</h1>
                     
                     <p className='text-xl pt-10'>
                         Це сторінка нашої політики використання файлів cookie. Тут ви можете знайти інформацію про те, як ми використовуємо файли cookie на нашому веб-сайті.
@@ -33,11 +33,11 @@ class CookiesPage extends Component {
                     </p>
                 </div>
                 <div className='flex-1 w-full flex flex-col pt-6'>
-                    <h1 className='text-5xl font-bold pt-10'>Технології відстеження які ми використовуємо</h1>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Технології відстеження які ми використовуємо</h1>
                     <p className='text-2xl pt-10'>
                         Ми використовуємо такі Технології відстеження для цілей, описаних у цьому Повідомленні:
                     </p>
-                    <ul className='pl-10 pt-4 text-xl list-disc space-y-2'>
+                    <ul className='pl-10 pt-4 text-xl list-disc space-y-4 md:space-y-2'>
                         <li>
                             Файли cookie — це невеликі текстові файли, які розміщуються та зберігаються 
                             у вашому браузері під час відвідування вебсайту або на вашому пристрої під час
@@ -65,8 +65,8 @@ class CookiesPage extends Component {
                         </li>
                     </ul>
                 </div>
-                <div className='flex-1 w-full flex flex-col pt-6'>
-                    <h1 className='text-5xl font-bold pt-10'>Як ми використовуємо Технології відстеження</h1>
+                <div className='flex-1 w-full flex flex-col pt-6 '>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Як ми використовуємо Технології відстеження</h1>
                     <p className='text-2xl pt-10'>
                         У наступній таблиці наведено категорії Технологій відстеження
                         (включаючи файли cookie, піксельні теги, SDK та файли локального сховища),
@@ -74,7 +74,47 @@ class CookiesPage extends Component {
                         а також інформацію про те, чи розміщуються вони компанією Cargix чи сторонніми партнерами.
                     </p>
 
-                    <div>
+                    <div className='flex-1 w-full flex flex-col py-10 gap-y-8 md:hidden'>
+                        <div className='flex flex-col gap-y-8 '>
+                            <div className='text-[24px]'>
+                                Категорія: Необхідні файли cookie
+                            </div>
+                            <div className='text-[20px]'>
+                                Ціль: Ці файли cookie є необхідними для роботи наших Онлайн-ресурсів і не можуть бути вимкнені в наших системах. Вони зазвичай встановлюються лише у відповідь на дії, які ви здійснюєте і які становлять запит на послугу, наприклад, встановлення ваших уподобань конфіденційності, входу або заповнення форм. Ви можете налаштувати свій браузер на блокування або сповіщення про ці файли cookie, але деякі частини Онлайн-ресурсів не працюватимуть.
+                            </div>
+                            <div className='text-[20px]'>
+                                Власник: Cargix
+                            </div>
+
+                            <div className='w-full h-[1px] bg-lighter'></div>
+                        </div>
+                        <div className='flex flex-col gap-y-8 '>
+                            <div className='text-[24px]'>
+                                Категорія: Аналітичні/продуктивні файли cookie
+                            </div>
+                            <div className='text-[20px]'>
+                                Ціль: Ці файли cookie дозволяють нам рахувати відвідувачів і джерела трафіку, щоб ми могли вимірювати та покращувати продуктивність наших Онлайн-ресурсів. Вони допомагають нам дізнатися, які сторінки є найпопулярнішими, а також бачити, як відвідувачі пересуваються по Онлайн-ресурсах. Вся інформація, яку збирають ці файли cookie, є агрегованою і тому анонімною. Якщо ви не дозволите ці файли cookie, ми не знатимемо, коли ви відвідували наші Онлайн-ресурси, і не зможемо відстежувати їхню продуктивність.
+                            </div>
+                            <div className='text-[20px]'>
+                                Власник: Cargix, Google Analytics
+                            </div>
+
+                            <div className='w-full h-[1px] bg-lighter'></div>
+                        </div>
+                        <div className='flex flex-col gap-y-8 '>
+                            <div className='text-[24px]'>
+                                Категорія: Файли cookie для реклами
+                            </div>
+                            <div className='text-[20px]'>
+                                Ціль: Ці файли cookie можуть бути встановлені через наші Онлайн-ресурси нашими рекламними партнерами. Вони використовуються для створення профілів ваших інтересів та показу вам релевантної реклами на інших сайтах. Якщо ви не дозволите ці файли cookie, ви отримаєте менш цільову рекламу.
+                            </div>
+                            <div className='text-[20px]'>
+                                Власник: Сторонні партнери
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='hidden md:block'>
                         <table className='w-full text-left mt-10'>
                             <thead>
                                 <tr>

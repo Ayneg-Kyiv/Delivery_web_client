@@ -80,7 +80,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
     renderContent = () => {
         return (
             <ContentBox>
-                <form className='flex-1 p-20 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+                <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
 
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>

@@ -1,4 +1,4 @@
-export type TResponse = {
+interface TResponse {
     statusCode: number;
     message?: string | null;
     success: boolean;
