@@ -13,8 +13,8 @@ const ContentBox: React.FC<ContentBoxProps> = ({
 }) => {
     return (
         <div className='flex-1 flex flex-col items-center justify-center p-[30px]'>
-            <div className={`flex-1 w-[820px] bg-[#2c1b48] rounded-[30px] flex flex-col`}>
-                <div className={`flex-1 w-[760px] m-[30px] bg-[#0f0e10] rounded-[20px] flex flex-col justify-center`}>
+            <div className={`flex-1 md:w-[700px] lg:w-[820px] max-w-[820px] bg-[#2c1b48] p-[8px] md:p-[30px] md:rounded-[30px] flex flex-col`}>
+                <div className={`flex-1 w-full max-w-[760px] bg-[#0f0e10] rounded-[20px] px-8 py-20 flex flex-col justify-center`}>
                     {children}
                 </div>
             </div>

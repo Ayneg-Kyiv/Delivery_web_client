@@ -31,7 +31,7 @@ export default function EditProfile(): React.JSX.Element {
     const loadUserData = async () => {
       setLoading(true);
       try {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/Account`;
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
         console.log('Шлях запиту до API:', url);
         const token = session?.accessToken;
         const response = await fetch(url, {

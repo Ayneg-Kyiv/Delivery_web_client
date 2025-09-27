@@ -81,10 +81,12 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
         e.preventDefault();
         try {
             const formData = new FormData();
+
             formData.append('id', this.state.article.id);
             formData.append('title', this.state.article.title);
             formData.append('content', this.state.article.content);
             formData.append('author', this.state.article.author);
+            
             if (this.state.article.image) {
                 formData.append('image', this.state.article.image);
             }

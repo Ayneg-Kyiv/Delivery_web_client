@@ -131,16 +131,28 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
 
             const driverAppsResponse = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=1&pageSize=10`);
 
-            this.setState({
-                driverApplicationPanel: {
-                    ...this.state.driverApplicationPanel,
-                    totalApplications: driverAppsResponse.data.pagination.totalCount,
-                    applications: driverAppsResponse.data.data,
-                    currentPage: driverAppsResponse.data.pagination.pageNumber,
-                    totalPages: driverAppsResponse.data.pagination.totalPages,
-                    batchSize: driverAppsResponse.data.pagination.pageSize
-                }
-            });
+            console.log(driverAppsResponse);
+
+            const totalApplications = driverAppsResponse.data.pagination.totalCount;
+            const applications = driverAppsResponse.data.data;
+            const currentPage = driverAppsResponse.data.pagination.pageNumber;
+            const totalPages = driverAppsResponse.data.pagination.totalPages;
+            const batchSize = driverAppsResponse.data.pagination.pageSize;
+
+            const driverPanel = this.state.driverApplicationPanel;
+
+            driverPanel.totalApplications = totalApplications;
+            driverPanel.applications = applications;
+            driverPanel.currentPage = currentPage;
+            driverPanel.totalPages = totalPages;
+            driverPanel.batchSize = batchSize;
+            if( driverAppsResponse.success ) {
+                this.setState({
+                    driverApplicationPanel: { ...driverPanel }
+                });
+            }
+
+            console.log(this.state.driverApplicationPanel);
 
     }
 
@@ -205,6 +217,220 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                 </div>
             </div>
         );
+    }
+
+    driverApplicationsPanelRender () {
+        return (
+            <div className="flex-1 bg-lighter flex py-10 rounded-lg">
+                <div className="flex-1 flex-col w-full flex py-10 px-8">
+                    <h2 className="text-3xl font-bold mb-8">Заявки водіїв</h2>
+                    {this.state.driverApplicationPanel.applications.length === 0 ? (
+                        <div className="text-xl">Немає заявок</div>
+                    ) : (
+                        this.state.driverApplicationPanel.applications.map((app, idx: number) => (
+                            <div key={app.id || idx} className="mt-10 flex flex-col bg-darker rounded-xl p-8">
+                                <div className="flex-1 flex flex-col md:flex-row ">
+                                    <div className="flex-1 flex flex-row  flex flex-col items-start justify-center">
+                                        <div className="flex flex-col justify-start gap-4">
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-lg">Адреса електронної пошти:</p>
+                                                <p className="text-lg">{app.email}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-lg">Тип транспортного засобу:</p>
+                                                <p className="text-lg">{app.vehicle?.type}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-lg">Бренд:</p>
+                                                <p className="text-lg">{app.vehicle?.brand}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-lg">Модель:</p>
+                                                <p className="text-lg">{app.vehicle?.model}</p>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-lg">Номерний знак:</p>
+                                                <p className="text-lg">{app.vehicle?.numberPlate}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col pl-8">
+                                            <div className="flex flex-row gap-2">
+                                                <div className="flex-1 flex flex-col items-center gap-2 mt-2">
+                                                    <span className="text-lg">Фото водійських прав:</span>
+                                                    {app.driverLicenseImagePath ? (
+                                                        <Image
+                                                            src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.driverLicenseImagePath}
+                                                            alt="Driver License"
+                                                            width={120}
+                                                            height={80}
+                                                            className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-lg">N/A</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 flex flex-col items-center gap-2 mt-2">
+                                                    <span className="text-lg">Фото профілю водія:</span>
+                                                    {app.imagePath   ? (
+                                                        <Image
+                                                            src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.imagePath}
+                                                            alt="Driver Profile"
+                                                            width={120}
+                                                            height={80}
+                                                            className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-lg">N/A</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-row gap-2 mt-6">
+                                                <div className="flex-1 flex flex-col items-center gap-2 mt-2">
+                                                    <span className="text-lg">Фото авто (спереду):</span>
+                                                    {app.vehicle?.imagePath ? (
+                                                        <Image
+                                                            src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.vehicle.imagePath}
+                                                            alt="Front of Vehicle"
+                                                            width={120}
+                                                            height={80}
+                                                            className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-200 transition-transform"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-lg">N/A</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 flex flex-col items-center gap-2 mt-2">
+                                                    <span className="text-lg">Фото авто (ззаду):</span>
+                                                    {app.vehicle?.imagePathBack ? (
+                                                        <Image
+                                                            src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.vehicle.imagePathBack}
+                                                            alt="Back of Vehicle"
+                                                            width={120}
+                                                            height={80}
+                                                            className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-lg">N/A</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4 mt-6 w-full">
+                                    <button
+                                        className="flex-1 px-4 py-2 button-type-2 rounded-lg bg-green-600 text-white"
+                                        onClick={async () => {
+                                            await ApiClient.post(`/admin/approve-driver-application/${app.id}`);
+                                            this.setState({
+                                                driverApplicationPanel: {
+                                                    ...this.state.driverApplicationPanel,
+                                                    applications: this.state.driverApplicationPanel.applications.filter((a) => a.id !== app.id)
+                                                }
+                                            });
+                                        }}
+                                    >
+                                        Підтвердити
+                                    </button>
+                                    <button
+                                        className="flex-1 px-4 py-2 button-type-2 rounded-lg bg-red-600 text-white"
+                                        onClick={async () => {
+                                            await ApiClient.post(`/admin/reject-driver-application/${app.id}`);
+                                            this.setState({
+                                                driverApplicationPanel: {
+                                                    ...this.state.driverApplicationPanel,
+                                                    applications: this.state.driverApplicationPanel.applications.filter((a) => a.id !== app.id)
+                                                }
+                                            });
+                                        }}
+                                    >
+                                    Відхилити
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                    {this.state.driverApplicationPanel.totalPages > 1 && (
+                        <div className="flex justify-center items-center mt-10 gap-2 text-lg">
+                            <button
+                                className="px-4 py-2 bg-lighter rounded-lg disabled:bg-darker disabled:cursor-not-allowed"
+                                onClick={async () => {
+                                    const response = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=1&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                    this.setState({
+                                        driverApplicationPanel: {
+                                            ...this.state.driverApplicationPanel,
+                                            applications: response.data.data,
+                                            currentPage: 1
+                                        }
+                                    });
+                                }}
+                                disabled={this.state.driverApplicationPanel.currentPage === 1}
+                            >
+                                1
+                            </button>
+                            {this.state.driverApplicationPanel.currentPage !== 1 && this.state.driverApplicationPanel.currentPage !== 2 && (
+                                <button
+                                    className="px-4 py-2 bg-default rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    onClick={async () => {
+                                        const prevPage = Math.max(1, this.state.driverApplicationPanel.currentPage - 1);
+                                        const response = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=${prevPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                        this.setState({
+                                            driverApplicationPanel: {
+                                                ...this.state.driverApplicationPanel,
+                                                applications: response.data.data,
+                                                currentPage: prevPage
+                                            }
+                                        });
+                                    }}
+                                    disabled={this.state.driverApplicationPanel.currentPage === 1}
+                                >
+                                    {this.state.driverApplicationPanel.currentPage - 1}
+                                </button>
+                            )}
+                            <span className="px-6 py-2 bg-default rounded-lg">
+                                {this.state.driverApplicationPanel.currentPage}
+                            </span>
+                            {this.state.driverApplicationPanel.currentPage !== this.state.driverApplicationPanel.totalPages &&
+                                this.state.driverApplicationPanel.currentPage !== this.state.driverApplicationPanel.totalPages - 1 && (
+                                    <button
+                                        className="px-4 py-2 bg-default rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        onClick={async () => {
+                                            const nextPage = Math.min(this.state.driverApplicationPanel.totalPages, this.state.driverApplicationPanel.currentPage + 1);
+                                            const response = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=${nextPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                            this.setState({
+                                                driverApplicationPanel: {
+                                                    ...this.state.driverApplicationPanel,
+                                                    applications: response.data.data,
+                                                    currentPage: nextPage
+                                                }
+                                            });
+                                        }}
+                                        disabled={this.state.driverApplicationPanel.currentPage === this.state.driverApplicationPanel.totalPages}
+                                    >
+                                        {this.state.driverApplicationPanel.currentPage + 1}
+                                    </button>
+                                )}
+                            <button
+                                className="px-4 py-2 bg-default rounded-lg disabled:bg-darker disabled:cursor-not-allowed"
+                                onClick={async () => {
+                                    const response = await ApiClient.get<any>(`/admin/driver-applications/?pageNumber=${this.state.driverApplicationPanel.totalPages}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                    this.setState({
+                                        driverApplicationPanel: {
+                                            ...this.state.driverApplicationPanel,
+                                            applications: response.data.data,
+                                            currentPage: this.state.driverApplicationPanel.totalPages
+                                        }
+                                    });
+                                }}
+                                disabled={this.state.driverApplicationPanel.currentPage === this.state.driverApplicationPanel.totalPages}
+                            >
+                                {this.state.driverApplicationPanel.totalPages}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        )
     }
 
     articlesPanelRender () {
@@ -394,6 +620,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                     </div>
                     { this.state.mode === 'dashboard' && this.dashboardPanelRender() }
                     { this.state.mode === 'articles' && this.articlesPanelRender() }
+                    { this.state.mode === 'driver-applications' && this.driverApplicationsPanelRender() }
                 </div>
         );
     }

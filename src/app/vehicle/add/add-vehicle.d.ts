@@ -1,13 +1,11 @@
 
+
+interface AddVehicleProps {
+    session: any;
+}
+
 interface AddVehicleState {
     stage: number;
-
-    driverPhonePresent: boolean;
-    driverLicensePresent: boolean;
-
-    driverPhone: string;
-    driverLicenseImage?: File | null;
-
     vehicleTypes: string[];
     selectedType: string;
     brand: string;
@@ -16,11 +14,9 @@ interface AddVehicleState {
     licensePlate: string;
     imageFront: File | null;
     imageBack: File | null;
+    showFrontModal: boolean;
+    showBackModal: boolean;
     isSubmitting: boolean;
     error: string;
     success: boolean;
-}
-
-interface AddVehicleProps {
-    session: any;
 }

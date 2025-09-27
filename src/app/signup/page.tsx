@@ -157,7 +157,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         return (
             <ContentBox>
                 
-                <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage1}>
+                <form className='flex-1 flex flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage1}>
                        
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
