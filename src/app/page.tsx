@@ -1,6 +1,8 @@
 'use client';
 
 import Button from "@/components/ui/button";
+import dynamic from "next/dynamic";
+const SupportChatWidget = dynamic(() => import("../components/support-chat-widget"), { ssr: false });
 import Card from "@/components/ui/card";
 import CardContent from "@/components/ui/card-content";
 import React, { Component, ChangeEvent } from "react";
@@ -664,7 +666,8 @@ class PageTemplate extends Component {
           </div> */}
         </section>
 
-      </main>
+  <SupportChatWidget />
+  </main>
     );
   }
 }

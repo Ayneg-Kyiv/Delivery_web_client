@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
 import https from 'https';
+import { TResponse } from './response';
 
 function getCsrfTokenSync(): string | null {
   if (typeof window !== "undefined") {
@@ -19,15 +20,13 @@ export const ApiClient = {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
       ...Object.fromEntries(
         Object.entries(config.headers ?? {}).filter(
           ([, value]) => typeof value === 'string' && value !== null
         ) as [string, string][]
       ),
     };
-    
+
     if (session?.accessToken) headers['Authorization'] = `Bearer ${session.accessToken}`;
 
     // Add CSRF token for mutating requests

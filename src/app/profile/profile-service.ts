@@ -4,14 +4,13 @@ import { ChangeUserDataDTO, ApiResponse } from './profile.d';
 // Import the global type
 declare global {
   type ApplicationUser = {
-    id: string;
     firstName?: string;
     middleName?: string;
     lastName?: string;
     email: string;
     dateOfBirth?: string;
     aboutMe?: string;
-    phoneNumber?: string;
+  phoneNumber?: string;
     address?: string;
     imagePath?: string;
     rating: number;
