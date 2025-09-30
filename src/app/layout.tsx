@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import I18nProvider from "@/i18n/I18nProvider";
 import "./globals.css";
 import { AuthProvider } from "./provider";
 import Navbar from "@/components/navbar";
@@ -30,15 +31,17 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-        <AuthProvider>
-          <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
-            <Navbar />
-                  <main className="flex-1 mt-[2px] flex flex-col min-h-[900px] sm:w-full md:w-full lg:w-full">
-              {children}
-                    <SupportChatClient />
-            </main>
-          </Suspense>
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+              <Navbar />
+                    <main className="flex-1 mt-[2px] flex flex-col min-h-[900px] sm:w-full md:w-full lg:w-full">
+                {children}
+                      <SupportChatClient />
+              </main>
+            </Suspense>
+          </AuthProvider>
+        </I18nProvider>
         <Footer />
       </body>
     </html>

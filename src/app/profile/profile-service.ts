@@ -1,21 +1,5 @@
 import { ApiClient } from '../api-client';
-import { ChangeUserDataDTO, ApiResponse } from './profile.d';
-
-// Import the global type
-declare global {
-  type ApplicationUser = {
-    firstName?: string;
-    middleName?: string;
-    lastName?: string;
-    email: string;
-    dateOfBirth?: string;
-    aboutMe?: string;
-  phoneNumber?: string;
-    address?: string;
-    imagePath?: string;
-    rating: number;
-  };
-}
+import { ChangeUserDataDTO, ApiResponse, ApplicationUser } from './profile.d';
 
 export class ProfileService {
   static async changeUserData(userData: ChangeUserDataDTO): Promise<ApiResponse> {

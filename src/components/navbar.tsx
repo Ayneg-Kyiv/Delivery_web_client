@@ -7,18 +7,19 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Button from './ui/button';
 import dynamic from 'next/dynamic';
-import { se } from 'date-fns/locale';
+import LanguageSwitcher from './language-switcher';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { messages: t } = useI18n();
 
   const [windowWidth, setWindowWidth] = React.useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("EN");
 
   const handleMenuToggle = () => setMenuOpen((open) => !open);
 
@@ -33,12 +34,6 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
-  const handleLanguageChange = (langCode: string) => {
-    setSelectedLanguage(langCode);
-    console.log(`Language changed to: ${langCode}`);
-  };
-
   const authNavigation = (
     <nav className="h-[78px] w-screen w-full ">
       <div className="h-full mx-auto flex items-center justify-between">
@@ -50,30 +45,10 @@ export default function Navbar() {
         </div>
 
         <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <div className="flex items-center gap-2">
-            <Button className="flex items-center" onClick={() => handleLanguageChange("EN")} text=''>
-              <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
-                <Image width={14} height={14} alt="English flag" src="/worldicon.png" />
-              </div>
-              <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-[#c5c2c2] text-base">
-                EN
-              </span>
-            </Button>
-          
-            <div className="h-7 bg-white/20 w-[2px] rounded-sm" />
-
-            <Button className="flex items-center" onClick={() => handleLanguageChange("UA")} text=''>
-              <div className="w-[30px] h-[22px] icon-light-yellow rounded-md overflow-hidden">
-                <div className="h-[11px] icon-light-blue rounded-[6px_6px_0px_0px]" />
-              </div>
-              <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-base">
-                UA
-              </span>
-            </Button>
-          </div>
+          <LanguageSwitcher />
 
           <div className='flex items-center'>
-            <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+            <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>
             { 
               session?.user && (
                 <>
@@ -110,30 +85,10 @@ export default function Navbar() {
         </div>
 
         <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <div className="flex items-center ">
-            <Button className="flex items-center" onClick={() => handleLanguageChange("EN")} text=''>
-              <div className="w-[30px] h-[22px] icon-light-blue rounded-md flex items-center justify-center">
-                <Image width={14} height={14} alt="English flag" src="/worldicon.png" />
-              </div>
-              <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-[#c5c2c2] text-base">
-                EN
-              </span>
-            </Button>
-          
-            <div className="h-7 bg-white/20 w-[2px] rounded-sm" />
-
-            <Button className="flex items-center" onClick={() => handleLanguageChange("UA")} text=''>
-              <div className="w-[30px] h-[22px] icon-light-yellow rounded-md overflow-hidden">
-                <div className="h-[11px] icon-light-blue rounded-[6px_6px_0px_0px]" />
-              </div>
-              <span className="ml-2 [font-family:'Bahnschrift-Regular',Helvetica] text-base">
-                UA
-              </span>
-            </Button>
-          </div>
+          <LanguageSwitcher />
 
           <div className='flex items-center '>
-            <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Допомога</Link>
+            <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>
 
             { 
               session?.user && (
@@ -147,8 +102,8 @@ export default function Navbar() {
             {
               !session?.user && (
                 <>
-                  <Link href='/signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>Реєстрація</Link>
-                  <Link href='/signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>Вхід</Link>
+                  <Link href='/signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.register}</Link>
+                  <Link href='/signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>{t.nav.login}</Link>
                 </>
             )}
           </div>
@@ -176,6 +131,7 @@ export default function Navbar() {
         </div>
 
         <div className=' h-full flex items-center justify-between pr-[20px]'>
+          <LanguageSwitcher />
           <button
             className="ml-[10px] text-3xl focus:outline-none"
             onClick={handleMenuToggle}

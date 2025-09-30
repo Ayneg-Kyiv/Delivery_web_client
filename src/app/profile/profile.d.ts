@@ -1,5 +1,5 @@
-type ApplicationUser = {
-  id: string;
+export type ApplicationUser = {
+  id?: string;
   firstName?: string;
   middleName?: string;
   lastName?: string;
