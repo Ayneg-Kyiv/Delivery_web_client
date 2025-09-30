@@ -807,6 +807,18 @@ const messages = {
     saveButton: "Save",
     savingButton: "Saving..."
   }
+  ,
+  supportChat: {
+    widgetTitle: "Support chat",
+    greetingBot: "Welcome! I'm your AI assistant.",
+    noReply: "No reply",
+    errorPrefix: "Error: ",
+    sendError: "Failed to send message",
+    loading: "Generating a response...",
+    inputPlaceholder: "Your question...",
+    send: "Send",
+    openAria: "Open support chat"
+  }
 };
 
 export default messages;

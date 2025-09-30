@@ -697,6 +697,18 @@ const messages = {
     saveButton: "Зберегти",
     savingButton: "Збереження..."
   }
+  ,
+  supportChat: {
+    widgetTitle: "Чат підтримки",
+    greetingBot: "Вітаємо! Я Ваш ШІ помічник.",
+    noReply: "Немає відповіді",
+    errorPrefix: "Помилка: ",
+    sendError: "Не вдалося відправити повідомлення",
+    loading: "Генеруємо відповідь...",
+    inputPlaceholder: "Ваше питання...",
+    send: "Надіслати",
+    openAria: "Відкрити чат підтримки"
+  }
 };
 
 export default messages;
