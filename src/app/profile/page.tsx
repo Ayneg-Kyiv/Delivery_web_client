@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HelpCircle, Settings, Star } from "lucide-react";
+import { Settings, Star } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
 import Image from "next/image";
+import Link from "next/link";
 import MyTrips from "./components/my-trips";
 import MyOrders from "./components/my-orders";
 import MyReviews from "./components/my-reviews";
@@ -28,9 +29,9 @@ export default function Profile(): React.JSX.Element {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const session = useSession();
 
-
   // Load user data on component mount with normalization and console logs
   useEffect(() => {
+
     async function loadUserData() {
       setLoading(true);
       try {
@@ -245,11 +246,10 @@ export default function Profile(): React.JSX.Element {
   }
 
   return (
-    <main className="flex bg-[#130c1f] justify-items-center w-full px-4 md:px-20 lg:px-40">
-      <div className="bg-[#130c1f] w-full pb-6">
-
+    <main className="flex flex-col bg-[#130c1f] justify-center items-center w-full px-4 md:px-20 lg:px-40">
+ 
         {/* Profile header card */}
-        <div className="max-w-[1080px] mx-auto mt-[35px] bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
+        <div className="w-full max-w-[1080px] mt-[35px] px-4 bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
           <div className="flex flex-col md:flex-row justify-between md:p-10 lg:p-[100px] px-10 md:px-0">
             {/* Profile avatar and name */}
             <div className=" flex flex-col items-center justify-center pt-10">
@@ -331,20 +331,31 @@ export default function Profile(): React.JSX.Element {
               </div>
 
               {/* Edit Profile Button */}
-              <div className="mt-8 mb-8 ">
+              <div className="mt-8 mb-8 flex flex-col gap-4">
                 <Button
-                  className="w-full bg-[#7f51b3] text-white py-3 rounded-lg hover:bg-[#6a4399] transition-colors"
+                  className="w-full button-type-2 text-white py-3 rounded-lg "
                   onClick={() => window.location.href = '/edit-profile'}
                 >
                   Редагувати профіль
                 </Button>
+                {
+                  session?.data?.user?.roles.includes("Admin") && (
+                    <div className="font-['Bahnschrift-SemiBold',Helvetica] py-3 rounded-lg button-type-2 font-semibold text-white text-2xl data-[state=active]:bg-transparent data-[state=active]:text-white">
+                      <Link href="/profile/admin-panel">
+                        <div  className="w-full h-full flex items-center justify-center">
+                          Адмін панель
+                        </div>
+                      </Link>
+                    </div>
+                  )
+                }
               </div>
             </div>
           </div>
         </div>
 
         {/* Navigation tabs */}
-        <Tabs defaultValue="tab1" className=" max-w-[1080px] flex h-[78px] mx-auto">
+        <Tabs defaultValue="tab1" className="w-full max-w-[1080px] flex h-[78px]">
           <TabsList className="overflow-y-hidden overflow-x-scroll  flex flex-row justify-start items-start custom-scrollbar scroll-smooth w-full h-[83px] bg-[#2c1b48] rounded-[0px_0px_8px_8px] p-2.5 pt-0 justify-start gap-4">
             <Button className="w-[60px] h-[60px] bg-[#7f51b3] rounded-lg p-0 flex items-center justify-center">
               <Settings className="w-[34px] h-[34px]" />
@@ -367,41 +378,33 @@ export default function Profile(): React.JSX.Element {
         {/* Profile form section */}
         {
           selectedTab === "user" && (
-            <Card className="max-w-[1080px] mt-[20px] mb-[50px] mx-auto bg-[#0f0e10] border-0 rounded-none">
-              <CardContent className="pt-[39px] px-[68px]">
-                <Separator className="w-[965px] h-px mb-[20px]" />
+            <Card className="w-full max-w-[1080px] mt-8 mb-8 bg-[#0f0e10] border-0 rounded-none ">
+              <CardContent className="w-full flex flex-col justify-center items-center pt-[39px]">
+                <Separator className="w-full max-w-[965px] h-px mb-[20px]" />
 
-                <div className="w-[682px] mx-auto mt-[20px]">
+                <div className="flex flex-col w-full max-w-[682px] mt-[20px]">
                   {formFields.map((field, index) => (
-                    <div key={field.key} className="mb-[56px]">
-                      <div className="flex justify-between">
-                        <label className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
+                    <div key={field.key} className="w-full mb-[56px]">
+                      <div className="w-full flex justify-between">
+                        <label className="w-full font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
                           {field.label}
                         </label>
                       </div>
 
-                      <div className="relative mt-1">
+                      <div className="w-full flex mt-1">
                         {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
                           <Textarea
-                            className="w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            className="w-full max-w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
                             value={(field.value as string) || ''}
                             readOnly
                           />
                         ) : (
                           <Input
-                            className="w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            className="w-full max-w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
                             value={(field.value as string) || ''}
                             type="text"
                             readOnly
                           />
-                        )}
-
-                        {field.hasHelp && (
-                          <div className="absolute right-[-20px] top-[10px]">
-                            <div className="w-5 h-5 rounded-[10px] bg-[#d9d9d9] flex items-center justify-center">
-                              <HelpCircle className="w-4 h-4 text-[#4d4d4d]" />
-                            </div>
-                          </div>
                         )}
                       </div>
                     </div>
@@ -414,39 +417,38 @@ export default function Profile(): React.JSX.Element {
 
         {
           selectedTab === "trips" && (
-          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyTrips />
           </div>)
         }
 
         {
           selectedTab === "orders" && (
-          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyOrders id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "reviews" && (
-          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyReviews id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "requests" && (
-          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyRequests id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "offers" && (
-          <div className="max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyOffers id={session?.data?.user?.id ?? ""} />
           </div>)
         }
-      </div>
     </main>
   );
 }

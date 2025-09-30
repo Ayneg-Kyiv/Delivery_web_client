@@ -2,8 +2,6 @@
 
 import React from 'react';
 import Button from '@/components/ui/button';
-import Card from '@/components/ui/card';
-import CardContent from '@/components/ui/card-content';
 import Link from 'next/link';
 
 export default function AboutPage() {
@@ -43,12 +41,12 @@ export default function AboutPage() {
       text: 'Frontend and backend developer, senior'
     },
     {
-      title: '',
-      text: ''
+      title: 'Вусик Данило',
+      text: 'Frontend designer, lead'
     },
     {
-      title: '',
-      text: ''
+      title: 'Шульга Анна',
+      text: 'Frontend designer, senior'
     },
   ]
 
@@ -156,26 +154,50 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <section className='w-full px-8 md:px-20 xl:px-40 py-12 md:py-24 relative'>
+      <section className='w-full px-8 md:px-20 xl:px-40 py-12 md:py-24 bg-gradient-to-b from-[#18121f] to-[#0f0c13] relative'>
         <div className="relative max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-start gap-14">
-            <div className="md:w-1/2">
-              <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-5xl md:text-6xl mb-8">Команда розробників</h2>
-              <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-lg leading-relaxed mb-6">
-                
-              </p>
+            <div className="flex flex-col md:flex-row md:items-start gap-14">
+              <div className="md:w-1/2">
+                <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-5xl md:text-6xl mb-8">Команда розробників</h2>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-lg leading-relaxed mb-6">
+                Команда Cargix — це поєднання досвідчених розробників та креативних дизайнерів, які прагнуть створювати інноваційні рішення для сучасних логістичних викликів.
+                Ми віримо в силу технологій для покращення життя людей і зменшення впливу на довкілля.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-6 flex-1">
+                  <>
+                    <div
+                      className="bg-[#2a2332] border border-[#3d2a5a] rounded-2xl p-5 flex-1 min-w-[220px] max-w-[calc(50%-12px)]"
+                      style={{ flexBasis: 'calc(50% - 12px)' }}
+                    >
+                      <h3 className="text-lg mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{developers[0].title}</h3>
+                      <p className="text-xs fg-secondary leading-relaxed">{developers[0].text}</p>
+                    </div>
+                      <div
+                        className="bg-[#2a2332] border border-[#3d2a5a] rounded-2xl p-5 flex-1 min-w-[220px] max-w-[calc(50%-12px)]"
+                        style={{ flexBasis: 'calc(50% - 12px)' }}
+                      >
+                        <h3 className="text-lg mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{developers[1].title}</h3>
+                        <p className="text-xs fg-secondary leading-relaxed">{developers[1].text}</p>
+                      </div>
+                      <div
+                        className="bg-[#2a2332] border border-[#3d2a5a] rounded-2xl p-5 flex-1 min-w-[220px] max-w-[calc(50%-12px)]"
+                        style={{ flexBasis: 'calc(50% - 12px)' }}
+                      >
+                        <h3 className="text-lg mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{developers[2].title}</h3>
+                        <p className="text-xs fg-secondary leading-relaxed">{developers[2].text}</p>
+                      </div>
+                      <div
+                        className="bg-[#2a2332] border border-[#3d2a5a] rounded-2xl p-5 flex-1 min-w-[220px] max-w-[calc(50%-12px)]"
+                        style={{ flexBasis: 'calc(50% - 12px)' }}
+                      >
+                        <h3 className="text-lg mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{developers[3].title}</h3>
+                        <p className="text-xs fg-secondary leading-relaxed">{developers[3].text}</p>
+                      </div>
+                  </>
+              </div>
             </div>
-            
-            <div className="grid sm:grid-cols-2 gap-6 flex-1">
-              {developers.map(item => (
-                <div key={item.title} className="bg-[#2a2332] border border-[#3d2a5a] rounded-2xl p-5">
-                  <h3 className="text-lg mb-2 [font-family:'Bahnschrift-Regular',Helvetica]">{item.title}</h3>
-                  <p className="text-xs fg-secondary leading-relaxed">{item.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

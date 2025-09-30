@@ -1,11 +1,4 @@
 
-interface Reviewer {
-    userName: string;
-    email: string;
-    imagePath?: string;
-    rating: number;
-};
-
 interface ReviewDto {
     id: string;
     rating: number;
@@ -15,7 +8,7 @@ interface ReviewDto {
     deliveryRequestId?: string;
     userId: string;
     reviewerId: string;
-    reviewer?: Reviewer;
+    reviewer?: shortUserInfo;
 };
 
 interface CreateReviewDto {

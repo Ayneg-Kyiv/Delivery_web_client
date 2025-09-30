@@ -392,7 +392,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
     }
     
     // Fallback to formatted address
-    let addressParts = [];
+    const addressParts = [];
     if (location.address) addressParts.push(location.address);
     if (location.houseNumber) addressParts.push(location.houseNumber);
     if (location.city) addressParts.push(location.city);

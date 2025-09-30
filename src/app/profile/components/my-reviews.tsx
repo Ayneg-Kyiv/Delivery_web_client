@@ -52,7 +52,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
                             />
                             <div className="flex-1 flex flex-col px-6">
                                 <div className="flex gap-2 items-center text-white text-lg font-bold">
-                                    {review.reviewer?.userName}
+                                    {review.reviewer?.name}
                                 </div>
                                 <div className="flex gap-2 items-center text-white mt-2">
                                     <span className="font-bold">{review.reviewer?.email}</span>

@@ -105,7 +105,7 @@ const ChangeImageModal: React.FC<ChangeImageProps> = ({
                     </div>
                     {/* Live Preview */}
                     <div className="mb-4">
-                        <div className="text-xl text-white mb-2">Прев'ю:</div>
+                        <div className="text-xl text-white mb-2">Прев&apos;ю:</div>
                         {imageUrl ? (
                             <Image
                                 height={300}

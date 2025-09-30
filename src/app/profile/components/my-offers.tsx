@@ -46,7 +46,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                     offers.map(offer => (
                         <div key={offer.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-start p-6 shadow-lg gap-6">
                             {/* Delivery Request Section */}
-                            <div className="flex flex-col md:w-2/3 w-full bg-[#1a093a] rounded-lg p-4 border border-[#7c3aed]">
+                            <div className="flex flex-col  md:w-2/3 w-full bg-[#1a093a] rounded-lg p-4 border border-[#7c3aed]">
                                 <h3 className="text-lg font-bold text-[#7c3aed] mb-2">Запит на доставку</h3>
                                 <div className="flex items-center gap-4 mb-2">
                                     <Image
