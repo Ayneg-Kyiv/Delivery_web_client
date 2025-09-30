@@ -40,7 +40,7 @@ export default function Navbar() {
         
         <div className='h-full flex items-center justify-between '>
           <Link href="/" className="pl-8 md:pl-10 lg:pl-[190px]">
-            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+            <Image src='/logo/Logo.png' alt={t.nav.logoAlt} width={129} height={36}/>
           </Link>
         </div>
 
@@ -54,7 +54,7 @@ export default function Navbar() {
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
                   <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
-                    <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
+                    <Image src='/profile-icon.png' alt={t.nav.profileAlt} width={16} height={16} />
                   </Link>
                 </>
             )}
@@ -64,7 +64,7 @@ export default function Navbar() {
             <button
               className="ml-[20px] text-3xl focus:outline-none"
               onClick={handleMenuToggle}
-              aria-label="Toggle menu">
+              aria-label={t.nav.toggleMenu}>
               &#9776;
             </button>
           </div>
@@ -80,7 +80,7 @@ export default function Navbar() {
         
         <div className='h-full flex items-center justify-between '>
           <Link href="/" className="pl-8 md:pl-10 lg:pl-[190px]">
-            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+            <Image src='/logo/Logo.png' alt={t.nav.logoAlt} width={129} height={36}/>
           </Link>
         </div>
 
@@ -95,7 +95,7 @@ export default function Navbar() {
                 <>
                   <p className='ml-[20px]'>{session.user.email}</p>
                   <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
-                    <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
+                    <Image src='/profile-icon.png' alt={t.nav.profileAlt} width={16} height={16} />
                   </Link>
                 </>
             )}
@@ -111,7 +111,7 @@ export default function Navbar() {
           <button
             className="ml-[20px] text-3xl focus:outline-none"
             onClick={handleMenuToggle}
-            aria-label="Toggle menu">
+            aria-label={t.nav.toggleMenu}>
             &#9776;
           </button>
         </div>
@@ -126,7 +126,7 @@ export default function Navbar() {
         
         <div className='flex-1 h-full flex items-center justify-between pl-[20px]'>
           <Link href="/" className="">
-            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+            <Image src='/logo/Logo.png' alt={t.nav.logoAlt} width={129} height={36}/>
           </Link>
         </div>
 
@@ -135,7 +135,7 @@ export default function Navbar() {
           <button
             className="ml-[10px] text-3xl focus:outline-none"
             onClick={handleMenuToggle}
-            aria-label="Toggle menu">
+            aria-label={t.nav.toggleMenu}>
             &#9776;
           </button>
         </div>

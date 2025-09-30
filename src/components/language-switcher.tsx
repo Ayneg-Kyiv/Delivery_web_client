@@ -1,36 +1,42 @@
-'use client';
+"use client";
 
 import { useI18n } from '@/i18n/I18nProvider';
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { setCookie } from 'cookies-next';
 
-export default function LanguageSwitcher() {
-  const { locale, setLocale } = useI18n();
+const LanguageSwitcher: React.FC = () => {
+  const { language, setLocale } = useI18n();
+  const router = useRouter();
 
-  const switchTo = (l: 'en' | 'uk') => {
-    if (locale === l) return;
-    document.cookie = `locale=${l};path=/;max-age=31536000;samesite=lax`;
-    setLocale(l);
-    window.location.reload();
+  const handleLanguageChange = (lang: 'en' | 'uk') => {
+    if (language === lang) return;
+    setCookie('locale', lang);
+    setLocale(lang);
+    router.refresh();
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center space-x-2">
       <button
-        type="button"
-        onClick={() => switchTo('uk')}
-        aria-pressed={locale === 'uk'}
-        className="font-semibold text-sm transition-opacity hover:opacity-100 aria-pressed:opacity-100 opacity-60"
+        onClick={() => handleLanguageChange('uk')}
+        className={`px-3 py-1 rounded-md text-sm font-medium ${
+          language === 'uk' ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+        }`}
       >
-        UA
+        УКР
       </button>
-      <div className="w-px h-4 bg-white/40" />
       <button
-        type="button"
-        onClick={() => switchTo('en')}
-        aria-pressed={locale === 'en'}
-        className="font-semibold text-sm transition-opacity hover:opacity-100 aria-pressed:opacity-100 opacity-60"
+        onClick={() => handleLanguageChange('en')}
+        className={`px-3 py-1 rounded-md text-sm font-medium ${
+          language === 'en' ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+        }`}
       >
-        EN
+        ENG
       </button>
     </div>
   );
-}
+};
+
+export default LanguageSwitcher;
+

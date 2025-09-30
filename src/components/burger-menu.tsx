@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { AuthService } from "@/app/auth-service";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type BurgerMenuProps = {
   onClose?: () => void;
@@ -14,6 +15,7 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
 
   const { data: session } = useSession();
   const router = useRouter();
+  const { messages: t } = useI18n();
 
   // Lock body scroll while open
   useEffect(() => {
@@ -51,10 +53,10 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
     >
       <div className="absolute right-0 top-0 h-full w-[90vw] max-w-[420px] bg-[#130c1f] text-white shadow-2xl border-l border-white/10">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <span className="text-xl font-semibold">Меню</span>
+          <span className="text-xl font-semibold">{t.nav.menuTitle}</span>
           <button
             onClick={onClose}
-            aria-label="Close menu"
+            aria-label={t.nav.closeMenu}
             className="w-9 h-9 rounded-md hover:bg-white/10 flex items-center justify-center text-2xl leading-none"
           >
             ×
@@ -65,47 +67,47 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           { session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
-                Профіль
+                {t.nav.profile}
               </Link>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/delivery/request/list" onClick={onClose}>
-                Дошка замовлення
+                {t.footer.requestList}
               </Link>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/delivery/trip/list" onClick={onClose}>
-                Список поїздок
+                {t.footer.tripList}
               </Link>
             </>
           )}
 
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/about" onClick={onClose}>
-            Про нас
+            {t.footer.aboutUs}
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/policy" onClick={onClose}>
-            Політика
+            {t.footer.privacyPolicy}
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/help" onClick={onClose}>
-            Центр допомоги
+            {t.footer.helpCenter}
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/news" onClick={onClose}>
-            Останні новини
+            {t.footer.latestNews}
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/terms" onClick={onClose}>
-            Умови користування
+            {t.footer.termsOfUse}
           </Link> 
           
           { !session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>
-                Увійти
+                {t.nav.login}
               </Link>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signup" onClick={onClose}>
-                Реєстрація
+                {t.nav.register}
               </Link>
             </>
           )}
 
           { session?.user && (
               <button className="block px-3 py-2 rounded-md hover:bg-white/10 w-full text-left absolute bottom-4" onClick={() => { handleSignOut(); onClose?.(); }}>
-                Вийти
+                {t.nav.logout}
               </button>
           )}
         </nav>

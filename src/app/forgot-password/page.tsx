@@ -7,136 +7,118 @@ import ContentBox from '@/components/ui/content-box';
 import Image from 'next/image';
 import TextInputGroup from '@/components/ui/text-input-group';
 import Button from '@/components/ui/button';
+import { useI18n } from '@/i18n/I18nProvider';
 
-class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, ForgotPasswordPageState> {
-    constructor(props: ForgotPasswordPageProps) {
-        super(props);
-        this.state = {
-            email: '',
-            error: undefined,
-            emailError: false,
-            success: undefined,
-            loading: false,
+function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }) {
+    const { messages: t } = useI18n();
+    const [email, setEmail] = React.useState('');
+    const [error, setError] = React.useState<string | undefined>(undefined);
+    const [emailError, setEmailError] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        const fetchCsrf = async () => {
+            try {
+                await ApiClient.get<null>('/csrf');
+            } catch (error) {
+                console.error('Error fetching CSRF token:', error);
+            }
         };
-    }
+        fetchCsrf();
+    }, []);
 
-    async componentDidMount() {
-        try {
-            await ApiClient.get<null>('/csrf');
-        } catch (error) {
-            console.error('Error fetching CSRF token:', error);
-        }
-    }
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newEmail = e.target.value;
+        setEmail(newEmail);
 
-    
-    handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const email = e.target.value;
-        
-        this.setState({ email });
-        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newEmail) && newEmail.length > 0) {
+            setEmailError(true);
+        } else {
+            setEmailError(false);
+        }
+    };
 
-        if (!emailRegex.test(email) && email.length > 0) 
-            this.setState({ emailError: true });
-        else 
-            this.setState({ emailError: false });
-        };
-
-
-    handleSubmit = async (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        const { email } = this.state;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (!emailRegex.test(email) && email.length > 0) {
-            this.setState({ error: 'Invalid email format', success: undefined });
+        if (!emailRegex.test(email)) {
+            setError(t.forgotPassword.invalidEmail);
             return;
         }
-        
-        this.setState({ loading: true, error: undefined, success: undefined });
-        
+
+        setLoading(true);
+        setError(undefined);
+
         try {
             const response = await ApiClient.post('/account/forgot-password', { email });
 
             if (response?.success) {
-                this.props.router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
+                router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
             } else {
-            this.setState({
-                error: `An error occurred Please try again.`,
-                success: undefined,
-                loading: false,
-            });
+                setError(t.forgotPassword.emailNotFound);
             }
         } catch (err) {
-            this.setState({
-                error: `An error occurred. ${err} Please try again.`,
-                success: undefined,
-                loading: false,
-            });
+            setError(t.forgotPassword.genericError);
+        } finally {
+            setLoading(false);
         }
     };
 
-    renderContent = () => {
-        return (
-            <ContentBox>
-                <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
+    return (
+        <ContentBox>
+            <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={handleSubmit}>
+                <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                    
+                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
+                        {t.forgotPassword.title}
+                    </h1>
 
-                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
-                        
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                            Забули пароль?
-                        </h1>
+                    <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        {t.forgotPassword.subtitle}
+                    </p>
+                </div>
 
-                        <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                            Будь ласка введіть вашу електронну адресу, щоб отримати посилання для скидання паролю.
-                        </p>
-                    </div>
-
-                    <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
-
-                        <div className="space-y-5 flex flex-col">
-                            <TextInputGroup
-                                label="E-mail"
-                                value={this.state.email}
-                                onChange={this.handleEmailChange}
-                                type="email"
-                                className=""
-                                inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
-                                labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
-                                placeholder=""
-                            />
-
-                            <div className={`flex flex-row items-center ${this.state.error ? '' : 'hidden'}`}>
-                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
-                                <p className='text-[#ED2B2B]'>
-                                    Адреса електронної пошти, яку ви вказали, повинна бути зареєстрована в нашій системі.
-                                </p>
-                            </div>
-                        </div>
-
-                        <input type="submit" value='Наступна'
-                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
+                    <div className="space-y-5 flex flex-col">
+                        <TextInputGroup
+                            label={t.forgotPassword.emailLabel}
+                            value={email}
+                            onChange={handleEmailChange}
+                            type="email"
+                            className=""
+                            inputClassName={`floating-input ${emailError ? 'floating-input-error' : ''}`}
+                            labelClassName={`${email ? ' filled' : ''} ${emailError ? ' floating-label-error' : ''}`}
+                            placeholder=""
                         />
 
-                        <div className="flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                            <Button onClick={() => this.props.router?.push('/signin')} text='Повернутись до сторінки входу'
-                                className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
-                            />
+                        <div className={`flex flex-row items-center ${error ? '' : 'hidden'}`}>
+                            <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                            <p className='text-[#ED2B2B]'>
+                                {error}
+                            </p>
                         </div>
                     </div>
-                </form>
-            </ContentBox>
-        );
-    };
 
-    render() {
-        return <>{this.renderContent()}</>;
-    }
+                    <input type="submit" value={t.forgotPassword.submitButton}
+                        disabled={loading}
+                        className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] disabled:opacity-50"
+                    />
+
+                    <div className="flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                        <Button onClick={() => router?.push('/signin')} text={t.forgotPassword.backToLogin}
+                            className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
+                        />
+                    </div>
+                </div>
+            </form>
+        </ContentBox>
+    );
 }
 
-export default function ForgotPasswordPageWrapper(props: ForgotPasswordPageProps) {
+export default function ForgotPasswordPageWrapper() {
     const router = useRouter();
-    return <ForgotPasswordPage {...props} router={router} />;
+    return <ForgotPasswordPage router={router} />;
 }

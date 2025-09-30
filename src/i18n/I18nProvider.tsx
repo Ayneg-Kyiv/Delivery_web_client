@@ -1,14 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import en from './messages/en';
 import uk from './messages/uk';
+import { setCookie } from 'cookies-next';
 
 type Locale = 'en' | 'uk';
 type Messages = typeof en | typeof uk;
 
-type I18nContextValue = {
-  locale: Locale;
+export type I18nContextValue = {
+  language: Locale;
   messages: Messages;
   setLocale: (l: Locale) => void;
 };
@@ -29,13 +30,29 @@ export default function I18nProvider({
   initialLocale: Locale;
 }) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
-  const msgs: Messages = locale === 'en' ? en : uk;
 
-  const value = useMemo(() => ({ locale, messages: msgs, setLocale }), [locale, msgs]);
+  const setAndStoreLocale = (newLocale: Locale) => {
+    setLocale(newLocale);
+    setCookie('locale', newLocale, { path: '/' });
+    if (typeof document !== 'undefined') {
+        document.documentElement.lang = newLocale;
+    }
+  };
+
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.lang = locale;
     }
   }, [locale]);
+
+  const messages = useMemo(() => (locale === 'en' ? en : uk), [locale]);
+
+  const value = useMemo(() => ({
+    language: locale,
+    messages,
+    setLocale: setAndStoreLocale,
+  }), [locale, messages]);
+
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
+

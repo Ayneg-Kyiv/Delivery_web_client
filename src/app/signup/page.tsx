@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-import { AuthService } from '../auth-service';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ApiClient } from '../api-client';
 import Image from 'next/image';
@@ -10,395 +9,274 @@ import Button from '@/components/ui/button';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
+import { AuthService } from '../auth-service';
 
-class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
-    constructor(props: SignupPageProps) {
-        super(props);
-        this.state = {
-            stage: 1,
-            
-            email: '',
-            emailError: false,
+const SignupPage: React.FC = () => {
+    const { messages: t } = useI18n();
+    const router = useRouter();
+    const [stage, setStage] = useState(1);
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState(false);
+    const [birthDate, setBirthDate] = useState('0000.00.00');
+    const [birthDateError, setBirthDateError] = useState(false);
+    const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [phoneNumberError, setPhoneNumberError] = useState(false);
+    const [error, setError] = useState<string | undefined>(undefined);
 
-            birthDate: '0000.00.00',
-            birthDateError: false,
-
-            password: '',
-            passwordError: false,
-            showPassword: false,
-            
-            confirmPassword: '',
-            confirmPasswordError: false,
-            showConfirmPassword: false,
-            
-            firstName: '',
-            lastName: '',
-            
-            phoneNumber: '',
-            phoneNumberError: false,
-            error: undefined
+    useEffect(() => {
+        const fetchCsrf = async () => {
+            try {
+                await ApiClient.get<null>('/csrf');
+            } catch (error) {
+                console.error('Error fetching CSRF token:', error);
+            }
         };
-    }
+        fetchCsrf();
+    }, []);
 
-    async componentDidMount() {
-        try{
-            await ApiClient.get<null>('/csrf');
-        }catch (error) {
-            console.error('Error fetching CSRF token:', error);
-        }
-    }
-
-    handleEmailChange = (email: string) => {
-        this.setState({ email });
-
+    const handleEmailChange = (newEmail: string) => {
+        setEmail(newEmail);
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email) && email.length > 0) 
-            this.setState({ emailError: true });
-        else 
-            this.setState({ emailError: false });
+        setEmailError(newEmail.length > 0 && !emailRegex.test(newEmail));
     };
 
-    handlePasswordChange = (password: string) => {
-        this.setState({ password });
-
-        if (password.length < 8 && password.length > 0) 
-            this.setState({ error: 'Password must be at least 8 characters long' });
-        else 
-            this.setState({ error: undefined });
-            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
-            if (!passwordRegex.test(password) && password.length > 0) {
-                this.setState({ passwordError: true });
-            } else {
-                this.setState({ passwordError: false });
-            }
+    const handlePasswordChange = (newPassword: string) => {
+        setPassword(newPassword);
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+        setPasswordError(newPassword.length > 0 && !passwordRegex.test(newPassword));
+        if (error) setError(undefined);
     };
 
-    handleConfirmPasswordChange = (confirmPassword: string) => {
-        this.setState({ confirmPassword });
-
-        if (confirmPassword !== this.state.password) 
-            this.setState({ confirmPasswordError: true });
-        else 
-            this.setState({ confirmPasswordError: false });
-        
+    const handleConfirmPasswordChange = (newConfirmPassword: string) => {
+        setConfirmPassword(newConfirmPassword);
+        setConfirmPasswordError(newConfirmPassword !== password);
     };
 
-    handleBirthDateChange = (birthDate: string) => {
-        this.setState({ birthDate });
-
-        if (birthDate < '1900-01-01' ) {
-            this.setState({ birthDateError: true });
-        } else {
-            this.setState({ birthDateError: false });
-        }
+    const handleBirthDateChange = (newBirthDate: string) => {
+        setBirthDate(newBirthDate);
+        setBirthDateError(newBirthDate < '1900-01-01');
     };
 
-    handleFirstNameChange = (firstName: string) => {
-        this.setState({ firstName });
+    const handleFirstNameChange = (newFirstName: string) => {
+        setFirstName(newFirstName);
     };
 
-    handleLastNameChange = (lastName: string) => {
-        this.setState({ lastName });
+    const handleLastNameChange = (newLastName: string) => {
+        setLastName(newLastName);
     };
 
-    handlePhoneNumberChange = (phoneNumber: string) => {
-        this.setState({ phoneNumber });
-
+    const handlePhoneNumberChange = (newPhoneNumber: string) => {
+        setPhoneNumber(newPhoneNumber);
         const phoneNumberRegex = /^\+?[0-9]\d{1,14}$/;
-        if (!phoneNumberRegex.test(phoneNumber) && phoneNumber.length > 0) {
-            this.setState({ phoneNumberError: true });
+        setPhoneNumberError(newPhoneNumber.length > 0 && !phoneNumberRegex.test(newPhoneNumber));
+    };
+
+    const handleSignUp = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const response = await AuthService.register(email, password, firstName, lastName, phoneNumber, birthDate);
+        if (response?.success) {
+            setStage(4);
         } else {
-            this.setState({ phoneNumberError: false });
+            setError('Sign up failed. Please try again.');
         }
     };
 
-    handleSignUp = async (event: React.FormEvent) => {
+    const handleSignupStage1 = async (event: React.FormEvent) => {
         event.preventDefault();
-        
-        const response = await AuthService.register(
-            this.state.email,
-            this.state.password,
-            this.state.firstName,
-            this.state.lastName,
-            this.state.phoneNumber,
-            this.state.birthDate
-        );
-
-        if (response?.success) 
-            this.setState({ stage: 4 });
-        else 
-            this.setState({ error: 'Sign up failed. Please try again.' });
-        
-    };
-
-    // Stage 1
-    handleSignupStage1 = async (event: React.FormEvent) => {
-        // Handle the first stage of signup
-        event.preventDefault();
-
-        const email = this.state;
-
-        try{
-            const response = await ApiClient.get(`/auth/check-is-email-exists/${this.state.email}`);
-
-            if( response.success ){
-                this.props.router?.push('/user-exists');
-            }
-            else {
-                this.setState({ stage: 2 });
+        try {
+            const response = await ApiClient.get(`/auth/check-is-email-exists/${email}`);
+            if (response.success) {
+                router.push('/user-exists');
+            } else {
+                setStage(2);
             }
         } catch (error) {
-            this.props.router?.push('/error');
+            router.push('/error');
         }
-    }
-
-
-    renderContentForStage1 = () => {
-        return (
-            <ContentBox>
-                
-                <form className='flex-1 flex flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage1}>
-                       
-                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
-                        
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Створіть свій обліковий запис в Cargix
-                        </h1>
-
-                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть вашу електронну адресу, щоб продовжити. 
-                        </p>
-                    </div>
-
-                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
-                        <TextInputGroup
-                                label="E-mail"
-                                value={this.state.email}
-                                onChange={(e) => this.handleEmailChange(e.target.value)}
-                                type="email"
-                                className=""
-                                inputClassName={`floating-input ${this.state.emailError ? 'floating-input-error' : ''}`}
-                                labelClassName={`${this.state.email ? ' filled' : ''} ${this.state.emailError ? ' floating-label-error' : ''}`}
-                                placeholder=""
-                            />
-
-                        <input type="submit" value='Продовжити'
-                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
-                        />
-                        
-                        <div className="flex-1 pt-4 space-y-4">
-                            <div className="font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                                <span className="text-[#e4e4e4] pr-2">
-                                    Маєте аккаунт?
-                                </span>
-                                <Button onClick={() => this.props.router?.push('/signin')} text='ввійти'
-                                    className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
-                                    />
-                            </div>
-                        </div>
-
-                    </div>
-
-                </form>
-                
-            </ContentBox>
-        );
     };
-    // 
 
-    // Stage 2 
-    handleSignupStage2 = async (event : React.FormEvent) => {
+    const handleSignupStage2 = (event: React.FormEvent) => {
         event.preventDefault();
-
-        if(!this.state.passwordError && !this.state.confirmPasswordError) {
-            this.setState({ stage: 3 });
+        if (!passwordError && !confirmPasswordError) {
+            setStage(3);
         }
-    }
-
-    renderContentForStage2 = () => {
-        return (
-            <ContentBox>
-                
-                <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage2}>
-                       
-                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
-                        
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Встановіть пароль
-                        </h1>
-
-                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть пароль для облікового запису.
-                        </p>
-                    </div>
-
-                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
-                        <TextInputGroup
-                                label="Пароль"
-                                value={this.state.password}
-                                onChange={(e) => this.handlePasswordChange(e.target.value)}
-                                type="password"
-                                className="floating-input-group-without-margin"
-                                inputClassName={`floating-input ${this.state.passwordError ? 'floating-input-error' : ''}`}
-                                labelClassName={`${this.state.password ? ' filled' : ''} ${this.state.passwordError ? ' floating-label-error' : ''}`}
-                                placeholder=""
-                            />
-
-                        {!this.state.error && (
-                        <p className='text-sm text-stretch mt-[4px] pl-[12px]'>
-                           Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
-                        </p>
-                        )}
-                        {this.state.passwordError && (
-                            <div className={`flex flex-row items-center  mt-[8px]`}>
-                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
-                                <p className='text-[#ED2B2B] text-sm text-stretch'>
-                                    Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
-                                </p>
-                            </div>
-                        )}
-
-                        <TextInputGroup
-                                label="Підтвердження пароля"
-                                value={this.state.confirmPassword}
-                                onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
-                                type="password"
-                                className={`${this.state.confirmPasswordError ? 'floating-input-group-without-margin' : ''}`}
-                                inputClassName={`floating-input ${this.state.confirmPasswordError ? 'floating-input-error' : ''}`}
-                                labelClassName={`${this.state.confirmPassword ? ' filled' : ''} ${this.state.confirmPasswordError ? ' floating-label-error' : ''}`}
-                                placeholder=""
-                            />
-                            
-                        {this.state.confirmPasswordError && (
-                            <div className={`flex flex-row items-center mt-[8px]`}>
-                                <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
-                                <p className='text-[#ED2B2B] text-sm text-stretch'>
-                                    Паролі мають співпадати.
-                                </p>
-                            </div>
-                        )}
-
-                        <input type="submit" value='Продовжити'
-                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
-                        />
-
-                    </div>
-
-                </form>
-                
-            </ContentBox>
-        );
     };
-// 
 
-// Stage 3
-renderContentForStage3 = () => {
-    return (
+    const renderContentForStage1 = () => (
         <ContentBox>
-            <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignUp}>
-                
-                    <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
-                        
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Останній крок
-                        </h1>
-
-                        <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть вказану інформацію.
-                        </p>
-                    </div>
-                    
-                    <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
-                        
-                        <div className='flex flex-row space-x-2'>
-                            <TextInputGroup
-                                label="Ім'я"
-                                value={this.state.firstName}
-                                type='text'
-                                onChange={(e) => this.handleFirstNameChange(e.target.value)} />
-
-                            <TextInputGroup
-                                label="Прізвище"
-                                value={this.state.lastName}
-                                type='text'
-                                onChange={(e) => this.handleLastNameChange(e.target.value)} />
+            <form className='flex-1 flex flex-col h-full items-center justify-center' onSubmit={handleSignupStage1}>
+                <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                        {t.signup.stage1.title}
+                    </h1>
+                    <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        {t.signup.stage1.subtitle}
+                    </p>
+                </div>
+                <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                    <TextInputGroup
+                        label={t.signup.emailLabel}
+                        value={email}
+                        onChange={(e) => handleEmailChange(e.target.value)}
+                        type="email"
+                        className=""
+                        inputClassName={`floating-input ${emailError ? 'floating-input-error' : ''}`}
+                        labelClassName={`${email ? ' filled' : ''} ${emailError ? ' floating-label-error' : ''}`}
+                        placeholder=""
+                    />
+                    <input type="submit" value={t.signup.stage1.continueButton}
+                        className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                    />
+                    <div className="flex-1 pt-4 space-y-4">
+                        <div className="font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
+                            <span className="text-[#e4e4e4] pr-2">{t.signup.stage1.hasAccount}</span>
+                            <Button onClick={() => router.push('/signin')} text={t.signup.stage1.login}
+                                className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
+                            />
                         </div>
-
-                        <DateInputGroup
-                            label='Дата народження'
-                            value={this.state.birthDate}
-                            onChange={(e) => this.handleBirthDateChange(e.target.value)}
-                            className={`${this.state.birthDateError ? 'floating-input-group-without-margin' : ''}`}
-                            inputClassName={`floating-input ${this.state.birthDateError ? 'floating-input-error' : ''}`}
-                            labelClassName={`${this.state.birthDate ? ' filled' : ''} ${this.state.birthDateError ? ' floating-label-error' : ''}`}
-                        />
-
-                        <TextInputGroup
-                            label="Номер телефону"
-                            value={this.state.phoneNumber}
-                            type='tel'
-                            className={`${this.state.phoneNumberError ? 'floating-input-group-without-margin' : ''}`}
-                            inputClassName={`floating-input ${this.state.phoneNumberError ? 'floating-input-error' : ''}`}
-                            labelClassName={`${this.state.phoneNumber ? ' filled' : ''} ${this.state.phoneNumberError ? ' floating-label-error' : ''}`}
-                            onChange={(e) => this.handlePhoneNumberChange(e.target.value)} />
-
-                        <input type="submit" value='Продовжити'
-                            className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
-                        />
                     </div>
+                </div>
             </form>
         </ContentBox>
     );
-}
-//
 
-// Stage 4 - Final
-renderContentForStage4 = () =>{
-    return (
-        <ContentBox height='760px' lheight='700px'>
+    const renderContentForStage2 = () => (
+        <ContentBox>
+            <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={handleSignupStage2}>
+                <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                        {t.signup.stage2.title}
+                    </h1>
+                    <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        {t.signup.stage2.subtitle}
+                    </p>
+                </div>
+                <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                    <TextInputGroup
+                        label={t.signup.stage2.passwordLabel}
+                        value={password}
+                        onChange={(e) => handlePasswordChange(e.target.value)}
+                        type="password"
+                        className="floating-input-group-without-margin"
+                        inputClassName={`floating-input ${passwordError ? 'floating-input-error' : ''}`}
+                        labelClassName={`${password ? ' filled' : ''} ${passwordError ? ' floating-label-error' : ''}`}
+                        placeholder=""
+                    />
+                    {!error && <p className='text-sm mt-[4px] pl-[12px]'>{t.signup.stage2.passwordHint}</p>}
+                    {passwordError && (
+                        <div className={`flex flex-row items-center mt-[8px]`}>
+                            <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                            <p className='text-[#ED2B2B] text-sm'>{t.signup.stage2.passwordError}</p>
+                        </div>
+                    )}
+                    <TextInputGroup
+                        label={t.signup.stage2.confirmPasswordLabel}
+                        value={confirmPassword}
+                        onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                        type="password"
+                        className={`${confirmPasswordError ? 'floating-input-group-without-margin' : ''}`}
+                        inputClassName={`floating-input ${confirmPasswordError ? 'floating-input-error' : ''}`}
+                        labelClassName={`${confirmPassword ? ' filled' : ''} ${confirmPasswordError ? ' floating-label-error' : ''}`}
+                        placeholder=""
+                    />
+                    {confirmPasswordError && (
+                        <div className={`flex flex-row items-center mt-[8px]`}>
+                            <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
+                            <p className='text-[#ED2B2B] text-sm'>{t.signup.stage2.confirmPasswordError}</p>
+                        </div>
+                    )}
+                    <input type="submit" value={t.signup.stage2.continueButton}
+                        className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                    />
+                </div>
+            </form>
+        </ContentBox>
+    );
+
+    const renderContentForStage3 = () => (
+        <ContentBox>
+            <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={handleSignUp}>
+                <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                        {t.signup.stage3.title}
+                    </h1>
+                    <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        {t.signup.stage3.subtitle}
+                    </p>
+                </div>
+                <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
+                    <div className='flex flex-row space-x-2'>
+                        <TextInputGroup
+                            label={t.signup.stage3.firstNameLabel}
+                            value={firstName}
+                            type='text'
+                            onChange={(e) => handleFirstNameChange(e.target.value)} />
+                        <TextInputGroup
+                            label={t.signup.stage3.lastNameLabel}
+                            value={lastName}
+                            type='text'
+                            onChange={(e) => handleLastNameChange(e.target.value)} />
+                    </div>
+                    <DateInputGroup
+                        label={t.signup.stage3.birthDateLabel}
+                        value={birthDate}
+                        onChange={(e) => handleBirthDateChange(e.target.value)}
+                        className={`${birthDateError ? 'floating-input-group-without-margin' : ''}`}
+                        inputClassName={`floating-input ${birthDateError ? 'floating-input-error' : ''}`}
+                        labelClassName={`${birthDate ? ' filled' : ''} ${birthDateError ? ' floating-label-error' : ''}`}
+                    />
+                    <TextInputGroup
+                        label={t.signup.stage3.phoneNumberLabel}
+                        value={phoneNumber}
+                        type='tel'
+                        className={`${phoneNumberError ? 'floating-input-group-without-margin' : ''}`}
+                        inputClassName={`floating-input ${phoneNumberError ? 'floating-input-error' : ''}`}
+                        labelClassName={`${phoneNumber ? ' filled' : ''} ${phoneNumberError ? ' floating-label-error' : ''}`}
+                        onChange={(e) => handlePhoneNumberChange(e.target.value)} />
+                    <input type="submit" value={t.signup.stage3.continueButton}
+                        className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                    />
+                </div>
+            </form>
+        </ContentBox>
+    );
+
+    const renderContentForStage4 = () => (
+        <ContentBox>
             <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
                 <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                     <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                     <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                        Залишився останній крок
+                        {t.signup.stage4.title}
                     </h1>
                     <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                        Ваш обліковий запис успішно створено. для завершення процесу реєстрації перейдіть на вказану електронну пошту та підтвердіть свою реєстрацію.
+                        {t.signup.stage4.subtitle}
                     </p>
-                    <Image src='/SuccessVector1.png' alt='success' width={126} height={126} className=''/>
-
                 </div>
                 <div className="flex-1 w-full max-w-[500px]">
                     <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                        <Link href='/' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Головна</Link>
+                        <Link href='/' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">{t.signup.stage4.mainButton}</Link>
                     </div>
                 </div>
             </div>
         </ContentBox>
     );
-}
-//
 
-    render() {
-        if(this.state.stage === 1) {
-            return this.renderContentForStage1();
-        }
-        else if (this.state.stage === 2) {
-            return this.renderContentForStage2();
-        }
-        else if (this.state.stage === 3) {
-            return this.renderContentForStage3();
-        }
-        else if (this.state.stage === 4) {
-            return this.renderContentForStage4();
-        }
-    }
+    if (stage === 1) return renderContentForStage1();
+    if (stage === 2) return renderContentForStage2();
+    if (stage === 3) return renderContentForStage3();
+    if (stage === 4) return renderContentForStage4();
+    return null;
 }
 
-export default function SignupPageWrapper(props: SignupPageProps) {
-    const router = useRouter();
-    return <SignupPage {...props} router={router} />;
-}
+export default SignupPage;

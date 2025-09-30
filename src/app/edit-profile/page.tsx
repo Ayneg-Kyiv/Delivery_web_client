@@ -9,8 +9,10 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { ProfileService } from "../profile/profile-service";
 import { ChangeUserDataDTO } from "../profile/profile.d";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export default function EditProfile(): React.JSX.Element {
+  const { messages: t } = useI18n();
   const [formData, setFormData] = useState<ChangeUserDataDTO>({
     Email: "",
     FirstName: "",
@@ -31,7 +33,7 @@ export default function EditProfile(): React.JSX.Element {
     const loadUserData = async () => {
       setLoading(true);
       try {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/Account`;
         console.log('Шлях запиту до API:', url);
         const token = session?.accessToken;
         const response = await fetch(url, {
@@ -90,29 +92,29 @@ export default function EditProfile(): React.JSX.Element {
     
     // Email validation
     if (!formData.Email) {
-      newErrors.Email = "Email обов'язковий";
+      newErrors.Email = t.editProfile.emailRequired;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email)) {
-      newErrors.Email = "Неправильний формат email";
+      newErrors.Email = t.editProfile.emailInvalid;
     }
     
     // First name validation
     if (formData.FirstName && formData.FirstName.length < 3) {
-      newErrors.FirstName = "Ім'я повинно містити мінімум 3 символи";
+      newErrors.FirstName = t.editProfile.firstNameMinLength;
     }
     
     // Middle name validation
     if (formData.MiddleName && formData.MiddleName.length < 3) {
-      newErrors.MiddleName = "По батькові повинно містити мінімум 3 символи";
+      newErrors.MiddleName = t.editProfile.middleNameMinLength;
     }
     
     // Last name validation
     if (formData.LastName && formData.LastName.length < 3) {
-      newErrors.LastName = "Прізвище повинно містити мінімум 3 символи";
+      newErrors.LastName = t.editProfile.lastNameMinLength;
     }
     
     // About me validation
     if (formData.AboutMe && formData.AboutMe.length < 3) {
-      newErrors.AboutMe = "Опис повинен містити мінімум 3 символи";
+      newErrors.AboutMe = t.editProfile.aboutMeMinLength;
     }
     
     setErrors(newErrors);
@@ -138,7 +140,7 @@ export default function EditProfile(): React.JSX.Element {
       // Accept only Success key (API returns Success: true)
       if (response.Success === true) {
         setErrors({});
-        setSuccessMessage("Дані успішно оновлено!");
+        setSuccessMessage(t.editProfile.successMessage);
         return;
       }
 
@@ -150,11 +152,11 @@ export default function EditProfile(): React.JSX.Element {
         });
         setErrors(errorObj);
       } else {
-        setErrors({ general: response.Message || 'Помилка при збереженні даних' });
+        setErrors({ general: response.Message || t.editProfile.errorMessage });
       }
     } catch (error: any) {
       console.error('Error saving data:', error);
-      setErrors({ general: 'Помилка при збереженні даних' });
+      setErrors({ general: t.editProfile.errorMessage });
     } finally {
       setSaveLoading(false);
     }
@@ -163,7 +165,7 @@ export default function EditProfile(): React.JSX.Element {
   if (loading) {
     return (
       <main className="bg-[#130c1f] min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Завантаження...</div>
+        <div className="text-white text-xl">{t.editProfile.loading}</div>
       </main>
     );
   }
@@ -173,8 +175,8 @@ export default function EditProfile(): React.JSX.Element {
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Редагування профілю</h1>
-          <p className="text-gray-300">Оновіть свої особисті дані</p>
+          <h1 className="text-3xl font-bold text-white mb-2">{t.editProfile.title}</h1>
+          <p className="text-gray-300">{t.editProfile.subtitle}</p>
         </div>
 
         {/* Form Card */}
@@ -199,14 +201,14 @@ export default function EditProfile(): React.JSX.Element {
               {/* Email Field */}
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
-                  Email *
+                  {t.editProfile.emailLabel}
                 </label>
                 <Input
                   type="email"
                   value={formData.Email}
                   onChange={(e) => handleInputChange('Email', e.target.value)}
                   className="w-full h-12 bg-transparent border-2 border-[#c5c2c2] text-white rounded-md focus:border-[#7f51b3]"
-                  placeholder="your.email@example.com"
+                  placeholder={t.editProfile.emailPlaceholder}
                 />
                 {errors.Email && (
                   <p className="text-red-400 text-sm mt-1">{errors.Email}</p>
@@ -219,14 +221,14 @@ export default function EditProfile(): React.JSX.Element {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">
-                    Ім&apos;я
+                    {t.editProfile.firstNameLabel}
                   </label>
                   <Input
                     type="text"
                     value={formData.FirstName}
                     onChange={(e) => handleInputChange('FirstName', e.target.value)}
                     className="w-full h-12 bg-transparent border-2 border-[#c5c2c2] text-white rounded-md focus:border-[#7f51b3]"
-                    placeholder="Іван"
+                    placeholder={t.editProfile.firstNamePlaceholder}
                   />
                   {errors.FirstName && (
                     <p className="text-red-400 text-sm mt-1">{errors.FirstName}</p>
@@ -235,14 +237,14 @@ export default function EditProfile(): React.JSX.Element {
 
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">
-                    По батькові
+                    {t.editProfile.middleNameLabel}
                   </label>
                   <Input
                     type="text"
                     value={formData.MiddleName}
                     onChange={(e) => handleInputChange('MiddleName', e.target.value)}
                     className="w-full h-12 bg-transparent border-2 border-[#c5c2c2] text-white rounded-md focus:border-[#7f51b3]"
-                    placeholder="Іванович"
+                    placeholder={t.editProfile.middleNamePlaceholder}
                   />
                   {errors.MiddleName && (
                     <p className="text-red-400 text-sm mt-1">{errors.MiddleName}</p>
@@ -251,14 +253,14 @@ export default function EditProfile(): React.JSX.Element {
 
                 <div>
                   <label className="block text-white text-sm font-medium mb-2">
-                    Прізвище
+                    {t.editProfile.lastNameLabel}
                   </label>
                   <Input
                     type="text"
                     value={formData.LastName}
                     onChange={(e) => handleInputChange('LastName', e.target.value)}
                     className="w-full h-12 bg-transparent border-2 border-[#c5c2c2] text-white rounded-md focus:border-[#7f51b3]"
-                    placeholder="Іванов"
+                    placeholder={t.editProfile.lastNamePlaceholder}
                   />
                   {errors.LastName && (
                     <p className="text-red-400 text-sm mt-1">{errors.LastName}</p>
@@ -271,7 +273,7 @@ export default function EditProfile(): React.JSX.Element {
               {/* Date of Birth */}
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
-                  Дата народження
+                  {t.editProfile.birthDateLabel}
                 </label>
                 <Input
                   type="date"
@@ -287,13 +289,13 @@ export default function EditProfile(): React.JSX.Element {
               {/* About Me */}
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
-                  Про себе
+                  {t.editProfile.aboutMeLabel}
                 </label>
                 <Textarea
                   value={formData.AboutMe}
                   onChange={(e) => handleInputChange('AboutMe', e.target.value)}
                   className="w-full h-32 bg-transparent border-2 border-[#c5c2c2] text-white rounded-md focus:border-[#7f51b3]"
-                  placeholder="Розкажіть про себе..."
+                  placeholder={t.editProfile.aboutMePlaceholder}
                 />
                 {errors.AboutMe && (
                   <p className="text-red-400 text-sm mt-1">{errors.AboutMe}</p>
@@ -309,7 +311,7 @@ export default function EditProfile(): React.JSX.Element {
                   onClick={() => window.history.back()}
                   className="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
                 >
-                  Скасувати
+                  {t.editProfile.cancelButton}
                 </Button>
                 
                 <Button
@@ -317,7 +319,7 @@ export default function EditProfile(): React.JSX.Element {
                   disabled={saveLoading}
                   className="px-6 py-3 bg-[#7f51b3] text-white rounded-md hover:bg-[#6a4399] transition-colors disabled:opacity-50"
                 >
-                  {saveLoading ? 'Збереження...' : 'Зберегти зміни'}
+                  {saveLoading ? t.editProfile.savingButton : t.editProfile.saveButton}
                 </Button>
               </div>
             </form>

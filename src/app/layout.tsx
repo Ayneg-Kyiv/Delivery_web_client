@@ -24,12 +24,13 @@ export const metadata: Metadata = {
   description: "Відправляй вантажі з легкістю",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = cookies().get('locale')?.value === 'en' ? 'en' : 'uk';
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('locale')?.value === 'en' ? 'en' : 'uk';
 
   return (
     <html lang={locale}>
@@ -42,10 +43,10 @@ export default function RootLayout({
                 {children}
                       <SupportChatClient />
               </main>
+              <Footer />
             </Suspense>
           </AuthProvider>
         </I18nProvider>
-        <Footer />
       </body>
     </html>
   );
