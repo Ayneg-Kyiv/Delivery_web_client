@@ -82,16 +82,16 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
     renderContent = () => {
         return (
-            <ContentBox height='860px' lheight='800px'>
+            <ContentBox>
                 <form className="flex-1 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
                         
                     <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
 
-                    <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-16 text-center">
+                    <h1 className="font-title-2  mb-6 md:mb-16 text-center">
                         Ласкаво просимо до Cargix
                     </h1>
 
-                   <div className="flex-1 w-full max-w-[500px] space-y-5">
+                   <div className="flex-1 w-full max-w-[500px] md:space-y-5">
                         <div className="space-y-5 flex flex-col">
                             <TextInputGroup
                                 label="E-mail"
@@ -116,13 +116,10 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                             />
                         </div>
 
-                        <div className='h-8'>
-                            {
-                                this.state.error !== undefined &&
-                                <div className="text-[#ED2B2B] text-3xl">
-                                    Неправильний email або пароль
-                                </div>
-                            }
+                        <div className=''>
+                            <div className={`text-[#ED2B2B] text-2xl ${this.state.error ? 'block' : 'hidden'}`}>
+                                Неправильний email або пароль
+                            </div>
                         </div>
 
 
@@ -151,7 +148,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                             </div>
 
                             <input type="submit" value='Увійти'
-                                className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
+                                className="w-full h-[40px] md:h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                             />
 
                             <div className="pt-4 space-y-4">

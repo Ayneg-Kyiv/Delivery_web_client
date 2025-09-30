@@ -28,11 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className="scroll-smooth w-screen">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen max-w-screen flex flex-col`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased md:min-h-screen max-w-screen flex flex-col`}>
         <AuthProvider>
-            <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+            <Suspense fallback={<div className="flex items-center justify-center md:h-screen">Loading...</div>}>
               <Navbar />
-              <main className="flex-1 mt-[2px] flex flex-col min-h-[900px] sm:w-full md:w-full lg:w-full">
+              <main className="flex-1 md:mt-[2px] flex flex-col md:min-h-[900px] sm:w-full md:w-full lg:w-full">
                 {children}
               </main>
             </Suspense>

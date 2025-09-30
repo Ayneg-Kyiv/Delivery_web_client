@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 
-
 const batchSize = 10;
 
 interface MyReviewsProps {
@@ -117,12 +116,12 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         Доставлено
                                     </button>
                                 </div>
-                                <div className="flex flex-col gap-2 mt-4 mb-4">
+                                <div className="w-full flex flex-col gap-2 mt-4 mb-4">
                                     <div className="text-white font-bold">Пропозиції водіїв:</div>
                                     {request.offers && request.offers.length ? (
                                         request.offers.map(offer => (
-                                            <div key={offer.id} className={`bg-[#1a093a] rounded-lg p-4 mt-2 flex flex-col md:flex-row md:items-center gap-4 ${offer.id === request.deliveryOfferID ? 'border-2 border-green-400' : ''}`}>
-                                                <div className="flex items-center gap-2">
+                                            <div key={offer.id} className={`w-full bg-[#1a093a] rounded-lg p-2 md:p-4 mt-2 flex flex-col md:flex-row md:items-center gap-4 ${offer.id === request.deliveryOfferID ? 'border-2 border-green-400' : ''}`}>
+                                                <div className="flex flex-col items-center gap-2">
                                                     <Image
                                                         src={offer.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + offer.driver.imagePath : '/dummy.png'}
                                                         alt={offer.driver.name || 'Driver'}

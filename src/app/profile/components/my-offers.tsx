@@ -44,7 +44,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                     <div className="text-white text-center py-20">Немає пропозицій</div>
                 ) : (
                     offers.map(offer => (
-                        <div key={offer.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-start p-6 shadow-lg gap-6">
+                        <div key={offer.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-start p-2 md:p-6 shadow-lg gap-6">
                             {/* Delivery Request Section */}
                             <div className="flex flex-col  md:w-2/3 w-full bg-[#1a093a] rounded-lg p-4 border border-[#7c3aed]">
                                 <h3 className="text-lg font-bold text-[#7c3aed] mb-2">Запит на доставку</h3>
@@ -64,16 +64,17 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                                 <div className="flex gap-2 items-center text-white text-lg font-bold">
                                     {offer.deliveryRequest.startLocation.city} {offer.deliveryRequest.startLocation.address} - {offer.deliveryRequest.endLocation.city} {offer.deliveryRequest.endLocation.address}
                                 </div>
-                                <div className="flex flex-col gap-4 text-white mt-2">
+                                <div className="flex flex-col gap-2 text-white mt-2">
                                     <span>Відправка: {formatDateTime(offer.deliveryRequest.startLocation.dateTime)}</span>
                                     <span>Прибуття: {formatDateTime(offer.deliveryRequest.endLocation.dateTime)}</span>
                                 </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
-                                    <span>Відправник: {offer.deliveryRequest.senderName}</span>
+                                <div className="flex flex-col md:flex-row gap-2 md:items-center text-white mt-6 md:mt-2">
+                                    <span>Відправник:</span>
+                                    <span>{offer.deliveryRequest.senderName}</span>
                                     <span className="font-bold">{offer.deliveryRequest.senderPhoneNumber}</span>
                                     {offer.deliveryRequest.senderEmail && <span>{offer.deliveryRequest.senderEmail}</span>}
                                 </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
+                                <div className="flex gap-2 items-center text-white mt-6 md:mt-2">
                                     <span>Вантаж: {offer.deliveryRequest.objectName}</span>
                                     <span>Тип: {offer.deliveryRequest.cargoSlotType}</span>
                                     <span>Вага: {offer.deliveryRequest.objectWeight} кг</span>

@@ -25,8 +25,8 @@ const Footer: React.FC = () => (
 
             <div className="flex flex-col text-lg fg-secondary">
                 <Link href="/#calculate-delivery" className="">Розрахувати вартість</Link>
-              <Link href="/delivery/request/list" className="mt-2">Список запитів</Link>
-              <Link href="/delivery/trip/list" className="mt-2">Список Поїздок</Link>
+              <Link href="/delivery/request/list" className="mt-2">Запити</Link>
+              <Link href="/delivery/trip/list" className="mt-2">Поїздки</Link>
             </div>
           </div>
           

@@ -58,7 +58,7 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
         const filteredSections = this.filterSections();
 
         return (
-            <div className='py-10 px-8 md:px-10 lg:px-[190px] flex flex-col pt-40 '>
+            <div className='py-10 px-8 md:px-10 lg:px-[190px] flex flex-col pt-20 md:pt-40 '>
                 <div className='flex-1 flex flex-col w-full gap-6 items-center'>
                     <h1 className='text-[40px] md:text-5xl lg:text-7xl'>Допомога та Чапи для Водіїв</h1>
                     <div className='w-full flex justify-center mt-6 px-8 md:px-20 lg:px-40'>
@@ -125,7 +125,7 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
                         )}
                     </div>
 
-                <div className='flex flex-col md:flex-row bg-darker mt-20 rounded-lg text-center text-gray-300 px-10 py-10 gap-10'>
+                <div className='flex flex-col md:flex-row bg-darker md:mt-20 rounded-lg text-center text-gray-300 px-10 py-10 gap-10'>
                     <div className='flex-1 flex flex-col justify-center items-center py-10'>
                         <h2 className="text-3xl font-bold mb-4 text-white">Приєднуйтесь до руху</h2>
                         <p className="mb-4">

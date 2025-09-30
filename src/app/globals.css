@@ -124,6 +124,13 @@
   font-size: var(--title-2-font-size);
 }
 
+@media screen and (max-width: 768px) {
+  .font-title-2{
+    font-size: var(--title-4-font-size);
+  }
+
+}
+
 .font-title-3{
   font-family: var(--title-3-font);
   font-size: var(--title-3-font-size);

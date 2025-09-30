@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Button from './ui/button';
 import dynamic from 'next/dynamic';
-import { se } from 'date-fns/locale';
 
 const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
 
@@ -166,25 +165,28 @@ export default function Navbar() {
   );
 
   const phoneNavigation =  (
-    <nav className="h-[78px] max-w-screen w-full flex items-center">
-      <div className='flex flex-1 flex-row justify-between h-full'>
-        
-        <div className='flex-1 h-full flex items-center justify-between pl-[20px]'>
-          <Link href="/" className="">
-            <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
-          </Link>
-        </div>
+    <>
+      <nav className="h-[78px] max-w-screen w-full flex items-center">
+        <div className='flex flex-1 flex-row justify-between h-full'>
+          
+          <div className='flex-1 h-full flex items-center justify-between pl-[20px]'>
+            <Link href="/" className="">
+              <Image src='/logo/Logo.png' alt="Logo" width={129} height={36}/>
+            </Link>
+          </div>
 
-        <div className=' h-full flex items-center justify-between pr-[20px]'>
-          <button
-            className="ml-[10px] text-3xl focus:outline-none"
-            onClick={handleMenuToggle}
-            aria-label="Toggle menu">
-            &#9776;
-          </button>
+          <div className=' h-full flex items-center justify-between pr-[20px]'>
+            <button
+              className="ml-[10px] text-3xl focus:outline-none"
+              onClick={handleMenuToggle}
+              aria-label="Toggle menu">
+              &#9776;
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <div className='h-[2px] navbar-underline z-10' />
+    </>
   );
 
   return (

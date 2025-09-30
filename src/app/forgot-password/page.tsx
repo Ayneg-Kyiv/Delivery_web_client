@@ -89,7 +89,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
                             Забули пароль?
                         </h1>
 
-                        <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        <p className='md:pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
                             Будь ласка введіть вашу електронну адресу, щоб отримати посилання для скидання паролю.
                         </p>
                     </div>
