@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import I18nProvider from "@/i18n/I18nProvider";
 import "./globals.css";
@@ -28,10 +29,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = cookies().get('locale')?.value === 'en' ? 'en' : 'uk';
+
   return (
-    <html lang="uk">
+    <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-        <I18nProvider>
+        <I18nProvider initialLocale={locale}>
           <AuthProvider>
             <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
               <Navbar />

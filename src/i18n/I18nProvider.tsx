@@ -21,17 +21,14 @@ export function useI18n() {
   return ctx;
 }
 
-function getInitialLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const m = document.cookie.match(/(?:^|; )locale=([^;]+)/);
-    const c = m ? decodeURIComponent(m[1]) : '';
-    if (c === 'en' || c === 'uk') return c;
-  }
-  return 'uk';
-}
-
-export default function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(getInitialLocale);
+export default function I18nProvider({
+  children,
+  initialLocale,
+}: {
+  children: React.ReactNode;
+  initialLocale: Locale;
+}) {
+  const [locale, setLocale] = useState<Locale>(initialLocale);
   const msgs: Messages = locale === 'en' ? en : uk;
 
   const value = useMemo(() => ({ locale, messages: msgs, setLocale }), [locale, msgs]);
