@@ -5,6 +5,8 @@ import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { regions } from '@/data/regions';
+import { monts } from '@/data/monts';
 
 // HOC to inject session into class components (copied from your admin panel)
 const withSession = (Component: React.ComponentType<any>) => {
@@ -157,13 +159,13 @@ class TripListPage extends React.Component<any, TripListState> {
                 <div className="h-[600px] md:h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
                     <div className="w-full h-[600px] md:h-[500px] bg-[#00000099]">
                         <div className="flex flex-col justify-center items-center absolute top-0 left-0 right-0 z-10 h-[500px] px-8 md:px-10 lg:px-20">
-                            <h1 className="pt-18 text-2xl md:text-4xl font-bold mb-4 text-center">Відправляй свою посилку вже зараз</h1>
-                            <div className="flex flex-col md:flex-row rounded-lg gap-4">
+                            <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4 text-center">Відправляй свою посилку вже зараз</h1>
+                            <div className="w-full flex flex-col md:flex-row justify-center items-center rounded-lg gap-4">
                                 <select
                                     name="cityFrom"
                                     value={filters.cityFrom}
                                     onChange={this.handleFilterChange}
-                                    className="px-4 py-5 rounded-lg text-black w-[200px]"
+                                    className="px-4 py-5 rounded-lg text-black w-full md:w-[200px]"
                                     style={{
                                         border: '1px solid #ccc',
                                         backgroundColor: 'white',
@@ -179,7 +181,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                     name="cityTo"
                                     value={filters.cityTo}
                                     onChange={this.handleFilterChange}
-                                    className="px-4 py-5 rounded-lg text-black w-[200px]"
+                                    className="px-4 py-5 rounded-lg text-black w-full md:w-[200px]"
                                     style={{
                                         border: '1px solid #ccc',
                                         backgroundColor: 'white',
@@ -196,7 +198,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                     type="date"
                                     value={filters.dateFrom}
                                     onChange={this.handleFilterChange}
-                                    className="px-4 py-5 rounded-lg text-black"
+                                    className="px-4 py-5 rounded-lg text-black w-full md:w-[200px]"
                                     style={{
                                         border: '1px solid #ccc',
                                         backgroundColor: 'white',
@@ -207,7 +209,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                     name="cargoType"
                                     value={filters.cargoType}
                                     onChange={this.handleFilterChange}
-                                    className="px-4 py-5 rounded-lg text-black"
+                                    className="px-4 py-5 rounded-lg text-black w-full md:w-[200px]"
                                     style={{
                                         border: '1px solid #ccc',
                                         backgroundColor: 'white',
@@ -240,6 +242,7 @@ class TripListPage extends React.Component<any, TripListState> {
                         </div>
                 </div>
             </div>
+
                 <div className='flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
                         <div className="flex flex-col p-4 rounded-lg md:w-1/4 bg-[#ffffff]">
                         {/* Filters Sidebar */}
@@ -301,44 +304,60 @@ class TripListPage extends React.Component<any, TripListState> {
                                 <div className="text-white text-center py-20">Немає доступних поїздок</div>
                             ) : (
                                 trips.map(trip => (
-                                    <div key={trip.id} className="bg-[#2d1857] w-full rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
-                                        <div className=" flex flex-col items-center justify-center mr-6 pb-10 md:pb-0 gap-2">
+                                    <div key={trip.id} className="bg-white text-black w-full rounded-xl flex flex-col md:flex-row items-center p-4 shadow-lg">
+                                        <div className="w-full lg:max-w-[180px] flex flex-col items-center justify-center md:mr-6 pb-10 md:pb-0 gap-2">
                                             <Image
-                                            src={trip.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
-                                            alt={trip.fullName}
-                                            width={80}
-                                            height={80}
-                                            className="rounded-full object-cover"
-                                        />
-                                            <span>Водій: {trip.fullName}</span>
-                                            <span className="font-bold">{trip.driver.email}</span>
-                                            <span className="text-yellow-400">★ {trip.driver.rating.toFixed(1)}</span>
+                                                src={regions.find(r=> r.name === trip.startLocation.state)?.image || '/regions/Kyivska.jpg'}
+                                                alt={trip.fullName}
+                                                width={350}
+                                                height={400}
+                                                className="w-full rounded-lg object-cover"
+                                            />
                                         </div>
 
-                                        <div className="w-full pb-10 md:pb-0 flex-1 flex flex-col md:px-6">
-                                            <div className="flex gap-2 items-center text-white text-lg font-bold">
-                                                {trip.startLocation.city} - {trip.endLocation.city}
+                                        <div className="w-full flex flex-col md:flex-row justify-start items-start gap-2 md:gap-0 ">
+                                            <div className="w-full pb-4 md:pb-0 flex-1 flex flex-col justify-center md:px-2">
+                                                <div className="flex gap-2 items-center text-lg md:text-sm font-bold">
+                                                    {trip.startLocation.city} - {trip.endLocation.city}
+                                                </div>
+                                                <div className="flex flex-col gap-4 mt-2 text-sm">
+                                                    <span>
+                                                        Дата: {monts.find(m => m.value === new Date(trip.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(trip.endLocation.dateTime).getDay() !== new Date(trip.startLocation.dateTime).getDay()) ? ` ${new Date(trip.endLocation.dateTime).getDate()}` : '' }
+                                                    </span>
+                                                    <span>
+                                                        Час: {new Date(trip.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(trip.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col gap-4 text-white mt-2">
-                                                <span>
-                                                    відбуття: {trip.startLocation.dateTime} 
-                                                </span>
-                                                <span>
-                                                    прибуття: {trip.endLocation.dateTime}
-                                                </span>
-                                            </div>
-                                        </div>
 
-                                        <div className="w-full md:w-[30%] flex flex-col items-end gap-2">
-                                            <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
-                                                {trip.deliverySlots.length > 0
-                                                    ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
-                                                    : trip.price}грн
+                                            <div className='w-full md:w-[40%] pb-4 md:pb-0 flex flex-col gap-2 justify-center items-center md:px-2'>
+                                                <div className='w-full flex flex-col lg:flex-row justify-center gap-2 md:gap-0 items-center mb-2'>
+                                                    
+                                                    <Image
+                                                        src={trip.driver?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
+                                                        alt={trip.driver?.name || trip.driver?.name}
+                                                        width={35}
+                                                        height={35}
+                                                        className="rounded-full object-cover"
+                                                    />
+                                                    <span>{trip.fullName}</span>
+
+                                                </div>
+
+                                                <span className="text-yellow-400">★ {trip.driver.rating.toFixed(1)}</span>
                                             </div>
-                                            <div className="text-white text-xs">Ціна може змінюватись від розміру посилки</div>
-                                            <Link href={`/delivery/trip/${trip.id}`} className='w-full flex'>
-                                                <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Обрати</button>
-                                            </Link>
+
+                                            <div className="w-full md:w-[30%] flex flex-col items-end gap-1">
+                                                <div className="w-full bg-[#7c3aed] px-4 py-2 rounded-lg font-bold text-xl">
+                                                    {trip.deliverySlots.length > 0
+                                                        ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
+                                                        : trip.price}грн
+                                                </div>
+                                                <div className="text-xs">Ціна може змінюватись від розміру посилки</div>
+                                                <Link href={`/delivery/trip/${trip.id}`} className='w-full flex'>
+                                                    <button className="w-full button-type-1 px-6 py-2 rounded-lg font-bold mb-4 md:mb-0 mt-2">Обрати</button>
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 ))

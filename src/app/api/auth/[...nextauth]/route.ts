@@ -5,7 +5,6 @@ import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { ApiClient } from "../../../api-client";
 import { error } from "console";
-import { access } from "fs";
 
 async function getCsrfToken()  {
   const cookieStore = await cookies();
@@ -33,6 +32,8 @@ async function refreshAccessToken(token: JWT) {
       },
       credentials: "include"
     });
+
+    console.log("Refresh token response:", responseRaw);
 
     const response = await responseRaw.json();
 
@@ -100,8 +101,8 @@ async function refreshAccessToken(token: JWT) {
       }
     }
 
-    if (!response.success){
 
+    if (!response.success){
       return {
         ...token,
         error: "Error refreshing access token"
@@ -118,7 +119,8 @@ async function refreshAccessToken(token: JWT) {
         email: response.data.email,
         token: response.data.token,
         roles: response.data.roles
-      }
+      },
+      error: response.success ? undefined : "No session on this device"
     };
   }
   catch (error: unknown) {
@@ -258,11 +260,9 @@ const handler = NextAuth({
       if (account && account.provider === 'google') {
         try {
 
-          console.log("Google account:", "present");
           // Exchange the Google token for your backend JWT token
           const csrfToken = await getCsrfToken();
           
-          console.log("CSRF Token:", csrfToken);
           const responseRaw = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google-authenticate`, {
             method: "POST",
             headers: {
@@ -278,8 +278,6 @@ const handler = NextAuth({
           });
 
         const response = await responseRaw.json();
-
-          console.log("Google authentication response:", response);
           
           // Handle the refreshToken cookie from response
           const setCookieHeader: string[] = responseRaw.headers.getSetCookie() || [];
@@ -377,9 +375,17 @@ const handler = NextAuth({
     },
  
     async session({ session, token }) {
+
       session.accessToken = token.accessToken;
       session.user = token.user;
       session.error = token.error;
+
+      if(session.error === "No session on this device") {
+        sessionStorage.clear();
+
+        (await cookies()).delete('refreshToken');
+        (await cookies()).delete('rememberMe');
+      }
 
       return session;
     },
@@ -399,7 +405,7 @@ const handler = NextAuth({
       try {
         const refreshToken = (await cookies()).get('refreshToken')?.value;
         
-        if (!refreshToken) {
+        if (refreshToken) {
 
           await ApiClient.post("/auth/signout", {}, {
             headers: {
@@ -409,7 +415,8 @@ const handler = NextAuth({
         }
 
         (await cookies()).delete('refreshToken');
-        (await cookies()).delete('rememberMe'); 
+        (await cookies()).delete('rememberMe');
+
         sessionStorage.clear();
 
        

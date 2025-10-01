@@ -5,6 +5,8 @@ import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { regions } from '@/data/regions';
+import { monts } from '@/data/monts';
 
 // HOC to inject session into class components
 const withSession = (Component: React.ComponentType<any>) => {
@@ -144,7 +146,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
                 <div className="h-[600px] md:h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
                     <div className="w-full h-[600px] md:h-[500px] bg-[#00000099]">
                     <div className="flex flex-col justify-center items-center absolute top-0 left-0 right-0 z-10 h-[500px] px-8 md:px-10 lg:px-20">
-                        <h1 className="pt-18 text-2xl md:text-4xl font-bold mb-4">Знайдіть запит на доставку</h1>
+                        <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4">Знайдіть запит на доставку</h1>
                         <div className="w-full flex flex-col md:flex-row justify-center items-center rounded-lg gap-x-4 gap-y-4">
                             <select
                                 name="cityFrom"
@@ -238,55 +240,62 @@ class RequestListPage extends React.Component<any, RequestListState> {
                             <div className="text-white text-center py-20">Немає доступних запитів</div>
                         ) : (
                             requests.map(request => (
-                                <div key={request.id} className="bg-[#2d1857] w-full rounded-xl flex flex-col md:flex-row items-center mb-10 p-6 shadow-lg">
-                                    <div className=" flex flex-col items-center justify-center mr-6 pb-10 md:pb-0">
+                                <div key={request.id} className="bg-white text-black w-full rounded-xl flex flex-col md:flex-row  items-center mb-10 p-4 shadow-lg">
+                                    <div className="w-full lg:max-w-[300px] flex flex-col items-center justify-center md:mr-6 pb-10 md:pb-0">
                                         <Image
-                                            src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
+                                            src={regions.find(r=> r.name === request.startLocation.state)?.image || '/regions/Kyivska.jpg'}
                                             alt={request.sender?.name || request.senderName}
-                                            width={80}
-                                            height={80}
-                                            className="rounded-full object-cover"
+                                            width={220}
+                                            height={400}
+                                            className="w-full  rounded-lg object-cover"
                                         />
-                                        <span className="text-white text-xs mt-2">{request.sender?.name || request.senderName}</span>
-                                        {request.sender?.rating && (
-                                            <span className="text-yellow-400">★ {request.sender.rating.toFixed(1)}</span>
-                                        )}
                                     </div>
-                                    
-                                    <div className="w-full pb-10 md:pb-0 flex-1 flex flex-col md:px-6">
-                                        <div className="flex gap-2 items-center text-white text-lg font-bold">
-                                            {request.startLocation.city} - {request.endLocation.city}
+
+                                    <div className="w-full pb-10 md:pb-0 flex-1 flex flex-col md:flex-row gap-2 md:px-6">
+                                        <div className='flex-1 flex flex-col'>
+                                            <div className="flex gap-2 self-center items-center  text-lg font-bold">
+                                                {request.startLocation.city} - {request.endLocation.city}
+                                            </div>
+                                            <div className="flex flex-col gap-4  mt-2">
+                                                <span>
+                                                    Дата: {monts.find(m => m.value === new Date(request.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(request.endLocation.dateTime).getDay() !== new Date(request.startLocation.dateTime).getDay()) ? ` ${new Date(request.endLocation.dateTime).getDate()}` : '' }
+                                                </span>
+                                                <span>
+                                                    Час: {new Date(request.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(request.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                            
+                                            <div className="flex flex-col md:flex-row gap-2 items-start  mt-4">
+                                                <span>Вантаж: {request.objectName}</span>
+                                                <span>Тип: {request.cargoSlotType}</span>
+                                                <span>Вага: {request.objectWeight} кг</span>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col md:flex-row gap-4 text-white mt-2">
-                                            <span>
-                                                відправка: {request.startLocation.dateTime}
-                                            </span>
-                                            <span>
-                                                прибуття: {request.endLocation.dateTime}
-                                            </span>
+
+                                        <div className='flex flex-col items-center self-center md:self-start px-4'>
+                                            <div className='flex flex-col lg:flex-row  items-center gap-2 md:gap-1'>
+                                                <Image
+                                                    src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
+                                                    alt={request.sender?.name || request.senderName}
+                                                    width={40}
+                                                    height={40}
+                                                    className="rounded-full object-cover"
+                                                    />
+                                                <span className=" text-x mt-2">{request.sender?.name || request.senderName}</span>
+                                            </div>
+                                            {request.sender?.rating && (
+                                                <span className="text-yellow-400">★ {request.sender.rating.toFixed(1)}</span>
+                                            )} 
                                         </div>
-                                        <div className="flex flex-col md:flex-row gap-2 items-start text-white mt-2">
-                                            <span>Відправник: {request.senderName}</span>
-                                        </div>
-                                        <div className="flex flex-col md:flex-row gap-2 items-start text-white mt-2">
-                                            <span>Вантаж: {request.objectName}</span>
-                                            <span>Тип: {request.cargoSlotType}</span>
-                                            <span>Вага: {request.objectWeight} кг</span>
-                                        </div>
-                                        {request.objectDescription && (
-                                            <div className="text-white mt-2">Опис: {request.objectDescription}</div>
-                                        )}
-                                        {request.comment && (
-                                            <div className="text-white mt-2">Коментар: {request.comment}</div>
-                                        )}
                                     </div>
-                                    <div className="w-full md:w-[30%] flex flex-col items-end gap-2">
-                                        <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
+                                    <div className="w-full md:w-[30%] lg:w-[25%] flex flex-col items-end gap-2">
+                                        <div className="w-full bg-[#7c3aed] px-4 py-2 rounded-lg font-bold text-xl">
                                             {request.estimatedPrice ? `${request.estimatedPrice} грн` : 'Ціна не вказана'}
                                         </div>
+                                        <div className="text-s">Пропонована ціна, може бути змінена при прийнятті пропозиції</div>
                                         {this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') && (
                                             <Link href={`/delivery/request/${request.id}`} className='w-full'>
-                                                <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Деталі</button>
+                                                <button className="w-full button-type-2 px-6 py-2 rounded-lg font-bold mt-2">Деталі</button>
                                             </Link>
                                         )}
                                     </div>

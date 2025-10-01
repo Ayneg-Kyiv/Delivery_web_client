@@ -3,7 +3,6 @@
 import { SessionProvider } from "next-auth/react";
 import { ReactNode , useEffect } from "react";
 import { Session } from 'next-auth'
-import { cookies } from "next/dist/server/request/cookies";
 
 type AuthProviderProps = {
   children: ReactNode;
