@@ -5,6 +5,7 @@ import { ApiClient } from '@/app/api-client';
 import { useSearchParams } from 'next/dist/client/components/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useI18n } from '@/i18n/I18nProvider';
 
 class ArticlePage extends Component<ArticlePageProps, ArticlePageState> {
     constructor(props: ArticlePageProps) {
@@ -27,29 +28,29 @@ class ArticlePage extends Component<ArticlePageProps, ArticlePageState> {
         const { loading, article, error } = this.state;
 
         if (loading) {
-            return <div>Loading...</div>;
+            return <div>{this.props.t.articlePage.loading}</div>;
         }
 
         if (error) {
-            return <div>Error: {error}</div>;
+            return <div>{this.props.t.articlePage.errorPrefix}{error}</div>;
         }
 
         if (!article) {
-            return <div>No article found.</div>;
+            return <div>{this.props.t.articlePage.notFound}</div>;
         }
 
         return (
             <div className='flex-1 flex-col w-full flex pt-8 md:pt-10 lg:pt-20 px-8 md:px-10 lg:px-20'>
                 <div className='flex-1 w-full flex flex-row'>
-                    <Link href='/' className=' hover:underline pr-4'>Головна</Link>
+                    <Link href='/' className=' hover:underline pr-4'>{this.props.t.articlePage.breadcrumb.home}</Link>
                     <p> {' > '} </p>
-                    <Link href='/news' className='pl-4 hover:underline pr-4'>Новини</Link>
+                    <Link href='/news' className='pl-4 hover:underline pr-4'>{this.props.t.articlePage.breadcrumb.news}</Link>
                     <p> {' > '} </p>
                     <Link href={`/article?id=${article.id}`} className='pl-4 hover:underline'>{article.title}</Link>
                 </div>
                 <div className='flex-1 flex-col w-full flex '>
-                    <p className='mt-4'>Категорія: {article.category}</p>
-                    <p className='mt-4'>Дата: {article.createdAt}</p>
+                    <p className='mt-4'>{this.props.t.articlePage.categoryLabel} {article.category}</p>
+                    <p className='mt-4'>{this.props.t.articlePage.dateLabel} {article.createdAt}</p>
                     <h1 className='text-4xl font-bold py-10'>{article.title}</h1>
                     
                     { this.state.article?.imagePath &&
@@ -92,10 +93,11 @@ class ArticlePage extends Component<ArticlePageProps, ArticlePageState> {
 
 export default function ArticleWithRouter(props: ArticlePageProps) {
   const searchParams = useSearchParams();
+    const { messages: t } = useI18n();
 
   const id = searchParams.get('id');
 
   return (
-      <ArticlePage {...props} id={id} />
+            <ArticlePage {...props} id={id} t={t} />
   );
 }

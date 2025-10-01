@@ -11,6 +11,16 @@ import { useI18n } from '@/i18n/I18nProvider';
 
 function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }) {
     const { messages: t } = useI18n();
+    const fp = t?.forgotPassword ?? {
+        title: 'Забули пароль?',
+        subtitle: 'Введіть вашу електронну адресу і ми надішлемо посилання для скидання паролю.',
+        emailLabel: 'E-mail',
+        invalidEmail: 'Введіть коректну електронну адресу.',
+        emailNotFound: 'Обліковий запис з такою електронною адресою не знайдено.',
+        genericError: 'Щось пішло не так. Спробуйте ще раз.',
+        submitButton: 'Надіслати посилання',
+        backToLogin: 'Повернутися до входу',
+    };
     const [email, setEmail] = React.useState('');
     const [error, setError] = React.useState<string | undefined>(undefined);
     const [emailError, setEmailError] = React.useState(false);
@@ -44,7 +54,7 @@ function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError(t.forgotPassword.invalidEmail);
+            setError(fp.invalidEmail);
             return;
         }
 
@@ -57,10 +67,10 @@ function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }
             if (response?.success) {
                 router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
             } else {
-                setError(t.forgotPassword.emailNotFound);
+                setError(fp.emailNotFound);
             }
         } catch (err) {
-            setError(t.forgotPassword.genericError);
+            setError(fp.genericError);
         } finally {
             setLoading(false);
         }
@@ -73,18 +83,18 @@ function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }
                     <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                     
                     <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                        {t.forgotPassword.title}
+                        {fp.title}
                     </h1>
 
                     <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                        {t.forgotPassword.subtitle}
+                        {fp.subtitle}
                     </p>
                 </div>
 
                 <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
                     <div className="space-y-5 flex flex-col">
                         <TextInputGroup
-                            label={t.forgotPassword.emailLabel}
+                            label={fp.emailLabel}
                             value={email}
                             onChange={handleEmailChange}
                             type="email"
@@ -102,13 +112,13 @@ function ForgotPasswordPage({ router }: { router: ReturnType<typeof useRouter> }
                         </div>
                     </div>
 
-                    <input type="submit" value={t.forgotPassword.submitButton}
+                    <input type="submit" value={fp.submitButton}
                         disabled={loading}
                         className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] disabled:opacity-50"
                     />
 
                     <div className="flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                        <Button onClick={() => router?.push('/signin')} text={t.forgotPassword.backToLogin}
+                        <Button onClick={() => router?.push('/signin')} text={fp.backToLogin}
                             className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                         />
                     </div>

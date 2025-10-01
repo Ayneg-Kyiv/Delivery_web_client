@@ -819,6 +819,112 @@ const messages = {
     send: "Send",
     openAria: "Open support chat"
   }
+  ,
+  userExists: {
+    title: "User already exists",
+    subtitle: "An account with this email address already exists. You can sign in to your account or reset your password if you forgot it.",
+    resetPassword: "Reset password"
+  },
+  forgotPassword: {
+    title: "Forgot your password?",
+    subtitle: "Enter your email address and we'll send you a link to reset your password.",
+    emailLabel: "E-mail",
+    invalidEmail: "Please enter a valid email address.",
+    emailNotFound: "We couldn't find an account with that email.",
+    genericError: "Something went wrong. Please try again.",
+    submitButton: "Send reset link",
+    backToLogin: "Back to sign in"
+  }
+  ,
+  resetPasswordSuccess: {
+    title: "Password changed successfully",
+    subtitle: "Your new password has been saved. You can now sign in with your new password.",
+    goToSignIn: "Go to sign in page"
+  },
+  changePassword: {
+    header: "Password and security",
+    currentLabel: "Your current password:",
+    newLabel: "New password:",
+    confirmLabel: "Confirm new password:",
+    placeholder: {
+      password: "Password",
+      newPassword: "New password",
+      confirmNewPassword: "Confirm new password"
+    },
+    toggles: { show: "Show", hide: "Hide" },
+    validate: {
+      noEmail: "No user email in session",
+      fillAll: "Fill in all fields",
+      tooShort: "New password must be at least 6 characters",
+      mismatch: "Passwords do not match",
+      sameAsCurrent: "New password cannot match the current one"
+    },
+    submit: { saving: "Saving…", save: "Save" },
+    successDefault: "Operation completed successfully",
+    errorChangeDefault: "Error changing password"
+  }
+  ,
+  cookiesPage: {
+    breadcrumbTitle: "Cookies",
+    title: "Cookies Policy",
+    lastUpdated: "Last updated: August 29, 2025",
+    intro1: "This is our cookies policy page. Here you can find information about how we use cookies on our website.",
+    intro2: "Cargix and its third-party partners use cookies and other tracking technologies (together — 'Tracking Technologies'), including third-party Tracking Technologies, on websites, mobile apps, emails, ads, and other online services of Cargix (collectively — 'Online Resources'). These technologies are used to operate the Cargix services ('Services'), improve them, personalize experiences and analyze usage of Online Resources, as well as to show personalized ads.",
+    intro3: "This Notice describes the Tracking Technologies we and our partners use, how we apply them, and your choices regarding the use of such technologies. For more information about how Cargix collects and uses personal data, please see our Privacy Policy.",
+    tech: {
+      title: "Tracking technologies we use",
+      intro: "We use the following Tracking Technologies for the purposes described in this Notice:",
+      list: {
+        cookies: "Cookies are small text files placed and stored in your browser when you visit a website or on your device when you use an app. Cookies may be created and placed by the website or app you visit ('first-party cookies') or by other websites or apps ('third-party cookies'). We use both session cookies (deleted after closing the browser) and persistent cookies (stored for a defined period, even after closing the browser).",
+        pixelTags: "Pixel tags (also called 'beacons') are small blocks of code placed on web pages, apps, emails, or ads that help us identify users and track interactions with our Online Resources.",
+        sdks: "Software Development Kits (SDKs) are code blocks mainly used in mobile apps, similar to cookies and pixel tags. SDKs allow developers to collect information about your device, network, and app usage.",
+        localStorage: "Local storage are files created by apps or websites and stored on your device or in the browser. They function similarly to cookies."
+      }
+    },
+    howWeUse: {
+      title: "How we use Tracking Technologies",
+      intro: "The following table shows categories of Tracking Technologies (including cookies, pixel tags, SDKs, and local storage) that may be placed on Online Resources, their purposes, and whether they are placed by Cargix or third-party partners.",
+      prefixes: {
+        category: "Category:",
+        purpose: "Purpose:",
+        owner: "Owner:"
+      },
+      tableHeaders: {
+        category: "Category",
+        purpose: "Purpose",
+        owner: "Owner"
+      },
+      categories: {
+        necessary: {
+          title: "Strictly necessary cookies",
+          purpose: "These cookies are essential for our Online Resources to function and cannot be switched off in our systems. They are usually set only in response to actions you take that amount to a request for services, such as setting your privacy preferences, logging in, or filling out forms. You can set your browser to block or alert you about these cookies, but some parts of the Online Resources will not work.",
+          owner: "Cargix"
+        },
+        analytics: {
+          title: "Analytics/performance cookies",
+          purpose: "These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our Online Resources. They help us know which pages are the most and least popular and see how visitors move around the Online Resources. All information these cookies collect is aggregated and therefore anonymous. If you do not allow these cookies, we will not know when you have visited our Online Resources and will not be able to monitor their performance.",
+          owner: "Cargix, Google Analytics"
+        },
+        advertising: {
+          title: "Advertising cookies",
+          purpose: "These cookies may be set through our Online Resources by our advertising partners. They may be used to build a profile of your interests and show you relevant ads on other sites. If you do not allow these cookies, you will experience less targeted advertising.",
+          owner: "Third-party partners"
+        }
+      }
+    }
+  }
+  ,
+  articlePage: {
+    loading: "Loading...",
+    errorPrefix: "Error: ",
+    notFound: "No article found.",
+    categoryLabel: "Category:",
+    dateLabel: "Date:",
+    breadcrumb: {
+      home: "Home",
+      news: "News"
+    }
+  }
 };
 
 export default messages;

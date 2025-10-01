@@ -16,6 +16,7 @@ interface Article {
 
 interface ArticlePageProps {
     id: string | null;
+    t: typeof import("@/i18n/messages/en").default | typeof import("@/i18n/messages/uk").default;
 }
 
 interface ArticlePageState {
