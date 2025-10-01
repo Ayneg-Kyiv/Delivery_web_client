@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
   images: {
-    domains: ['localhost', process.env.NEXT_PUBLIC_API_URL?.replace(/^https?:\/\//, '') || ''],
+    domains: ['localhost',  'testonazureb0de.blob.core.windows.net'],
   },
 };
 
