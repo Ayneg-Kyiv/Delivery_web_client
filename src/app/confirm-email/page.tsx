@@ -82,8 +82,8 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
               )}
 
               {status === 'success' && (
-            <ContentBox height='760px' lheight='700px'>
-                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+            <ContentBox>
+                <div className='flex-1 flex flex-col items-center justify-stretch'>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
@@ -99,6 +99,7 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
                     <div className="flex-1 w-full max-w-[500px]">
                         <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
                             <Link href='/signin' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Ввійти</Link>
+                            <Link href='/vehicle' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Стати водієм</Link>
                         </div>
                     </div>
                 </div>
@@ -107,8 +108,8 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
 
               {status === 'error' && (
                 
-            <ContentBox height='760px' lheight='700px'>
-                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+            <ContentBox>
+                <div className='flex-1 flex flex-col items-center justify-stretch'>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
@@ -132,8 +133,8 @@ class ConfirmEmail extends React.Component<ConfirmEmailProps, ConfirmEmailState>
             </ContentBox>
               )}
               {status === 'resent' && (
-            <ContentBox height='760px' lheight='700px'>
-                <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
+            <ContentBox>
+                <div className='flex-1  flex flex-col items-center justify-stretch'>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">

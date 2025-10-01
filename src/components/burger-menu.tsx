@@ -90,8 +90,25 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           </Link>
           <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/terms" onClick={onClose}>
             Умови користування
-          </Link> 
+          </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/help" onClick={onClose}>
+            Допомога
+          </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/help/driver" onClick={onClose}>
+            Допомога водієві
+          </Link>
+          <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/help/sender" onClick={onClose}>
+            Допомога відправнику
+          </Link>
           
+
+          {
+            session?.user?.roles.includes('Admin') && (
+              <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile/admin-panel" onClick={onClose}>
+                Адмін панель
+              </Link>
+            )
+          }
           { !session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/signin" onClick={onClose}>

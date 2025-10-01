@@ -86,10 +86,12 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
                 <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
                             Встановлення нового паролю
                         </h1>
-                        <p className='pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
+                        
+                        <p className='md:pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
                             Введіть новий пароль для вашого акаунта.
                         </p>
                     </div>

@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { ApiClient } from '@/app/api-client';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
+import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 const OrderDeliveryPage: React.FC = () => {
     const { id: tripId } = useParams<{ id: string }>();
@@ -28,6 +29,8 @@ const OrderDeliveryPage: React.FC = () => {
         date: '',
         time: '',
         dateTime: '',
+        latitude: undefined,
+        longitude: undefined,
     });
     const [endLocation, setEndLocation] = useState<CreateLocationDto>({
         country: '',
@@ -38,7 +41,14 @@ const OrderDeliveryPage: React.FC = () => {
         date: '',
         time: '',
         dateTime: '',
+        latitude: undefined,
+        longitude: undefined,
     });
+
+    const [startDate, setStartDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [endTime, setEndTime] = useState('');
 
     const [senderName, setSenderName] = useState('');
     const [senderPhoneNumber, setSenderPhoneNumber] = useState('');
@@ -57,32 +67,37 @@ const OrderDeliveryPage: React.FC = () => {
         fetchTrip();
     }, [tripId]);
 
+    // Set trip locations if using trip locations
     useEffect(() => {
         if (trip && useTripStartLocation) {
             setStartLocation({
-                country: trip.startLocation.country,
-                state: trip.startLocation.state,
-                city: trip.startLocation.city,
-                address: trip.startLocation.address,
-                houseNumber: trip.startLocation.houseNumber,
-                date: trip.startLocation.date,
-                time: trip.startLocation.time,
-                dateTime: trip.startLocation.dateTime,
+                ...trip.startLocation,
             });
+            setStartDate(trip.startLocation.date || '');
+            setStartTime(trip.startLocation.time || '');
         }
         if (trip && useTripEndLocation) {
             setEndLocation({
-                country: trip.endLocation.country,
-                state: trip.endLocation.state,
-                city: trip.endLocation.city,
-                address: trip.endLocation.address,
-                houseNumber: trip.endLocation.houseNumber,
-                date: trip.endLocation.date,
-                time: trip.endLocation.time,
-                dateTime: trip.endLocation.dateTime,
+                ...trip.endLocation,
             });
+            setEndDate(trip.endLocation.date || '');
+            setEndTime(trip.endLocation.time || '');
         }
     }, [trip, useTripStartLocation, useTripEndLocation]);
+
+    // Reset custom location if toggling to trip location
+    useEffect(() => {
+        if (useTripStartLocation && trip) {
+            setStartLocation({ ...trip.startLocation });
+            setStartDate(trip.startLocation.date || '');
+            setStartTime(trip.startLocation.time || '');
+        }
+        if (useTripEndLocation && trip) {
+            setEndLocation({ ...trip.endLocation });
+            setEndDate(trip.endLocation.date || '');
+            setEndTime(trip.endLocation.time || '');
+        }
+    }, [useTripStartLocation, useTripEndLocation, trip]);
 
     if (session.status === 'loading' || loading) {
         return (
@@ -127,16 +142,26 @@ const OrderDeliveryPage: React.FC = () => {
         if (useTripStartLocation) {
             payload.startLocationId = trip.startLocationId;
             payload.startLocation = undefined;
-        } else {;
-            startLocation.dateTime = `${startLocation.date}T${startLocation.time}`;
-            payload.startLocation = startLocation;
+        } else {
+            payload.startLocation = {
+                ...startLocation,
+                date: startDate,
+                time: startTime,
+                dateTime: startDate && startTime ? `${startDate}T${startTime}` : '',
+            };
+            payload.startLocationId = undefined;
         }
         if (useTripEndLocation) {
             payload.endLocationId = trip.endLocationId;
             payload.endLocation = undefined;
         } else {
-            endLocation.dateTime = `${endLocation.date}T${endLocation.time}`;
-            payload.endLocation = endLocation;
+            payload.endLocation = {
+                ...endLocation,
+                date: endDate,
+                time: endTime,
+                dateTime: endDate && endTime ? `${endDate}T${endTime}` : '',
+            };
+            payload.endLocationId = undefined;
         }
 
         try {
@@ -150,6 +175,34 @@ const OrderDeliveryPage: React.FC = () => {
             alert('Сталася помилка при створенні замовлення');
         }
     };
+
+    // Handlers for map selection
+    const handleStartLocationSelect = (location: CreateLocationDto) => {
+        setStartLocation(prev => ({
+            ...prev,
+            ...location,
+        }));
+    };
+
+    const handleEndLocationSelect = (location: CreateLocationDto) => {
+        setEndLocation(prev => ({
+            ...prev,
+            ...location,
+        }));
+    };
+
+    const mapToLocationState = (loc: CreateLocationDto): LocationState => ({
+        country: loc.country || '',
+        state: loc.state || '',
+        city: loc.city || '',
+        address: loc.address || '',
+        houseNumber: loc.houseNumber || '',
+        date: loc.date || '',
+        time: loc.time || '',
+        dateTime: loc.dateTime || '',
+        latitude: loc.latitude || null,
+        longitude: loc.longitude || null,
+    });
 
     return (
         <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-120">
@@ -174,6 +227,26 @@ const OrderDeliveryPage: React.FC = () => {
                         </select>
                     </div>
                     <div className='h-[2px] bg-lighter rounded-sm my-4'></div>
+                    
+                    {/* Map for custom locations */}
+                    
+                        <div className="mb-6">
+                            <h2 className="text-xl font-semibold mb-2 text-black">Виберіть точки на карті</h2>
+                            <DeliveryMapToSelect
+                                startLocation={mapToLocationState(startLocation)}
+                                endLocation={mapToLocationState(endLocation)}
+                                onStartLocationSelect={useTripStartLocation ? () => {} : handleStartLocationSelect}
+                                onEndLocationSelect={useTripEndLocation ? () => {} : handleEndLocationSelect}
+                                className="w-full h-[350px] mb-4 rounded-lg"
+                            />
+                            <div className="text-xs text-gray-500">
+                                {(!useTripStartLocation && !useTripEndLocation) && "Вкажіть точки на карті для відправлення та отримання."}
+                                {(!useTripStartLocation && useTripEndLocation) && "Вкажіть точку на карті для відправлення."}
+                                {(useTripStartLocation && !useTripEndLocation) && "Вкажіть точку на карті для отримання."}
+                            </div>
+                        </div>
+                    
+
                     {/* Start Location */}
                     <div className="mb-6">
                         <div className="flex items-center mb-2">
@@ -217,16 +290,16 @@ const OrderDeliveryPage: React.FC = () => {
                                 <label className="font-semibold text-black">Дата</label>
                                 <DateInputGroup
                                     label=""
-                                    value={startLocation.date}
-                                    onChange={e => setStartLocation({ ...startLocation, date: e.target.value })}
+                                    value={startDate}
+                                    onChange={e => setStartDate(e.target.value)}
                                     inputClassName="floating-input-black"
-                                    labelClassName={startLocation.date ? 'filled' : ''}
+                                    labelClassName={startDate ? 'filled' : ''}
                                 />
                                 <label className="font-semibold text-black">Час</label>
                                 <input
                                     type="time"
-                                    value={startLocation.time}
-                                    onChange={e => setStartLocation({ ...startLocation, time: e.target.value })}
+                                    value={startTime}
+                                    onChange={e => setStartTime(e.target.value)}
                                     className="floating-input-black"
                                 />
                             </>
@@ -276,16 +349,16 @@ const OrderDeliveryPage: React.FC = () => {
                                 <label className="font-semibold text-black">Дата</label>
                                 <DateInputGroup
                                     label=""
-                                    value={endLocation.date}
-                                    onChange={e => setEndLocation({ ...endLocation, date: e.target.value })}
+                                    value={endDate}
+                                    onChange={e => setEndDate(e.target.value)}
                                     inputClassName="floating-input-black"
-                                    labelClassName={endLocation.date ? 'filled' : ''}
+                                    labelClassName={endDate ? 'filled' : ''}
                                 />
                                 <label className="font-semibold text-black">Час</label>
                                 <input
                                     type="time"
-                                    value={endLocation.time}
-                                    onChange={e => setEndLocation({ ...endLocation, time: e.target.value })}
+                                    value={endTime}
+                                    onChange={e => setEndTime(e.target.value)}
                                     className="floating-input-black"
                                 />
                             </>

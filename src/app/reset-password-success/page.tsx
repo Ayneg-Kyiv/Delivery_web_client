@@ -16,10 +16,13 @@ class ResetPasswordSuccessPage extends Component<ResetPasswordSuccessPageProps> 
             <ContentBox height='760px' lheight='700px'>
                 <div className='flex-1 flex flex-col items-center justify-stretch'>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
+                        
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
                             Пароль успішно змінено
                         </h1>
+                        
                         <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
                             Ваш новий пароль збережено. Тепер ви можете увійти до свого облікового запису з новим паролем.
                         </p>

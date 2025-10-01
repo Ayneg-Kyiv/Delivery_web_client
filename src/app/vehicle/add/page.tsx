@@ -109,6 +109,7 @@ class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
                     isSubmitting: false,
                     stage: 2,
                 });
+                localStorage.setItem("isApplicationSubmitted", "true");
             } else {
                 this.setState({ error: response.message || 'Помилка додавання.', isSubmitting: false });
             }

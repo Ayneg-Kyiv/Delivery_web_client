@@ -157,11 +157,11 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         return (
             <ContentBox>
                 
-                <form className='flex-1 flex flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage1}>
+                <form className='flex-1 flex flex-col h-full items-center' onSubmit={this.handleSignupStage1}>
                        
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
-                        
+
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
                             Створіть свій обліковий запис в Cargix
                         </h1>
@@ -220,12 +220,12 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         return (
             <ContentBox>
                 
-                <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignupStage2}>
+                <form className='flex-1 flex flex-col h-full items-center ' onSubmit={this.handleSignupStage2}>
                        
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
                         
-                        <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
+                        <h1 className="font-title-2 mt-2 mb-4 text-center">
                             Встановіть пароль
                         </h1>
 
@@ -297,7 +297,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 renderContentForStage3 = () => {
     return (
         <ContentBox>
-            <form className='flex-1 flex pt-20 p-20 flex-col h-full items-center justify-center' onSubmit={this.handleSignUp}>
+            <form className='flex-1 flex flex-col h-full items-center ' onSubmit={this.handleSignUp}>
                 
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
@@ -313,7 +313,7 @@ renderContentForStage3 = () => {
                     
                     <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
                         
-                        <div className='flex flex-row space-x-2'>
+                        <div className='flex flex-col md:flex-row space-x-2'>
                             <TextInputGroup
                                 label="Ім'я"
                                 value={this.state.firstName}
