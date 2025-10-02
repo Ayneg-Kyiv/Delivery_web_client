@@ -7,12 +7,15 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TravelPathMap from '@/components/other/travel-path-map';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const TripDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [trip, setTrip] = useState<Trip | null>(null);
     const [loading, setLoading] = useState(true);
     const session = useSession();
+    const { messages } = useI18n();
+    const t = messages.tripDetail;
 
     useEffect(() => {
         const fetchTrip = async () => {
@@ -30,7 +33,7 @@ const TripDetailPage: React.FC = () => {
     if (session.status === 'loading' || loading) {
         return (
             <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-                <div className="text-white text-center py-20">Завантаження...</div>
+                <div className="text-white text-center py-20">{t.loading}</div>
             </div>
         );
     }
@@ -38,7 +41,7 @@ const TripDetailPage: React.FC = () => {
     if (!trip) {
         return (
             <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-                <div className="text-white text-center py-20">Поїздка не знайдена</div>
+                <div className="text-white text-center py-20">{t.notFound}</div>
             </div>
         );
     }
@@ -54,7 +57,7 @@ const TripDetailPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-[#1a093a]/60 flex flex-col justify-center items-center px-8">
                     <h1 className="text-4xl font-bold mb-4 text-white">
-                        Деталі поїздки
+                        {t.heroTitle}
                     </h1>
                     <div className="flex gap-4 text-white text-xl font-bold">
                         <span>{trip.startLocation.city}</span>
@@ -62,15 +65,15 @@ const TripDetailPage: React.FC = () => {
                         <span>{trip.endLocation.city}</span>
                     </div>
 					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
-						<div className="mt-2 text-white">
-							Відправка: {trip.startLocation.dateTime} 
-						</div>
+                        <div className="mt-2 text-white">
+                            {t.labels.departureShort}: {trip.startLocation.dateTime} 
+                        </div>
 						<div className='hidden md:block'>
 							|
 						</div>
-						<div className="mt-2 text-white">
-							Доставка: {trip.endLocation.dateTime}
-						</div>
+                        <div className="mt-2 text-white">
+                            {t.labels.deliveryShort}: {trip.endLocation.dateTime}
+                        </div>
 					</div>
                 </div>
             </div>
@@ -116,21 +119,21 @@ const TripDetailPage: React.FC = () => {
                     <div className='w-full flex justify-between gap-6 flex-col md:flex-row bg-[#2d1857]'>
 
                         <div className=" rounded-xl p-6 shadow-lg text-white">
-                            <div className="text-lg font-bold mb-2">Маршрут</div>
+                            <div className="text-lg font-bold mb-2">{t.labels.route}</div>
                             <div className="mb-2">
-                                <span className="font-bold">Звідки:</span> {trip.startLocation.address} {trip.startLocation.houseNumber}, {trip.startLocation.state}, {trip.startLocation.city}
+                                <span className="font-bold">{t.labels.from}:</span> {trip.startLocation.address} {trip.startLocation.houseNumber}, {trip.startLocation.state}, {trip.startLocation.city}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Куди:</span> {trip.endLocation.address} {trip.endLocation.houseNumber}, {trip.endLocation.state}, {trip.endLocation.city}
+                                <span className="font-bold">{t.labels.to}:</span> {trip.endLocation.address} {trip.endLocation.houseNumber}, {trip.endLocation.state}, {trip.endLocation.city}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Дата відбуття:</span> {trip.startLocation.dateTime}
+                                <span className="font-bold">{t.labels.departureDate}:</span> {trip.startLocation.dateTime}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Дата прибуття:</span> {trip.endLocation.dateTime}
+                                <span className="font-bold">{t.labels.arrivalDate}:</span> {trip.endLocation.dateTime}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">Тип транспорту:</span> {trip.vehicle.type}
+                                <span className="font-bold">{t.labels.transportType}:</span> {trip.vehicle.type}
                             </div>
                         </div>
                         <TravelPathMap 
@@ -146,7 +149,7 @@ const TripDetailPage: React.FC = () => {
                         />
                     </div>
                     <div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
-                        <div className="text-lg font-bold mb-2">Автомобіль</div>
+                        <div className="text-lg font-bold mb-2">{t.labels.vehicle}</div>
                         <div className="flex gap-4 items-center">
                             <Image
                                 src={trip.vehicle.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.vehicle.imagePath : '/dummy.png'}
@@ -157,27 +160,27 @@ const TripDetailPage: React.FC = () => {
                             />
                             <div>
                                 <div>{trip.vehicle.brand} {trip.vehicle.model}</div>
-                                <div>Тип: {trip.vehicle.type}</div>
-                                <div>Колір: {trip.vehicle.color}</div>
-                                <div>Номер: {trip.vehicle.numberPlate}</div>
+                                <div>{t.labels.type}: {trip.vehicle.type}</div>
+                                <div>{t.labels.color}: {trip.vehicle.color}</div>
+                                <div>{t.labels.plate}: {trip.vehicle.numberPlate}</div>
                             </div>
                         </div>
                     </div>
                     <div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
-                        <div className="text-lg font-bold mb-2">Варіанти доставки</div>
+                        <div className="text-lg font-bold mb-2">{t.labels.deliveryOptions}</div>
                         {trip.deliverySlots.length === 0 ? (
-                            <div>Варіанти доставки не вказані</div>
+                            <div>{t.labels.deliveryOptionsNotSpecified}</div>
                         ) : (
                             <div className="flex flex-col gap-2">
                                 {trip.deliverySlots.map(slot => (
                                     <div key={slot.id} className="flex justify-between items-center bg-[#7c3aed]/30 px-4 py-2 rounded-lg">
                                         <span>{slot.cargoSlotTypeName}</span>
-                                        <span className="font-bold">{slot.approximatePrice} грн</span>
+                                        <span className="font-bold">{slot.approximatePrice} {t.labels.currency}</span>
                                     </div>
                                 ))}
                             </div>
                         )}
-                        <div className="mt-4 text-xs text-white">Ціна може змінюватись від розміру посилки</div>
+                        <div className="mt-4 text-xs text-white">{t.priceDisclaimer}</div>
                     </div>
                     <div className="flex justify-end">
                         {
@@ -186,7 +189,7 @@ const TripDetailPage: React.FC = () => {
                             && (
                                 <Link href={`/delivery/trip/${trip.id}/order`} className='w-full md:w-auto'>
                                     <button className="w-full bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold text-lg">
-                                        Відправити посилку
+                                        {t.actions.sendParcel}
                                     </button>
                                 </Link>
                             )

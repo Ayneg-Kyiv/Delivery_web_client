@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const batchSize = 10;
 
 const MyTrips: React.FC = () => {
+    const { messages: t } = useI18n();
     const [trips, setTrips] = useState<Trip[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -56,12 +58,12 @@ const MyTrips: React.FC = () => {
 
     return (
         <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
-            <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">Мої поїздки</h2>
+            <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myTrips.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
-                    <div className="text-white text-center py-20">Завантаження...</div>
+                    <div className="text-white text-center py-20">{t.profile.myTrips.loading}</div>
                 ) : trips.length === 0 ? (
-                    <div className="text-white text-center py-20">Немає поїздок</div>
+                    <div className="text-white text-center py-20">{t.profile.myTrips.noTrips}</div>
                 ) : (
                     trips.map(trip => (
                         <div key={trip.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
@@ -78,32 +80,32 @@ const MyTrips: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col gap-4 text-white mt-2">
                                     <span>
-                                        відбуття: {trip.startLocation.dateTime}
+                                        {t.profile.myTrips.departure}: {trip.startLocation.dateTime}
                                     </span>
                                     <span>
-                                        прибуття: {trip.endLocation.dateTime}
+                                        {t.profile.myTrips.arrival}: {trip.endLocation.dateTime}
                                     </span>
                                 </div>
                                 <div className="flex flex-col md:flex-row gap-2 items-start md:items-center text-white mt-2">
-                                    <span>Водій: {trip.fullName}</span>
+                                    <span>{t.profile.myTrips.driver}: {trip.fullName}</span>
                                 </div>
                                 
                                 <div className="flex flex-col gap-2 mt-4 pt-10 md:pt-2">
-                                    <div className="text-white font-bold">Замовлення:</div>
+                                    <div className="text-white font-bold">{t.profile.myTrips.orders}</div>
                                     {trip.deliveryOrders.length === 0 ? (
-                                        <div className="text-white text-sm">Немає замовлень</div>
+                                        <div className="text-white text-sm">{t.profile.myTrips.noOrders}</div>
                                     ) : (
                                         trip.deliveryOrders.map(order => (
                                             <div key={order.id} className="bg-[#7c3aed]/30 rounded-lg p-3 mb-2 flex flex-col md:flex-row md:items-center md:justify-between">
                                                 <div>
-                                                    <div className="text-white text-sm font-bold">Відправник: {order.senderName}</div>
-                                                    <div className="text-white text-sm">Телефон: {order.senderPhoneNumber}</div>
-                                                    <div className="text-white text-sm">Статус: {order.isAccepted ? (order.isDelivered ? 'Доставлено' : order.isPickedUp ? 'В дорозі' : 'Підтверджено') : 'Очікує підтвердження'}</div>
+                                                    <div className="text-white text-sm font-bold">{t.profile.myTrips.sender}: {order.senderName}</div>
+                                                    <div className="text-white text-sm">{t.profile.myTrips.phone}: {order.senderPhoneNumber}</div>
+                                                    <div className="text-white text-sm">{t.profile.myTrips.status}: {order.isAccepted ? (order.isDelivered ? t.profile.myTrips.statusValues.delivered : order.isPickedUp ? t.profile.myTrips.statusValues.inTransit : t.profile.myTrips.statusValues.confirmed) : t.profile.myTrips.statusValues.awaitingConfirmation}</div>
                                                 </div>
                                                 <div className="flex gap-2 mt-2 md:mt-0">
                                                     
                                                     <Link href={`/delivery/chat/order?orderId=${order.id}`} className='w-full'>
-                                                        <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold">Перейти до чату</button>
+                                                        <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold">{t.profile.myTrips.goToChat}</button>
                                                     </Link>
 
                                                     {!order.isAccepted && (
@@ -113,21 +115,21 @@ const MyTrips: React.FC = () => {
                                                                 onClick={() => handleOrderAction(order.id, 'accept')}
                                                                 disabled={loading}
                                                             >
-                                                                Підтвердити
+                                                                {t.profile.myTrips.confirm}
                                                             </button>
                                                             <button
                                                                 className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold"
                                                                 onClick={() => handleOrderAction(order.id, 'declined')}
                                                                 disabled={loading}
                                                             >
-                                                                Відхилити
+                                                                {t.profile.myTrips.decline}
                                                             </button>
                                                         </>
                                                     )}
                                                     {
                                                         order.isDelivered && (
                                                             <Link href={`/delivery/review/order/${order.id}/?userId=${order.sender?.id}`} className='w-full'>
-                                                                <button className="bg-white text-[#7c3aed] px-4 py-2 rounded-lg font-bold">Залишити відгук</button>
+                                                                <button className="bg-white text-[#7c3aed] px-4 py-2 rounded-lg font-bold">{t.profile.myTrips.leaveReview}</button>
                                                             </Link>
                                                         )
                                                     }
@@ -139,13 +141,13 @@ const MyTrips: React.FC = () => {
                             </div>
                             <div className="w-full md:w-1/3 pt-10 md:pt-0 md:self-start flex flex-col md:items-end gap-2">
                                 <div className="w-full bg-[#7c3aed] text-white px-4 py-2 rounded-lg font-bold text-xl">
-                                    Мінімальна вартість: {trip.deliverySlots.length > 0
+                                    {t.profile.myTrips.minCost}: {trip.deliverySlots.length > 0
                                         ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
-                                        : trip.price}грн
+                                        : trip.price}{t.profile.myTrips.currency}
                                 </div>
-                                <div className="text-white text-xs">Ціна може змінюватись від розміру посилки</div>
+                                <div className="text-white text-xs">{t.profile.myTrips.priceDisclaimer}</div>
                                 <Link href={`/delivery/trip/${trip.id}`} className='w-full'>
-                                    <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">Деталі</button>
+                                    <button className="w-full bg-white text-[#7c3aed] px-6 py-2 rounded-lg font-bold mt-2">{t.profile.myTrips.details}</button>
                                 </Link>
 
                                 <div className="w-full flex gap-2 mt-2">
@@ -155,7 +157,7 @@ const MyTrips: React.FC = () => {
                                             onClick={() => handleTripAction(trip.id, 'start')}
                                             disabled={loading}
                                         >
-                                            Почати поїздку
+                                            {t.profile.myTrips.startTrip}
                                         </button>
                                     )}
                                     {trip.isStarted && !trip.isCompleted && (
@@ -164,11 +166,11 @@ const MyTrips: React.FC = () => {
                                             onClick={() => handleTripAction(trip.id, 'complete')}
                                             disabled={loading}
                                         >
-                                            Завершити поїздку
+                                            {t.profile.myTrips.completeTrip}
                                         </button>
                                     )}
                                     {trip.isCompleted && (
-                                        <span className="text-green-400 font-bold">Поїздка завершена</span>
+                                        <span className="text-green-400 font-bold">{t.profile.myTrips.tripCompleted}</span>
                                     )}
                                 </div>
                             </div>

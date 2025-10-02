@@ -13,11 +13,13 @@ interface NewsState {
     currentPage: number;
     totalPages: number;
     batchSize: number;
-    articles: [{
+    articles: Array<{
         id: string;
         title: string;
         content: string;
         createdAt: string;
         imagePath: string;
-    }];
+    }>;
+    loading: boolean;
+    error: string;
 }

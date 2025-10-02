@@ -39,4 +39,6 @@ interface VehicleState {
 
 interface VehicleProps {
     session: ReturnType<typeof useSession>
+    t: typeof import('../../i18n/messages/uk').default['vehiclePage'];
+    tCommon: typeof import('../../i18n/messages/uk').default['footer'];
 }

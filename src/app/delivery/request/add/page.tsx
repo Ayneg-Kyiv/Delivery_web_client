@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
@@ -118,7 +119,8 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 			this.state.receiverPhoneNumber,
 		];
 		if (requiredFields.some(field => !field)) {
-			alert('Будь ласка, заповніть всі обов\'язкові поля');
+			const t = (this.props as any).t?.addRequest;
+			alert(t?.errors.requiredFields || 'Будь ласка, заповніть всі обов\'язкові поля');
 			this.setState({ submitting: false });
 			return;
 		}
@@ -162,10 +164,12 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 			if (response.success) {
 				window.location.href = '/delivery/request/list';
 			} else {
-				alert('Не вдалося створити запит');
+				const t = (this.props as any).t?.addRequest;
+				alert(t?.errors.createFailed || 'Не вдалося створити запит');
 			}
 		} catch (error) {
-			alert('Сталася помилка при створенні запиту');
+			const t = (this.props as any).t?.addRequest;
+			alert(t?.errors.createError || 'Сталася помилка при створенні запиту');
 		}
 		this.setState({ submitting: false });
 	};
@@ -194,14 +198,17 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
     };
 
 	render() {
+		const t = (this.props as any).t?.addRequest;
 		return (
 			<div className="flex flex-col w-full justify-center items-center min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-80">
 				<div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]  max-w-[540px]'>
-					<h1 className='text-2xl font-bold py-3 text-[#724C9D]'>Створити запит на доставку</h1>
+					<h1 className='text-2xl font-bold py-3 text-[#724C9D]'>
+						{t?.title || 'Створити запит на доставку'}
+					</h1>
 					<form className="w-full max-w-lg mt-6" onSubmit={this.handleSubmit}>
 						{/* Map Selection */}
                         <div className="mb-8">
-                            <h2 className="text-xl font-semibold mb-4 text-black">Виберіть точки на карті</h2>
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.map.title || 'Виберіть точки на карті'}</h2>
                             <DeliveryMapToSelect
                                 startLocation={this.state.startLocation}
                                 endLocation={this.state.endLocation}
@@ -209,71 +216,68 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
                                 onEndLocationSelect={this.handleEndLocationSelect}
                                 className="w-full h-[350px] mb-4"
                             />
-                            <div className="text-sm text-gray-500">
-                                Натисніть &quot;Вказати початок&quot; або &quot;Вказати кінець&quot;, потім виберіть точку на карті.
-                            </div>
+							<div className="text-sm text-gray-500">{t?.map.hint || 'Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.'}</div>
                         </div>
 						{/* Start Location */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Дата і час отримання</h2>
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.pickup.sectionTitle || 'Дата і час отримання'}</h2>
 							<div className='h-[2px] bg-lighter rounded-sm my-4 mb-6'></div>
-							
-							<label className="font-semibold text-black">Дата</label>
+							<label className="font-semibold text-black">{t?.pickup.dateLabel || 'Дата'}</label>
 							<DateInputGroup label="" value={this.state.startDate} onChange={e => this.setState({ startDate: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.startDate ? 'filled' : ''} />
-							<label className="font-semibold text-black">Час</label>
+							<label className="font-semibold text-black">{t?.pickup.timeLabel || 'Час'}</label>
 							<input type="time" value={this.state.startTime} onChange={e => this.setState({ startTime: e.target.value })} className="floating-input-black" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* End Location */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Дата і час доставки</h2>
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.delivery.sectionTitle || 'Дата і час доставки'}</h2>
 							
-							<label className="font-semibold text-black">Дата</label>
+							<label className="font-semibold text-black">{t?.delivery.dateLabel || 'Дата'}</label>
 							<DateInputGroup label="" value={this.state.endDate} onChange={e => this.setState({ endDate: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.endDate ? 'filled' : ''} />
-							<label className="font-semibold text-black">Час</label>
+							<label className="font-semibold text-black">{t?.delivery.timeLabel || 'Час'}</label>
 							<input type="time" value={this.state.endTime} onChange={e => this.setState({ endTime: e.target.value })} className="floating-input-black" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Sender Info */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Відправник</h2>
-							<TextInputGroup label="Ім'я відправника" value={this.state.senderName} onChange={e => this.setState({ senderName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderName ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Телефон відправника" value={this.state.senderPhoneNumber} onChange={e => this.setState({ senderPhoneNumber: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderPhoneNumber ? 'filled' : ''} type="tel" />
-							<TextInputGroup label="Email відправника" value={this.state.senderEmail} required={false} onChange={e => this.setState({ senderEmail: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderEmail ? 'filled' : ''} type="email" />
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.sender.sectionTitle || 'Відправник'}</h2>
+							<TextInputGroup label={t?.sender.name || "Ім'я відправника"} value={this.state.senderName} onChange={e => this.setState({ senderName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderName ? 'filled' : ''} type="text" />
+							<TextInputGroup label={t?.sender.phone || 'Телефон відправника'} value={this.state.senderPhoneNumber} onChange={e => this.setState({ senderPhoneNumber: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderPhoneNumber ? 'filled' : ''} type="tel" />
+							<TextInputGroup label={t?.sender.email || 'Email відправника'} value={this.state.senderEmail} required={false} onChange={e => this.setState({ senderEmail: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.senderEmail ? 'filled' : ''} type="email" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Cargo Info */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Вантаж</h2>
-							<TextInputGroup label="Назва об'єкта" value={this.state.objectName} onChange={e => this.setState({ objectName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectName ? 'filled' : ''} type="text" />
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.cargo.sectionTitle || 'Вантаж'}</h2>
+							<TextInputGroup label={t?.cargo.objectName || "Назва об'єкта"} value={this.state.objectName} onChange={e => this.setState({ objectName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectName ? 'filled' : ''} type="text" />
 							<div className="flex flex-col mb-2">
-								<label className="mb-2 font-semibold text-black">Тип слота</label>
+								<label className="mb-2 font-semibold text-black">{t?.cargo.slotType || 'Тип слота'}</label>
 								<select value={this.state.cargoSlotType} onChange={e => this.setState({ cargoSlotType: e.target.value })} className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#724C9D] text-black" required>
-									<option value="">Оберіть тип слота</option>
+									<option value="">{t?.cargo.chooseSlotPlaceholder || 'Оберіть тип слота'}</option>
 									{Object.entries(SLOT_TYPES).map(([key, val]) => (
 										<option key={key} value={key}>{key} ({val.MaxWeight}, {val.MaxVolume})</option>
 									))}
 								</select>
 							</div>
-							<TextInputGroup label="Вага, кг" value={this.state.objectWeight} onChange={e => this.setState({ objectWeight: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectWeight ? 'filled' : ''} type="number" />
-							<TextInputGroup label="Опис вантажу" value={this.state.objectDescription} required={false} onChange={e => this.setState({ objectDescription: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectDescription ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Пропонована ціна доставки, грн" value={this.state.estimatedPrice} required={false} onChange={e => this.setState({ estimatedPrice: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.estimatedPrice ? 'filled' : ''} type="number" />
+							<TextInputGroup label={t?.cargo.weightWithUnit || 'Вага, кг'} value={this.state.objectWeight} onChange={e => this.setState({ objectWeight: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectWeight ? 'filled' : ''} type="number" />
+							<TextInputGroup label={t?.cargo.description || 'Опис вантажу'} value={this.state.objectDescription} required={false} onChange={e => this.setState({ objectDescription: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.objectDescription ? 'filled' : ''} type="text" />
+							<TextInputGroup label={`${t?.cargo.estimatedPrice || 'Пропонована ціна доставки'}, ${t?.currency || 'грн'}`} value={this.state.estimatedPrice} required={false} onChange={e => this.setState({ estimatedPrice: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.estimatedPrice ? 'filled' : ''} type="number" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Receiver Info */}
 						<div className="mb-6">
-							<h2 className="text-xl font-semibold mb-4 text-black">Одержувач</h2>
-							<TextInputGroup label="Ім'я одержувача" value={this.state.receiverName} onChange={e => this.setState({ receiverName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.receiverName ? 'filled' : ''} type="text" />
-							<TextInputGroup label="Телефон одержувача" value={this.state.receiverPhoneNumber} onChange={e => this.setState({ receiverPhoneNumber: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.receiverPhoneNumber ? 'filled' : ''} type="tel" />
+							<h2 className="text-xl font-semibold mb-4 text-black">{t?.receiver.sectionTitle || 'Одержувач'}</h2>
+							<TextInputGroup label={t?.receiver.name || "Ім'я одержувача"} value={this.state.receiverName} onChange={e => this.setState({ receiverName: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.receiverName ? 'filled' : ''} type="text" />
+							<TextInputGroup label={t?.receiver.phone || 'Телефон одержувача'} value={this.state.receiverPhoneNumber} onChange={e => this.setState({ receiverPhoneNumber: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.receiverPhoneNumber ? 'filled' : ''} type="tel" />
 						</div>
 						<div className='h-[2px] bg-lighter rounded-sm my-4'></div>
 						{/* Comment */}
 						<div className="mb-6">
-							<TextInputGroup label="Коментар" value={this.state.comment ?? ""} required={false} onChange={e => this.setState({ comment: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.comment ? 'filled' : ''} type="text" />
+							<TextInputGroup label={t?.comment || 'Коментар'} value={this.state.comment ?? ""} required={false} onChange={e => this.setState({ comment: e.target.value })} inputClassName="floating-input-black" labelClassName={this.state.comment ? 'filled' : ''} type="text" />
 						</div>
 						<div className="flex justify-end">
 							<button type="submit" className="w-full px-6 py-6 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors" disabled={this.state.submitting}>
-								Створити запит
+								{t?.buttons.create || 'Створити запит'}
 							</button>
 						</div>
 					</form>
@@ -282,5 +286,10 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		);
 	}
 }
+const AddRequestWithSession = withSession(AddRequestPage);
+const AddRequestWrapper = (props: any) => {
+	const { messages } = useI18n();
+	return <AddRequestWithSession {...props} t={messages} />;
+};
 
-export default withSession(AddRequestPage);
+export default AddRequestWrapper;

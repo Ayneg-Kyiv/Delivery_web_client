@@ -8,6 +8,7 @@ import ContentBox from "@/components/ui/content-box";
 import TextInputGroup from "@/components/ui/text-input-group";
 import ChangeImageModal from "@/components/ui/change-image";
 import Link from "next/link";
+import { useI18n } from "@/i18n/I18nProvider";
 
 
 
@@ -41,7 +42,7 @@ const withSession = (Component: React.ComponentType<any>) => {
 };
 
 class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
-    constructor(props: AddVehicleProps) {
+    constructor(props: VehicleProps) {
         super(props);
         this.state = {
             
@@ -101,7 +102,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                 this.setState({ vehicles: vehiclesResponse.data });
             }
         } catch (error) {
-            this.setState({ error: 'Помилка завантаження даних.' });
+            this.setState({ error: this.props.t.errors.loadError });
         }
     }
 
@@ -119,7 +120,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                 this.setState({ stage: 2 });
             }   
         } else {
-            this.setState({ error: 'Будь ласка, заповніть всі поля.' });
+            this.setState({ error: this.props.t.errors.fillAll });
         }
     }
 
@@ -157,10 +158,10 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
             if (response.success) {
                 this.setState( {stage: 2} ); 
             } else {
-            this.setState({ error: 'Будь ласка, заповніть всі поля.' });
+            this.setState({ error: this.props.t.errors.fillAll });
             }
         } else {
-            this.setState({ error: 'Будь ласка, заповніть всі поля.' });
+            this.setState({ error: this.props.t.errors.fillAll });
         }
     };
 
@@ -179,17 +180,17 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Введіть необхідні дані
+                            {this.props.t.stage0.title}
                         </h1>
 
                         <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                            Для доступу, будь ласка, надайте або підтвердіть { !this.state.driverPhonePresent ? 'ваш номер телефону.' : ''}
+                            {!this.state.driverPhonePresent ? this.props.t.stage0.descriptionNoPhone : this.props.t.stage0.descriptionGeneric}
                         </p>
                     </div>
 
                     <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
                                 <TextInputGroup
-                                    label="Номер телефону"
+                                    label={this.props.t.stage0.phoneLabel}
                                     value={this.state.driverPhone || ''}
                                     onChange={(e) => this.setState({ driverPhone: e.target.value })}
                                     type="tel"
@@ -217,7 +218,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                                     htmlFor="agreeTerms"
                                     className="pl-2 font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] cursor-pointer"
                                 >
-                                    Я погоджуюсь з <Link href="/terms" className="text-[#2892f6] underline">Умовами використання</Link>, <Link href="/policy" className="text-[#2892f6] underline">Політикою конфіденційності</Link> та використанням cookie у проекті
+                                    {this.props.t.stage0.agreePrefix} <Link href="/terms" className="text-[#2892f6] underline">{this.props.tCommon.termsOfUse}</Link>, <Link href="/policy" className="text-[#2892f6] underline">{this.props.tCommon.privacyPolicy}</Link> {this.props.t.stage0.agreeCookiesSuffix}
                                 </label>
                             </div>
 
@@ -225,7 +226,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                             <div className="text-red-500 font-semibold text-center">{this.state.error}</div>
                         )}
 
-                        <input type="submit" value='Продовжити'
+                        <input type="submit" value={this.props.t.buttons.continue}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
                         </div>
@@ -246,13 +247,11 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Введіть необхідні дані
+                            {this.props.t.stage1.title}
                         </h1>
 
                         <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                            Для доступу, будь ласка, надайте { !this.state.driverProfileImagePresent ? 'ваше фото для профілю' : ''} 
-                                                             { !this.state.driverProfileImagePresent && !this.state.driverLicensePresent ? 'та' : ''}
-                                                             { !this.state.driverLicensePresent ? 'фото водійського посвідчення' : ''}.
+                            {this.props.t.stage1.description}
                         </p>
                     </div>
 
@@ -266,11 +265,11 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                                         className="button-type-1 mb-4 px-4 h-[60px] bg-blue-600 text-white rounded"
                                         onClick={() => this.setState({ showProfileModal: true })}
                                     >
-                                        Завантажити фото профілю
+                                        {this.props.t.stage1.uploadProfileButton}
                                     </button>
                                     <ChangeImageModal
                                         open={!!this.state.showProfileModal}
-                                        title="Завантажте фото профілю"
+                                        title={this.props.t.stage1.uploadProfileTitle}
                                         exampleImageUrl="/person_example.png"
                                         imageUrl={
                                             this.state.driverProfileImage
@@ -298,11 +297,11 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                                         className="button-type-1 mb-4 px-4 h-[60px] bg-blue-600 text-white rounded"
                                         onClick={() => this.setState({ showLicenseModal: true })}
                                     >
-                                        Завантажити фото водійського посвідчення
+                                        {this.props.t.stage1.uploadLicenseButton}
                                     </button>
                                     <ChangeImageModal
                                         open={!!this.state.showLicenseModal}
-                                        title="Завантажте фото водійського посвідчення"
+                                        title={this.props.t.stage1.uploadLicenseTitle}
                                         exampleImageUrl="/dr_example.png"
                                         imageUrl={
                                             this.state.driverLicenseImage
@@ -326,7 +325,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                             <div className="text-red-500 font-semibold text-center">{this.state.error}</div>
                         )}
 
-                        <input type="submit" value='Продовжити'
+                        <input type="submit" value={this.props.t.buttons.continue}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
 
@@ -347,13 +346,13 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                         <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Транспортні засоби
+                            {this.props.t.stage2.title}
                         </h1>
                         
                         {
                             !this.props.session.data.user.roles.includes('Driver') && (
                                 <div>
-                                    <p>Щоб стати водієм, додайте щонайменше один транспортний засіб та очікуйте підтвердження адміністрацією.</p>
+                                    <p>{this.props.t.stage2.becomeDriverInfo}</p>
                                 </div>
                             )
                         }
@@ -368,25 +367,25 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                                     this.state.vehicles.map((vehicle) => (
                                         <div key={vehicle.id} className="border border-gray-700 rounded-lg p-4">
                                             <h2 className="text-xl font-semibold text-white mb-2">{vehicle.brand} {vehicle.model}</h2>
-                                            <p className="text-gray-400 mb-1">Тип: {vehicle.type}</p>
-                                            <p className="text-gray-400 mb-1">Колір: {vehicle.color}</p>
-                                            <p className="text-gray-400 mb-1">Номерний знак: {vehicle.numberPlate}</p>
+                                            <p className="text-gray-400 mb-1">{this.props.t.labels.type}: {vehicle.type}</p>
+                                            <p className="text-gray-400 mb-1">{this.props.t.labels.color}: {vehicle.color}</p>
+                                            <p className="text-gray-400 mb-1">{this.props.t.labels.plate}: {vehicle.numberPlate}</p>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-gray-400 text-center">Немає доданих транспортних засобів</div>
+                                    <div className="text-gray-400 text-center">{this.props.t.stage2.noVehicles}</div>
                                 )
                                 
                             }
                         </div>
 
-                        <Link href='/vehicle/add' className=" flex justify-center items-center w-full h-[60px] rounded-lg button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]">Додати транспортний засіб</Link>
+                        <Link href='/vehicle/add' className=" flex justify-center items-center w-full h-[60px] rounded-lg button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]">{this.props.t.stage2.addVehicle}</Link>
                 
                     {this.state.error && (
                         <div className="text-red-500 font-semibold text-center">{this.state.error}</div>
                     )}
 
-                    <input type="submit" value='Продовжити'
+                    <input type="submit" value={this.props.t.buttons.continue}
                         className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                     />
                     </div>
@@ -402,9 +401,17 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                 0: this.renderForStageZero(),
                 1: this.renderForStageOne(),
                 2: this.renderForStageTwo(),
-            }[this.state.stage] || <div>Невірний етап.</div>
+            }[this.state.stage] || <div>{this.props.t.errors.invalidStage}</div>
         );
     }
 }
 
-export default withSession(AddVehiclePage);
+const VehiclePageWithSession = withSession(AddVehiclePage);
+const VehiclePageWrapper = (props: any) => {
+    const { messages } = useI18n();
+    const t = messages.vehiclePage;
+    const tCommon = messages.footer; // reuse common labels like terms/privacy
+    return <VehiclePageWithSession {...props} t={t} tCommon={tCommon} />;
+};
+
+export default VehiclePageWrapper;

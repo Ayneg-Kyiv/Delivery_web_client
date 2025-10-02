@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { regions } from '@/data/regions';
 import { monts } from '@/data/monts';
+import { useI18n } from '@/i18n/I18nProvider';
 
 // HOC to inject session into class components (copied from your admin panel)
 const withSession = (Component: React.ComponentType<any>) => {
@@ -154,12 +155,13 @@ class TripListPage extends React.Component<any, TripListState> {
 
     render() {
         const { trips, filters, currentPage, totalPages, loading } = this.state;
+        const t = (this.props as any).t;
         return (
             <div className='w-full relative'>
                 <div className="h-[600px] md:h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
                     <div className="w-full h-[600px] md:h-[500px] bg-[#00000099]">
                         <div className="flex flex-col justify-center items-center absolute top-0 left-0 right-0 z-10 h-[500px] px-8 md:px-10 lg:px-20">
-                            <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4 text-center">Відправляй свою посилку вже зараз</h1>
+                            <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4 text-center">{t.heroTitle}</h1>
                             <div className="w-full flex flex-col md:flex-row justify-center items-center rounded-lg gap-4">
                                 <select
                                     name="cityFrom"
@@ -172,7 +174,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                         color: 'black',
                                     }}
                                 >
-                                    <option value="">Звідки</option>
+                                    <option value="">{t.filters.from}</option>
                                     {this.state.cities.map(city => (
                                         <option key={city} value={city}>{city}</option>
                                     ))}
@@ -188,7 +190,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                         color: 'black',
                                     }}
                                 >
-                                    <option value="">Куди</option>
+                                    <option value="">{t.filters.to}</option>
                                     {this.state.cities.map(city => (
                                         <option key={city} value={city}>{city}</option>
                                     ))}
@@ -216,13 +218,13 @@ class TripListPage extends React.Component<any, TripListState> {
                                         color: 'black',
                                     }}
                                 >
-                                    <option value="">Розмір</option>
-                                    <option value="XS">XS до 1 кг</option>
-                                    <option value="S">S до 5 кг</option>
-                                    <option value="M">M до 15 кг</option>
-                                    <option value="L">L до 30 кг</option>
-                                    <option value="XL">XL до 60 кг</option>
-                                    <option value="XXL">XXL від 61 кг</option>
+                                    <option value="">{t.filters.size}</option>
+                                    <option value="XS">{t.filters.sizes.xs}</option>
+                                    <option value="S">{t.filters.sizes.s}</option>
+                                    <option value="M">{t.filters.sizes.m}</option>
+                                    <option value="L">{t.filters.sizes.l}</option>
+                                    <option value="XL">{t.filters.sizes.xl}</option>
+                                    <option value="XXL">{t.filters.sizes.xxl}</option>
                                 </select>
                             </div>
                             <div className='mt-6 w-full flex flex-col md:flex-row gap-4 items-center justify-center'>
@@ -230,12 +232,12 @@ class TripListPage extends React.Component<any, TripListState> {
                                     className="w-full bg-[#7c3aed] button-type-1 py-4 md:w-[252px] rounded-lg font-bold"
                                     onClick={() => this.fetchTrips(1)}
                                     >
-                                    Знайти попутника
+                                    {t.buttons.find}
                                 </button>
                                 {
                                     this.props.session?.data?.user?.roles.includes('Driver') &&
                                     <Link href="/delivery/trip/add" className="button-type-2 py-4 w-full md:w-[252px] rounded-lg flex items-center justify-center font-bold md:ml-6">
-                                        Додати поїздку
+                                        {t.buttons.addTrip}
                                     </Link>
                                 }
                             </div>
@@ -246,16 +248,16 @@ class TripListPage extends React.Component<any, TripListState> {
                 <div className='flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
                         <div className="flex flex-col p-4 rounded-lg md:w-1/4 bg-[#ffffff]">
                         {/* Filters Sidebar */}
-                            <h2 className="text-black text-xl font-bold mb-4">Фільтри</h2>
+                            <h2 className="text-black text-xl font-bold mb-4">{t.sidebar.filtersTitle}</h2>
                             <div className="mb-4">
-                                <label className="text-black">Ціна</label>
+                                <label className="text-black">{t.sidebar.price}</label>
                                 <div className="flex flex-col gap-2 mt-2">
                                     <input
                                         name="priceFrom"
                                         type="number"
                                         value={filters.priceFrom}
                                         onChange={this.handleFilterChange}
-                                        placeholder="Від"
+                                        placeholder={t.sidebar.placeholders.from}
                                         className="px-2 py-1 rounded"
                                         style={{
                                             border: '1px solid #ccc',
@@ -267,7 +269,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                         type="number"
                                         value={filters.priceTo}
                                         onChange={this.handleFilterChange}
-                                        placeholder="До"
+                                        placeholder={t.sidebar.placeholders.to}
                                         className="px-2 py-1 rounded "
                                         style={{
                                             border: '1px solid #ccc',
@@ -277,7 +279,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                 </div>
                             </div>
                             <div className="mb-4">
-                                <label className="text-black">Рейтинг водія</label>
+                                <label className="text-black">{t.sidebar.driverRating}</label>
                                 <input
                                     name="driverRatingFrom"
                                     type="number"
@@ -286,7 +288,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                     step={0.1}
                                     value={filters.driverRatingFrom}
                                     onChange={this.handleFilterChange}
-                                    placeholder="Від"
+                                    placeholder={t.sidebar.placeholders.from}
                                     className="px-2 py-1 text-black rounded w-full mt-2"
                                         style={{
                                             border: '1px solid #ccc',
@@ -299,9 +301,9 @@ class TripListPage extends React.Component<any, TripListState> {
                         {/* Trips List */}
                         <div className="flex-1 flex flex-col gap-6">
                             {loading ? (
-                                <div className="text-white text-center py-20">Завантаження...</div>
+                                <div className="text-white text-center py-20">{t.loading}</div>
                             ) : trips.length === 0 ? (
-                                <div className="text-white text-center py-20">Немає доступних поїздок</div>
+                                <div className="text-white text-center py-20">{t.empty}</div>
                             ) : (
                                 trips.map(trip => (
                                     <div key={trip.id} className="bg-white text-black w-full rounded-xl flex flex-col md:flex-row items-center p-4 shadow-lg">
@@ -322,10 +324,10 @@ class TripListPage extends React.Component<any, TripListState> {
                                                 </div>
                                                 <div className="flex flex-col gap-4 mt-2 text-sm">
                                                     <span>
-                                                        Дата: {monts.find(m => m.value === new Date(trip.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(trip.endLocation.dateTime).getDay() !== new Date(trip.startLocation.dateTime).getDay()) ? ` ${new Date(trip.endLocation.dateTime).getDate()}` : '' }
+                                                        {t.labels.date}: {monts.find(m => m.value === new Date(trip.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(trip.endLocation.dateTime).getDay() !== new Date(trip.startLocation.dateTime).getDay()) ? ` ${new Date(trip.endLocation.dateTime).getDate()}` : '' }
                                                     </span>
                                                     <span>
-                                                        Час: {new Date(trip.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(trip.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                                        {t.labels.time}: {new Date(trip.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(trip.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
                                                     </span>
                                                 </div>
                                             </div>
@@ -351,11 +353,11 @@ class TripListPage extends React.Component<any, TripListState> {
                                                 <div className="w-full bg-[#7c3aed] px-4 py-2 rounded-lg font-bold text-xl">
                                                     {trip.deliverySlots.length > 0
                                                         ? Math.min(...trip.deliverySlots.map(slot => slot.approximatePrice))
-                                                        : trip.price}грн
+                                                        : trip.price}{t.currency}
                                                 </div>
-                                                <div className="text-xs">Ціна може змінюватись від розміру посилки</div>
+                                                <div className="text-xs">{t.priceDisclaimer}</div>
                                                 <Link href={`/delivery/trip/${trip.id}`} className='w-full flex'>
-                                                    <button className="w-full button-type-1 px-6 py-2 rounded-lg font-bold mb-4 md:mb-0 mt-2">Обрати</button>
+                                                    <button className="w-full button-type-1 px-6 py-2 rounded-lg font-bold mb-4 md:mb-0 mt-2">{t.buttons.choose}</button>
                                                 </Link>
                                             </div>
                                         </div>
@@ -406,4 +408,11 @@ class TripListPage extends React.Component<any, TripListState> {
     }
 }
 
-export default withSession(TripListPage);
+const TripListWithSession = withSession(TripListPage);
+const TripListWrapper = (props: any) => {
+    const { messages } = useI18n();
+    const t = messages.tripList;
+    return <TripListWithSession {...props} t={t} />;
+};
+
+export default TripListWrapper;
