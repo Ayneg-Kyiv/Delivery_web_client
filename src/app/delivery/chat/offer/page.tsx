@@ -12,13 +12,17 @@ const SIGNALR_URL = process.env.NEXT_PUBLIC_SIGNALR_URL + '/messagingHub' || '';
 
 const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {
     const res = await ApiClient.get<any>(`/request/offer/${offerId}`);
-    console.log('Fetched offer:', res.data);
+    
+    // console.log('Fetched offer:', res.data);
+    
     return res.data;
 };
 
 const fetchUser = async (id: string): Promise<shortUserInfo> => {
     const res = await ApiClient.get<any>(`/account/short/${id}`);
-    console.log('Fetched user:', res.data);
+    
+    // console.log('Fetched user:', res.data);
+    
     return res.data;
 };
 

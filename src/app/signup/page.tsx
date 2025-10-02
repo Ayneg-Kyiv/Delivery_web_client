@@ -44,7 +44,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         try{
             await ApiClient.get<null>('/csrf');
         }catch (error) {
-            console.error('Error fetching CSRF token:', error);
+            // console.error('Error fetching CSRF token:', error);
         }
     }
 

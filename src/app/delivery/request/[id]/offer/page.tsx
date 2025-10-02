@@ -30,7 +30,7 @@ const OfferDeliveryPage: React.FC = () => {
 			setLoading(true);
 			const res = await ApiClient.get<any>(`/request/${deliveryRequestId}`);
 
-            console.log(res.data);
+            // console.log(res.data);
 
 			setRequest(res.data);
 			if (res.data?.estimatedPrice) {

@@ -28,7 +28,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
         try {
             await ApiClient.get<null>('/csrf');
         } catch (error) {
-            console.error('Error fetching CSRF token:', error);
+            // console.error('Error fetching CSRF token:', error);
         }
     }
 

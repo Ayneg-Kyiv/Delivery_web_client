@@ -12,11 +12,13 @@ const SIGNALR_URL = (process.env.NEXT_PUBLIC_SIGNALR_URL || '') + '/messagingHub
 
 const fetchOrder = async (orderId: string): Promise<DeliveryOrder> => {
     const res = await ApiClient.get<any>(`/trip/order/${orderId}`);
+    
     return res.data;
 };
 
 const fetchUser = async (id: string): Promise<shortUserInfo> => {
     const res = await ApiClient.get<any>(`/account/short/${id}`);
+    
     return res.data;
 };
 
