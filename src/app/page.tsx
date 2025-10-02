@@ -1,3 +1,4 @@
+
 'use client';
 
 import Button from "@/components/ui/button";
@@ -10,8 +11,13 @@ import { ApiClient } from "./api-client";
 import { MapsService } from "@/components/other/google-maps-component";
 import DeliveryMap from "@/components/other/delivery-map";
 import { formatDateTime } from "@/components/other/date-time-former";
+import { useI18n } from "@/i18n/I18nProvider";
+import en from '@/i18n/messages/en';
+import uk from '@/i18n/messages/uk';
 
-class PageTemplate extends Component {
+type Messages = typeof en | typeof uk;
+
+class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
   state: {
     newsItems: [{id?: number; createdAt?: string; imagePath?: string; title?: string; content?: string;}];
     from: string;
@@ -186,38 +192,13 @@ class PageTemplate extends Component {
     this.setState({ [field]: e.target.value } as any);
   };
   
-  heroData = {
-    tagline: "Доставка від людей для людей",
-    title: "Відправляй куди та як завгодно",
-    subtitle: "Cargix - робить це можливим",
-    buttons: [
-      { text: "Відправити зараз", onclick: () => console.log("Send Now clicked!"), 
-        className: "button-type-1 w-[242px] h-12 rounded-lg text-2xl" },
-      { text: "Знайти попутника", onclick: () => console.log("Find Companion clicked!"), 
-        className: "button-type-2 w-[242px] h-12 rounded-lg text-2xl" },
-    ],
-  };
+  heroData = {} as any;
 
   howItWorksSteps = [
-    {
-      number: "1",
-      title: "Створіть запит",
-      description: "Опишіть посилку (тип, вага, орієнтовні габарити), вкажіть маршрут та бажану дату. Додайте фото — так водії швидше відгукнуться.",
-      image: "/how-step-1.svg",
-    },
-    {
-      number: "2",
-      title: "Обирайте перевізника",
-      description: "Перегляньте профілі водіїв, їх рейтинг, попередні відгуки та запропоновану ціну. Уточніть деталі в чаті перед підтвердженням.",
-      image: "/how-step-2.svg",
-    },
-    {
-      number: "3",
-      title: "Передача і доставка",
-      description: "Зустріньтеся у погодженому місці або передайте на точці збору. Слідкуйте за статусом. Після отримання — залиште відгук та оцінку.",
-      image: "/how-step-3.svg",
-    },
-  ];
+    { number: '1', image: '/how-step-1.svg' },
+    { number: '2', image: '/how-step-2.svg' },
+    { number: '3', image: '/how-step-3.svg' },
+  ] as Array<{number:string; image:string}>;
 
   fetchLastNews = async () => {
     const response = await ApiClient.get<any>('/article/list?pageSize=2');
@@ -235,6 +216,7 @@ class PageTemplate extends Component {
   ];
 
   render() {
+    const t = this.props.t;
     return (
       <main>
         {/* Hero Section */}
@@ -244,25 +226,25 @@ class PageTemplate extends Component {
 
             <div className="flex flex-col items-center justify-center h-full text-center px-4 absolute top-0 left-0 right-0">
               <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-[22px] mb-4">
-                {this.heroData.tagline}
+                {t.home.hero.tagline}
               </p>
 
               <h1 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl max-w-[580px] mb-8">
-                {this.heroData.title}
+                {t.home.hero.title}
               </h1>
 
               <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-[22px] mb-10">
-                {this.heroData.subtitle}
+                {t.home.hero.subtitle}
               </p>
 
               <div className="z-10 flex sm:flex-row flex-col gap-5">
 
                 <Link href={'/delivery/request/list'} className="z-10 button-type-1 w-[242px] h-12 rounded-lg text-2xl flex items-center justify-center">
-                  Відправити зараз
+                  {t.home.hero.ctaSend}
                 </Link>
 
                 <Link href={'/delivery/trip/list'} className="z-10 button-type-2 w-[242px] h-12 rounded-lg text-2xl flex items-center justify-center">
-                  Знайти попутника
+                  {t.home.hero.ctaFind}
                 </Link>
 
               </div>
@@ -275,10 +257,10 @@ class PageTemplate extends Component {
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 20% 30%, #3d2a5a 0, transparent 60%), radial-gradient(circle at 80% 70%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative">
             <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-4xl md:text-5xl text-center mb-10 md:mb-16">
-              Як це працює?
+              {t.home.how.title}
             </h2>
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-lg max-w-4xl mx-auto text-center mb-20">
-              Весь процес займає лічені хвилини. Ми допомагаємо знайти перевізника, який уже рухається вашим маршрутом — ви економите кошти і час, а транспорт використовується ефективніше.
+              {t.home.how.description}
             </p>
 
             <ol className="grid gap-16 md:gap-10 md:grid-cols-3">
@@ -300,10 +282,10 @@ class PageTemplate extends Component {
                     />
                   </Card>
                   <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">
-                    {step.title}
+                    {t.home.how.steps[index]?.title}
                   </h3>
                   <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base md:text-lg leading-relaxed">
-                    {step.description}
+                    {t.home.how.steps[index]?.description}
                   </p>
                 </li>
               ))}
@@ -314,32 +296,24 @@ class PageTemplate extends Component {
         {/* Ecological delivery section */}
         <section className="w-full px-8 md:px-20 xl:px-40 py-24 bg-darker mx-auto ">
           <h2 className="w-full [font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-            Робимо доставку екологічною та швидкою
+            {t.home.eco.title}
           </h2>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-8">
-              Наш сервіс об’єднує тих, хто хоче відправити речі,
-              і водіїв, які вже прямують у потрібному напрямку. 
-              Використовуючи вільне місце в багажнику,
-              ми знижуємо кількість порожніх кілометрів, 
-              економимо ваш час і гроші та зменшуємо викиди CO₂.
+              {t.home.eco.paragraph}
           </p>
 
           <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-            Як це працює?
+            {t.home.eco.howTitle}
           </h3>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl mb-8">
-            Ви залишаєте заявку з деталями відправлення, 
-            ми підбираємо найближчого попутного водія, 
-            який бере вашу посилку в дорогу. 
-            {/* Слідкуйте за маршрутом у реальному часі,  */}
-            спілкуйтеся з водієм через чат і залишайте відгук після успішної доставки.
+            {t.home.eco.howParagraph}
           </p>
 
           <Card className="h-[200px] bg-[#d9d9d9] rounded-xl items-center justify-center mb-8 relative">
             <p className="absolute inset-0 flex pl-4 pt-4 font-subtitle-1 text-center">
-              Швидка доставка
+              {t.home.eco.fastDelivery}
             </p>
             <Link href={"/"}>
               <Image
@@ -372,31 +346,29 @@ class PageTemplate extends Component {
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 10% 20%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 90% 80%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[34px] mb-5 tracking-wide uppercase">
-              Наша місія
+              {t.home.mission.sectionTitle}
             </h3>
 
             <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[920px] mx-auto mb-14">
-              Робимо доставку людяною, доступною та<br className="hidden md:block"/> екологічно відповідальною
+              {t.home.mission.title}
             </h2>
 
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[900px] mx-auto mb-12 leading-relaxed">
-              Ми поєднуємо людей, чий шлях уже прокладений, з тими, кому треба щось відправити. Так зменшуємо порожні кілометри,
-              скорочуємо витрати та час очікування. Кожна поїздка стає кориснішою: для відправника, перевізника та планети.
-              Прозорість, довіра й взаємна вигода — фундамент нашої платформи.
+              {t.home.mission.paragraph}
             </p>
 
             <div className="grid md:grid-cols-3 gap-10 mb-14 text-left">
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Прозорість</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Профілі з рейтингами, історія доставок та зрозумілі статуси формують довіру й прибирають невизначеність.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.mission.cards.transparency.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.mission.cards.transparency.text}</p>
               </div>
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Економія</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Маршрути вже існують — ми просто використовуємо вільний простір. Менше витрат для відправника, додатковий дохід для водія.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.mission.cards.economy.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.mission.cards.economy.text}</p>
               </div>
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Екологічність</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Оптимізований вантажний простір = менше зайвих поїздок і CO₂. Кожна сумісна доставка — маленький крок до стійкості.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.mission.cards.ecology.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.mission.cards.ecology.text}</p>
               </div>
           
             </div>
@@ -405,7 +377,7 @@ class PageTemplate extends Component {
               <Button
                 className="h-[60px] w-[220px] button-type-1 rounded-xl [font-family:'Inter-Regular',Helvetica] text-[24px]"
                 onClick={() => {}}
-                text="про нас"
+                text={t.home.mission.aboutButton}
               />
             </a>
           </div>
@@ -416,9 +388,9 @@ class PageTemplate extends Component {
           <div className="absolute inset-0 pointer-events-none opacity-25" style={{backgroundImage:"radial-gradient(circle at 18% 35%, #3d2a5a 0, transparent 60%), radial-gradient(circle at 82% 65%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative max-w-[1500px] mx-auto px-6 md:px-10">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-              <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-4xl md:text-5xl">Роби це швидко зручно вигідно</h2>
+              <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-4xl md:text-5xl">{t.home.gallery.title}</h2>
               <p className="md:max-w-md [font-family:'Inter-Regular',Helvetica] fg-secondary text-sm md:text-base leading-relaxed">
-                Короткі миті взаємодії: запити, рух, передача й отримання. Усе компактно — як і наш підхід до доставки.
+                {t.home.gallery.subtitle}
               </p>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 md:gap-4">
@@ -432,7 +404,7 @@ class PageTemplate extends Component {
                   </Card>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
                   <span className="absolute inset-x-2 bottom-2 [font-family:'Inter-Regular',Helvetica] text-[10px] md:text-xs tracking-wide text-[#e4e4e4] opacity-0 group-hover:opacity-100 transition-opacity">
-                    {i+1}. {img.alt}
+                    {i+1}. {t.home.gallery.images[i]?.alt ?? img.alt}
                   </span>
                 </div>
               ))}
@@ -443,13 +415,11 @@ class PageTemplate extends Component {
         {/* Earn with us section */}
         <section className="w-full px-8 md:px-20 xl:px-40 py-24">
           <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl lg:text-7xl mb-4">
-            Заробляйте разом з Cargix
+            {t.home.earn.title}
           </h2>
 
           <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[1020px] mb-16">
-            Плануйте маршрути з максимальним комфортом та без зайвих зусиль.
-            Наша платформа дозволяє швидко знаходити оптимальні заїзди та економити час на дорозі.
-            Використовуйте додаток для зручної комунікації з відправниками та прозорих виплат без зайвої паперової тяганини.
+            {t.home.earn.subtitle}
           </p>
 
           <div className="flex flex-col lg:flex-row md:gap-20">
@@ -460,17 +430,15 @@ class PageTemplate extends Component {
 
               <div className="flex flex-col justify-center">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-                  Переваги для водія
+                  {t.home.earn.driver.title}
                 </h3>
 
                 <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[758px] mb-8">
-                  Вибирайте поїздки відповідно до свого графіка та отримуйте дохід з кожної доставки.
-                  Інтуїтивний інтерфейс дозволяє швидко додавати маршрути й приймати замовлення без зайвих дзвінків.
-                  Автоматичні сповіщення тримають вас у курсі нових запитів та статусу виконання.
+                  {t.home.earn.driver.subtitle}
                 </p>
 
                 <Link href='/help/driver' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
-                  Дізнатися більше
+                  {t.home.earn.driver.button}
                 </Link>
 
               </div>
@@ -485,17 +453,15 @@ class PageTemplate extends Component {
 
               <div className="flex flex-col justify-center ">
                 <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] mb-4">
-                  Переваги для відправника
+                  {t.home.earn.sender.title}
                 </h3>
 
                 <p className="[font-fam</a>ily:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[760px] mb-8">
-                    Знаходьте перевірених водіїв для швидкої та надійної доставки в кілька кліків.
-                    Гнучкі тарифи та рейтинг водіїв гарантують оптимальне співвідношення ціни й якості.
-                    Всі комунікації, підтвердження та оплати відбуваються в додатку — без зайвої бюрократії.
+                    {t.home.earn.sender.subtitle}
                 </p>
 
                 <Link href='/help/sender' className="h-[76px] w-full lg:w-[320px] bg-[#d9d9d9] mb-8 lg:mb-10 rounded-xl md:place-self-center button-type-1 flex items-center justify-center text-[24px] [font-family:'Inter-Regular',Helvetica]">
-                  Дізнатися більше
+                  {t.home.earn.sender.button}
                 </Link>
 
                 <Card className="flex hidden md:block w-full bg-[#d9d9d9] rounded-xl ">
@@ -512,32 +478,32 @@ class PageTemplate extends Component {
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 14% 22%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 88% 78%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[30px] md:text-[34px] mb-5 tracking-wide uppercase">
-              Швидкий розрахунок
+              {t.home.calculate.sectionTitle}
             </h3>
             <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl leading-[1.05] max-w-[980px] mx-auto mb-10">
-              Розрахуй доставку за кілька секунд
+              {t.home.calculate.title}
             </h2>
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[900px] mx-auto mb-14 leading-relaxed">
-              Вкажіть звідки і куди, орієнтовну вагу та габарити. Ми підберемо попутні маршрути, спрогнозуємо діапазон вартості й підкажемо як оптимізувати: змінити дату, точку передачі чи об’єднати з існуючим запитом.
+              {t.home.calculate.subtitle}
             </p>
 
             <div className="grid md:grid-cols-3 gap-8 mb-16 text-left">
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Маршрут</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Початкова та кінцева точка визначають відстань і доступні попутні водії.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.calculate.cards.route.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.calculate.cards.route.text}</p>
               </div>
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Об’єм & вага</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Розуміння займаного простору дозволяє оптимально використати багажник.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.calculate.cards.volume.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.calculate.cards.volume.text}</p>
               </div>
               <div className="bg-[#2a2332] rounded-2xl border border-[#3d2a5a] p-6">
-                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">Оптимізація</h4>
-                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">Алгоритм радить як знизити вартість: гнучка дата або альтернатива передачі.</p>
+                <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl mb-3">{t.home.calculate.cards.optimization.title}</h4>
+                <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-base leading-relaxed">{t.home.calculate.cards.optimization.text}</p>
               </div>
             </div>
 
             <div className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10 mb-20">
-              <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl ">Вкажіть точки на карті</h4>
+              <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl ">{t.home.calculate.mapTitle}</h4>
               <DeliveryMap 
                 origin={this.state.from} 
                 destination={this.state.to} 
@@ -550,45 +516,45 @@ class PageTemplate extends Component {
             <div className="w-full mx-auto bg-[#2a2332] border border-[#3d2a5a] rounded-3xl p-10 md:p-14 text-left flex flex-col gap-10">
               <div className="grid md:grid-cols-2 gap-10">
                 <div className="flex flex-col gap-5">
-                  <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">Вхідні дані</h4>
+                  <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">{t.home.calculate.inputs.title}</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="flex flex-col gap-2">
-                      <label className="text-sm fg-secondary">Вага (кг)</label>
-                      <input value={this.state.weight} onChange={this.handleInput('weight')} placeholder="Напр. 4.5" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
+                      <label className="text-sm fg-secondary">{t.home.calculate.inputs.weight}</label>
+                      <input value={this.state.weight} onChange={this.handleInput('weight')} placeholder={t.home.calculate.inputs.weightPlaceholder} className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label className="text-sm fg-secondary">Габарити (см)</label>
-                      <input value={this.state.dims} onChange={this.handleInput('dims')} placeholder="Д×Ш×В" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
+                      <label className="text-sm fg-secondary">{t.home.calculate.inputs.dims}</label>
+                      <input value={this.state.dims} onChange={this.handleInput('dims')} placeholder={t.home.calculate.inputs.dimsPlaceholder} className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
                     </div>
                     <div className="flex flex-col gap-2 sm:col-span-2">
-                      <label className="text-sm fg-secondary">Тип передачі</label>
-                      <input value={this.state.transferType} onChange={this.handleInput('transferType')} placeholder="Особиста / Точка" className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
+                      <label className="text-sm fg-secondary">{t.home.calculate.inputs.transferType}</label>
+                      <input value={this.state.transferType} onChange={this.handleInput('transferType')} placeholder={t.home.calculate.inputs.transferTypePlaceholder} className="h-12 rounded-lg bg-[#241c2d] border border-[#3d2a5a] px-4 text-sm text-[#e4e4e4] focus:outline-none focus:border-[#c84cd8] placeholder:opacity-50" />
                     </div>
                   </div>
-                  <Button className="h-[60px] w-[220px] button-type-1 rounded-xl mt-2" onClick={this.estimateDelivery} text="Розрахувати" />
+                  <Button className="h-[60px] w-[220px] button-type-1 rounded-xl mt-2" onClick={this.estimateDelivery} text={t.home.calculate.inputs.button} />
                 </div>
                 <div className="flex flex-col gap-6">
-                  <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">Оцінка</h4>
+                  <h4 className="[font-family:'Bahnschrift-Regular',Helvetica] text-2xl">{t.home.calculate.estimate.title}</h4>
                   <div className="grid gap-4">
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
-                      <span className="text-sm fg-secondary">Прогнозована відстань</span>
+                      <span className="text-sm fg-secondary">{t.home.calculate.estimate.distance}</span>
                       <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.distanceKm} км` : '--'}</span>
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
-                      <span className="text-sm fg-secondary">Заповненість багажу</span>
+                      <span className="text-sm fg-secondary">{t.home.calculate.estimate.fill}</span>
                       <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `${this.state.estimate.fillPercent}%` : '--'}</span>
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
-                      <span className="text-sm fg-secondary">Діапазон вартості</span>
+                      <span className="text-sm fg-secondary">{t.home.calculate.estimate.cost}</span>
                       <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica] text-[#c84cd8]">{this.state.estimate ? `${this.state.estimate.costMin}–${this.state.estimate.costMax} ₴` : '--'}</span>
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
-                      <span className="text-sm fg-secondary">Час у дорозі</span>
+                      <span className="text-sm fg-secondary">{t.home.calculate.estimate.time}</span>
                       <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.timeHours} год` : '--'}</span>
                     </div>
                   </div>
                   <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-sm leading-relaxed">
-                    {this.state.estimate ? this.state.estimate.suggestion : 'Порада з оптимізації з’явиться після розрахунку.'}
+                    {this.state.estimate ? this.state.estimate.suggestion : t.home.calculate.estimate.suggestionDefault}
                   </p>
                 </div>
               </div>
@@ -600,17 +566,16 @@ class PageTemplate extends Component {
         <section className="px-8 md:px-20 xl:px-40 py-16">
           <div className="flex justify-between items-center mb-4">
             <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:lg:text-7xl">
-              Новини та оновлення
+              {t.home.news.title}
             </h2>
           </div>
 
             <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xl max-w-[1020px] mb-8">
-            Тут ви знайдете останні новини, оновлення сервісу та корисні поради щодо доставки.
-            Слідкуйте за змінами, щоб бути в курсі нових можливостей та акцій на платформі Cargix.
+            {t.home.news.subtitle}
             </p>
 
           <Button className="h-[70px] w-full md:w-60 button-type-1 rounded-xl mb-8">
-            <Link href={'/news'} className="w-full h-full flex items-center justify-center">Переглянути всі новини</Link>
+            <Link href={'/news'} className="w-full h-full flex items-center justify-center">{t.home.news.button}</Link>
           </Button>
 
           <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
@@ -630,7 +595,7 @@ class PageTemplate extends Component {
                 <div className=" p-4 flex flex-col ">
                   <div className="flex sm:flex-col justify-between items-center">
                     <span className="[font-family:'Inter-Regular',Helvetica] text-base">
-                      Новини
+                      {t.home.news.newsTag}
                     </span>
                     <span className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xs">
                       {formatDateTime(item.createdAt || '')}
@@ -647,7 +612,7 @@ class PageTemplate extends Component {
                   
                   <Link href={`/article/?id=${item.id}`}
                     className="flex [font-family:'Inter-Regular',Helvetica] text-[#94569f] text-base underline bottom-5 h-[10%]">
-                      Дивитися далі
+                      {t.home.news.viewMore}
                   </Link>
                 </div>
               </div>
@@ -669,5 +634,7 @@ class PageTemplate extends Component {
     );
   }
 }
-
-export default PageTemplate;
+export default function PageWrapper() {
+  const { messages: t, language } = useI18n();
+  return <PageTemplate t={t} language={language} />;
+}
