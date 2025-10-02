@@ -9,6 +9,7 @@ import TextInputGroup from '@/components/ui/text-input-group';
 import ContentBox from '@/components/ui/content-box';
 import Image from 'next/image';
 import { signIn } from 'next-auth/react';
+import { useI18n } from '@/i18n/I18nProvider';
 
 class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
     constructor(props: SignInPageProps) {
@@ -28,7 +29,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         try {
             await ApiClient.get<null>('/csrf');
         } catch (error) {
-            this.setState({ error: `Failed to initialize sign-in. ${error} Please try again.` });
+            const t = this.props.t;
+            this.setState({ error: t?.signin?.initFailed ?? `Failed to initialize sign-in. Please try again.` });
         }
     }
 
@@ -47,9 +49,9 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         const password = e.target.value;
         this.setState({ password });
 
-        if (password.length < 8 || password.length > 0) 
+        if (password.length > 0 && password.length < 8)
             this.setState({ passwordError: true });
-        else 
+        else
             this.setState({ passwordError: false, error: undefined });
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_*])(?=.{8,})/;
@@ -74,27 +76,28 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
             if (response?.ok)
                 this.props.router?.push('/');
             else
-                this.setState({ error: 'Invalid email or password' });
+                this.setState({ error: this.props.t?.signin?.error ?? 'Invalid email or password' });
         } catch (error) {
-            this.setState({ error: `Sign in failed. ${error} Please try again.` });
+            this.setState({ error: this.props.t?.signin?.signInFailed ?? 'Sign in failed. Please try again.' });
         }
     };
 
     renderContent = () => {
+        const t = this.props.t;
         return (
             <ContentBox>
                 <form className="flex-1 h-full flex flex-col items-center" onSubmit={this.handleSubmit}>
-                        
-                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+
+                    <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60}/>
 
                     <h1 className="font-title-2  mb-6 md:mb-16 text-center">
-                        Ласкаво просимо до Cargix
+                        {t?.signin?.welcome ?? 'Welcome to Cargix'}
                     </h1>
 
                    <div className="flex-1 w-full max-w-[500px] md:space-y-5">
                         <div className="space-y-5 flex flex-col">
                             <TextInputGroup
-                                label="E-mail"
+                                label={t?.signin?.emailLabel ?? 'E-mail'}
                                 value={this.state.email}
                                 onChange={this.handleEmailChange}
                                 type="email"
@@ -105,7 +108,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                             />
 
                             <TextInputGroup
-                                label="Password"
+                                label={t?.signin?.passwordLabel ?? 'Password'}
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
                                 type={this.state.showPassword ? 'text' : 'password'}
@@ -118,7 +121,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
                         <div className=''>
                             <div className={`text-[#ED2B2B] text-2xl ${this.state.error ? 'block' : 'hidden'}`}>
-                                Неправильний email або пароль
+                                {this.state.error ?? t?.signin?.error ?? 'Invalid email or password'}
                             </div>
                         </div>
 
@@ -138,23 +141,23 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                     </div>
             
                                     <label htmlFor="remember" className="pl-2 font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] cursor-pointer">
-                                        Запам&apos;ятати мене
+                                        {t?.signin?.rememberMe ?? "Remember me"}
                                     </label>
                                 </div>
 
-                                <Button onClick={() => this.props.router?.push('/forgot-password')} text='Забув пароль'
+                                <Button onClick={() => this.props.router?.push('/forgot-password')} text={t?.signin?.forgotPassword ?? 'Forgot password?'}
                                     className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                                 />
                             </div>
 
-                            <input type="submit" value='Увійти'
+                            <input type="submit" value={t?.signin?.loginButton ?? 'Login'}
                                 className="w-full h-[40px] md:h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                             />
 
                             <div className="pt-4 space-y-4">
                                 <div className="flex items-center gap-2">
                                     <span className="font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                                    Увійти за допомогою:
+                                    {t?.signin?.loginWith ?? 'Login with:'}
                                     </span>
                                     <Button onClick={()  => { signIn('google') }} text='' className="p-0 h-auto">
                                         <Image src='/google-icon-logo-svgrepo-com.svg' alt="Google" width={32} height={32}/>
@@ -163,9 +166,9 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
                                 <div className="font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
                                     <span className="text-[#e4e4e4] pr-2">
-                                    Не маєте акаунту? 
+                                    {t?.signin?.noAccount ?? "Don't have an account?"}
                                     </span>
-                                    <Button onClick={() => this.props.router?.push('/signup')} text='Створити акаунт'
+                                    <Button onClick={() => this.props.router?.push('/signup')} text={t?.signin?.createAccount ?? 'Create an account'}
                                         className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                                     />
                                 </div>
@@ -183,5 +186,6 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
 export default function SignInPageWithRouter(props: SignInPageProps) {
     const router = useRouter();
-    return <SignInPage {...props} router={router} />;
+    const { messages: t } = useI18n();
+    return <SignInPage {...props} router={router} t={t} />;
 }

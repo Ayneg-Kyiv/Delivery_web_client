@@ -2,6 +2,7 @@
 
 interface AddVehicleProps {
     session: any;
+    t: typeof import('../../../i18n/messages/uk').default['addVehicle'];
 }
 
 interface AddVehicleState {

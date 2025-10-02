@@ -1,17 +1,20 @@
 'use client';
 
 import React, { Component, ChangeEvent } from 'react';
-import { faqDriverSection ,faqSections, FaqSection, FaqItem } from '../faq';
+import type { FaqSection, FaqItem } from '../faq';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface HelpPageState {
     expanded: { [key: string]: number | null };
     search: string;
 }
 
-export class HelpPage extends Component<Record<string, never>, HelpPageState> {
-    constructor(props: Record<string, never>) {
+interface HelpPageProps { t: any }
+
+export class HelpPage extends Component<HelpPageProps, HelpPageState> {
+    constructor(props: HelpPageProps) {
         super(props);
         this.state = {
             expanded: {} as { [key: string]: number | null },
@@ -37,9 +40,22 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
 
     filterSections(): FaqSection[] {
         const { search } = this.state;
-        if (!search.trim()) return [faqDriverSection];
+        const { t } = this.props;
+
+        // Build sections from i18n messages
+        const allSections: FaqSection[] = Object.values(t.faq).map((section: any) => ({
+            title: section.title as string,
+            items: section.items as FaqItem[],
+        }));
+
+        if (!search.trim()) {
+            // Default view: only Driver section
+            const driver = t.faq.driver as { title: string; items: FaqItem[] };
+            return [{ title: driver.title, items: driver.items }];
+        }
+
         const lowerSearch = search.toLowerCase();
-        return faqSections
+        return allSections
             .map((section) => {
                 const filteredItems = section.items.filter(
                     (item) =>
@@ -57,14 +73,15 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
 
         const filteredSections = this.filterSections();
 
+        const { t } = this.props;
         return (
             <div className='py-10 px-8 md:px-10 lg:px-[190px] flex flex-col pt-20 md:pt-40 '>
                 <div className='flex-1 flex flex-col w-full gap-6 items-center'>
-                    <h1 className='text-[40px] md:text-5xl lg:text-7xl'>Допомога та Чапи для Водіїв</h1>
+                    <h1 className='text-[40px] md:text-5xl lg:text-7xl'>{t.title} — {t.faq.driver.title}</h1>
                     <div className='w-full flex justify-center mt-6 px-8 md:px-20 lg:px-40'>
                         <input
                             type="text"
-                            placeholder="Пошук..."
+                            placeholder={t.searchPlaceholder}
                             value={this.state.search}
                             onChange={this.handleSearchChange}
                             className='w-full focus:ring-2 focus:ring-[#9655DF] rounded-lg p-4'
@@ -73,7 +90,7 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
                     </div>
                     <div className='flex flex-col w-full mt-6 '>
                         {filteredSections.length === 0 ? (
-                            <div>Нічого не знайдено.</div>
+                            <div>{t.nothingFound}</div>
                         ) : (
                             filteredSections.map((section: FaqSection, sectionIdx: number) => (
                                 <div key={section.title} className='flex flex-col mb-8 justify-center align-center'>
@@ -127,27 +144,21 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
 
                 <div className='flex flex-col md:flex-row bg-darker md:mt-20 rounded-lg text-center text-gray-300 px-10 py-10 gap-10'>
                     <div className='flex-1 flex flex-col justify-center items-center py-10'>
-                        <h2 className="text-3xl font-bold mb-4 text-white">Приєднуйтесь до руху</h2>
-                        <p className="mb-4">
-                            Cargix — це більше, ніж просто платформа для доставки. Це спільнота помічників, мандрівників та справжніх героїв щодня.
-                        </p>
+                        <h2 className="text-3xl font-bold mb-4 text-white">{t.joinMovement.title}</h2>
+                        <p className="mb-4">{t.joinMovement.p1}</p>
                         
                         <ul className="list-disc list-inside mb-4 text-left">
-                            <li>Вам потрібно швидко та доступно доставити посилку</li>
-                            <li>Ви мандрівник, який хоче заробити, допомагаючи іншим</li>
-                            <li>Ви вірите у розумніші, екологічні рішення</li>
+                            {t.joinMovement.list.map((li: string) => (
+                              <li key={li}>{li}</li>
+                            ))}
                         </ul>
                         
-                        <p className="mb-4">
-                            ...Cargix тут для вас.
-                        </p>
+                        <p className="mb-4">{t.joinMovement.p2}</p>
                         
-                        <p>
-                            Зареєструйтесь сьогодні та станьте частиною глобальних змін у тому, як ми надсилаємо та отримуємо посилки. Разом ми створюємо світ, де кожна подорож має значення.
-                        </p>
+                        <p>{t.joinMovement.p3}</p>
 
                         <Link href='/vehicle' className='mt-10 px-8 py-4 h-9 rounded-xl flex items-center justify-center  button-type-1'>
-                            Приєднатись
+                            {t.joinMovement.joinButton}
                         </Link>
                     </div>
 
@@ -167,4 +178,10 @@ export class HelpPage extends Component<Record<string, never>, HelpPageState> {
     }
 }
 
-export default HelpPage;
+function HelpPageWrapper() {
+    const { messages } = useI18n();
+    const t = messages.helpPage;
+    return <HelpPage t={t} />;
+}
+
+export default HelpPageWrapper;

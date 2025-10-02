@@ -18,8 +18,10 @@ import MyReviews from "./components/my-reviews";
 import MyRequests from "./components/my-requests";
 import MyOffers from "./components/my-offers";
 import { useSession } from "next-auth/react";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export default function Profile(): React.JSX.Element {
+  const { messages: t } = useI18n();
   // State for user data
   const [selectedTab, setSelectedTab] = useState("user");
   const [userData, setUserData] = useState<ApplicationUser | null>(null);
@@ -82,11 +84,11 @@ export default function Profile(): React.JSX.Element {
 
   // Get display name
   const getDisplayName = () => {
-    if (!userData) return "Name Second name";
+    if (!userData) return t.profile.nameFallback;
     
     const parts = [userData.firstName, userData.middleName, userData.lastName].filter(Boolean);
     
-    return parts.length > 0 ? parts.join(' ') : "Не вказано";
+    return parts.length > 0 ? parts.join(' ') : t.profile.missing;
   };
 
   const getInitials = () => {
@@ -98,7 +100,7 @@ export default function Profile(): React.JSX.Element {
     return `${first}${last}`.toUpperCase() || "U";
   };
 
-  const displayOrMissing = (v?: string) => (v && v.trim() !== "" ? v : "Не вказано");
+  const displayOrMissing = (v?: string) => (v && v.trim() !== "" ? v : t.profile.missing);
 
   // Build absolute URL for image if backend returns relative path
   const resolveImageSrc = (path?: string | null) => {
@@ -212,23 +214,23 @@ export default function Profile(): React.JSX.Element {
 
   // Navigation items
   const navItems = [
-    { label: "Профіль", value: "user" },
-    { label: "Поїздки", value: "trips" },
-    { label: "Замовлення", value: "orders" },
-    { label: "Відгуки", value: "reviews" },
-    { label: "Запити ", value: "requests" },
-    { label: "Пропозиції", value: "offers" },
+    { label: t.profile.tabs.profile, value: "user" },
+    { label: t.profile.tabs.trips, value: "trips" },
+    { label: t.profile.tabs.orders, value: "orders" },
+    { label: t.profile.tabs.reviews, value: "reviews" },
+    { label: t.profile.tabs.requests, value: "requests" },
+    { label: t.profile.tabs.offers, value: "offers" },
   ];
 
   // Form fields with dynamic data (only existing/available fields)
   const formFields = [
-    { label: "Ім'я", value: displayOrMissing(userData?.firstName), key: "firstName" },
-    { label: "Прізвище", value: displayOrMissing(userData?.lastName), key: "lastName" },
-    { label: "E-mail", value: displayOrMissing(userData?.email), key: "email" },
-    { label: "Дата народження", value: displayOrMissing(userData?.dateOfBirth), key: "birthDate", hasHelp: true },
-    { label: "Номер телефону", value: displayOrMissing(userData?.phoneNumber), key: "phoneNumber" },
-    { label: "Адреса", value: displayOrMissing(userData?.address), key: "address" },
-    { label: "Про мене", value: displayOrMissing(userData?.aboutMe), key: "aboutMe", type: "textarea" as const },
+    { label: t.profile.fields.firstName, value: displayOrMissing(userData?.firstName), key: "firstName" },
+    { label: t.profile.fields.lastName, value: displayOrMissing(userData?.lastName), key: "lastName" },
+    { label: t.profile.fields.email, value: displayOrMissing(userData?.email), key: "email" },
+    { label: t.profile.fields.birthDate, value: displayOrMissing(userData?.dateOfBirth), key: "birthDate", hasHelp: true },
+    { label: t.profile.fields.phoneNumber, value: displayOrMissing(userData?.phoneNumber), key: "phoneNumber" },
+    { label: t.profile.fields.address, value: displayOrMissing(userData?.address), key: "address" },
+    { label: t.profile.fields.aboutMe, value: displayOrMissing(userData?.aboutMe), key: "aboutMe", type: "textarea" as const },
   ];
 
   // Rating stars based on user rating (0..5)
@@ -239,7 +241,7 @@ export default function Profile(): React.JSX.Element {
     return (
       <main className="bg-[#130c1f] grid justify-items-center w-full">
         <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="text-white text-xl">Завантаження...</div>
+          <div className="text-white text-xl">{t.profile.loading}</div>
         </div>
       </main>
     );
@@ -296,7 +298,7 @@ export default function Profile(): React.JSX.Element {
                 disabled={uploading}
                 className="mt-2 text-[#7f51b3] hover:text-[#6a4399] underline disabled:opacity-60"
               >
-                {uploading ? 'Завантаження…' : 'Змінити фото'}
+                {uploading ? t.profile.uploading : t.profile.changePhoto}
               </button>
             </div>
 
@@ -304,7 +306,7 @@ export default function Profile(): React.JSX.Element {
             <div className="flex flex-col">
               <div className="flex items-center">
                 <span className="font-['Bahnschrift-Light',Helvetica] font-light text-white text-lg mr-1">
-                  Рейтинг
+                  {t.profile.rating}
                 </span>
                 <div className="flex">
                   {stars.map((filled, index) => (
@@ -322,7 +324,7 @@ export default function Profile(): React.JSX.Element {
 
               <div className="mt-[70px]">
                 <span className="font-['Bahnschrift-Light',Helvetica] font-light text-white text-lg">
-                  Рейтинг
+                  {t.profile.rating}
                 </span>
                 <div className="font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-[28px] text-center mt-2">
                   {userData?.rating ?? 0}
@@ -336,14 +338,19 @@ export default function Profile(): React.JSX.Element {
                   className="w-full button-type-2 text-white py-3 rounded-lg "
                   onClick={() => window.location.href = '/edit-profile'}
                 >
-                  Редагувати профіль
+                  {t.profile.editProfile}
                 </Button>
+                <Link href="/change-password" className="w-full">
+                  <div className="w-full text-center button-type-2 text-white py-3 rounded-lg hover:opacity-90">
+                    {t.profile.changePassword}
+                  </div>
+                </Link>
                 {
                   session?.data?.user?.roles.includes("Admin") && (
                     <div className="font-['Bahnschrift-SemiBold',Helvetica] py-3 rounded-lg button-type-2 font-semibold text-white text-2xl data-[state=active]:bg-transparent data-[state=active]:text-white">
                       <Link href="/profile/admin-panel">
                         <div  className="w-full h-full flex items-center justify-center">
-                          Адмін панель
+                          {t.profile.adminPanel}
                         </div>
                       </Link>
                     </div>

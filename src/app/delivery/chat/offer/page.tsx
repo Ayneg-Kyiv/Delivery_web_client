@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const SIGNALR_URL = process.env.NEXT_PUBLIC_SIGNALR_URL + '/messagingHub' || '';
 
@@ -38,6 +39,11 @@ const ChatPage: React.FC = () => {
     const [connection, setConnection] = useState<HubConnection | null>(null);
     const [loading, setLoading] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const { messages: m, language } = useI18n();
+    const t = m.chat;
+    const localeTag = language === 'uk' ? 'uk-UA' : 'en-US';
+    const dayMonth = (d: Date) => d.toLocaleDateString(localeTag, { day: 'numeric', month: 'long' });
+    const hhmm = (d: Date) => d.toLocaleTimeString(localeTag, { hour: '2-digit', minute: '2-digit', hour12: false });
 
     // Scroll to bottom on new message
     useEffect(() => {
@@ -115,7 +121,7 @@ const ChatPage: React.FC = () => {
     };
 
     if (loading || !offer || !me) {
-        return <div className="text-white text-center py-20">Завантаження...</div>;
+        return <div className="text-white text-center py-20">{t.loading}</div>;
     }
 
     // Chat participants
@@ -140,22 +146,24 @@ const ChatPage: React.FC = () => {
                     />
                     <div>
                         <div className="font-bold text-white text-lg">{otherUser.name}</div>
-                        <div className="text-[#b6a7e6] text-sm">Супроводій</div>
+                        <div className="text-[#b6a7e6] text-sm">{role === 'driver' ? t.role.sender : t.role.driver}</div>
                         <div className="flex items-center gap-2 text-yellow-400 text-sm">
                             {'★'.repeat(Math.round(otherUser.rating || 0))}
                             <span className="text-white ml-2">{otherUser.rating?.toFixed(1)}</span>
                         </div>
                     </div>
                     <div className="ml-auto flex gap-4">
-                        <a href={`tel:${otherUser.email}`} className="text-[#7c3aed] text-xl" title="Call">
-                            <svg width="24" height="24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z" /></svg>
-                        </a>
+                        {otherUser.phoneNumber && (
+                            <a href={`tel:${otherUser.phoneNumber}`} className="text-[#7c3aed] text-xl" title={t.callTitle}>
+                                <svg width="24" height="24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z" /></svg>
+                            </a>
+                        )}
                     </div>
                 </div>
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto bg-[#1a093a] px-6 py-4">
                     {messages.length === 0 && (
-                        <div className="text-center text-[#b6a7e6] mt-10">Немає повідомлень</div>
+                        <div className="text-center text-[#b6a7e6] mt-10">{t.noMessages}</div>
                     )}
                     {messages.map((msg, idx) => {
                         console.log('Rendering message:', msg);
@@ -164,14 +172,13 @@ const ChatPage: React.FC = () => {
 
                         const showDate =
                             idx === 0 ||
-                            format(new Date(msg.sentAt), 'dd MMMM') !==
-                                format(new Date(messages[idx - 1].sentAt), 'dd MMMM');
+                            dayMonth(new Date(msg.sentAt)) !== dayMonth(new Date(messages[idx - 1].sentAt));
                         return (
                             <React.Fragment key={msg.id}>
                                 {showDate && (
                                     <div className="flex justify-center my-2">
                                         <span className="bg-[#7c3aed] text-white px-4 py-1 rounded-full text-xs">
-                                            {format(new Date(msg.sentAt), 'd MMMM')}
+                                            {dayMonth(new Date(msg.sentAt))}
                                         </span>
                                     </div>
                                 )}
@@ -198,7 +205,7 @@ const ChatPage: React.FC = () => {
                                     >
                                         <div className="text-sm">{msg.text}</div>
                                         <div className="text-xs text-right mt-1 opacity-70">
-                                            {format(new Date(msg.sentAt), 'HH:mm')}
+                                            {hhmm(new Date(msg.sentAt))}
                                         </div>
                                     </div>
                                     {isMe && (
@@ -225,69 +232,53 @@ const ChatPage: React.FC = () => {
                     {role === 'driver' && (
                     <div className="flex gap-2 mb-2">
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Уточніть, будь ласка, місце доставки.');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.driver.clarifyDeliveryPlace.value); }}
                         >
-                            Уточнити місце доставки
+                            {t.quickReplies.driver.clarifyDeliveryPlace.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Я на місці.');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.driver.imHere.value); }}
                         >
-                            Я на місці
+                            {t.quickReplies.driver.imHere.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Затримуюсь на 5 хв.');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.driver.delay5min.value); }}
                         >
-                            Затримуюсь на 5 хв
+                            {t.quickReplies.driver.delay5min.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Де Вас можна знайти?');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.driver.whereCanIFindYou.value); }}
                         >
-                            Де Вас можна знайти?
+                            {t.quickReplies.driver.whereCanIFindYou.label}
                         </button>
                     </div>)}
                     {role === 'sender' && (
                     <div className="flex gap-2 mb-2">
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Я на місці.');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.sender.imHere.value); }}
                         >
-                            Я на місці
+                            {t.quickReplies.sender.imHere.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Затримуюсь на 5 хв.');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.sender.delay5min.value); }}
                         >
-                            Затримуюсь на 5 хв
+                            {t.quickReplies.sender.delay5min.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Де Ви?');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.sender.whereAreYou.value); }}
                         >
-                            Де Ви?
+                            {t.quickReplies.sender.whereAreYou.label}
                         </button>
                         <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                            onClick={() => {
-                                setInput('Чи все ще їдете?');
-                            }}
+                            onClick={() => { setInput(t.quickReplies.sender.stillOnTheWay.value); }}
                         >
-                            Чи все ще їдете?
+                            {t.quickReplies.sender.stillOnTheWay.label}
                         </button>
                     </div>)}
                     <div className="flex gap-2">
                         <input
                             className="flex-1 rounded-lg px-4 py-2 bg-[#1a093a] text-white outline-none"
-                            placeholder="Написати повідомлення"
+                            placeholder={t.inputPlaceholder}
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={e => {
@@ -328,15 +319,15 @@ const ChatPage: React.FC = () => {
                 <hr className="my-4 border-[#b6a7e6]" />
                 <div className="flex flex-col gap-4">
                     <div>
-                        <div className="font-bold text-[#7c3aed]">{offer.deliveryRequest.startLocation.city} {format(new Date(offer.deliveryRequest.startLocation.dateTime), 'HH:mm')}</div>
+                        <div className="font-bold text-[#7c3aed]">{offer.deliveryRequest.startLocation.city} {hhmm(new Date(offer.deliveryRequest.startLocation.dateTime))}</div>
                         <div className="text-[#18102a] text-sm">
-                            Місце отримання: {offer.deliveryRequest.startLocation.address}
+                            {t.sidebar.pickupPlace}: {offer.deliveryRequest.startLocation.address}
                         </div>
                     </div>
                     <div>
-                        <div className="font-bold text-[#7c3aed]">{offer.deliveryRequest.endLocation.city} {format(new Date(offer.deliveryRequest.endLocation.dateTime), 'HH:mm')}</div>
+                        <div className="font-bold text-[#7c3aed]">{offer.deliveryRequest.endLocation.city} {hhmm(new Date(offer.deliveryRequest.endLocation.dateTime))}</div>
                         <div className="text-[#18102a] text-sm">
-                            Місце доставки: {offer.deliveryRequest.endLocation.address}
+                            {t.sidebar.deliveryPlace}: {offer.deliveryRequest.endLocation.address}
                         </div>
                     </div>
                 </div>

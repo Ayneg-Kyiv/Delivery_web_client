@@ -2,114 +2,78 @@
 
 import React, { Component } from 'react';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
-class CookiesPage extends Component {
+class CookiesPage extends Component<{ t: any; language: string }> {
     render() {
+        const t = this.props.t.cookiesPage;
+        const homeLabel = this.props.t.articlePage?.breadcrumb?.home ?? 'Home';
+        const localeTag = this.props.language === 'uk' ? 'uk-UA' : 'en-US';
+        const formattedDate = new Date().toLocaleDateString(localeTag);
         return (
             <div className='flex-1 flex-col w-full flex py-20 px-8 md:px-20 lg:px-40'>
                 <div className='w-full flex flex-row'>
-                    <Link href='/' className=' hover:underline pr-4'>Головна</Link>
-                    <p> {' > '} </p>
-                    <Link href='/news' className='pl-4 hover:underline'>Кукі</Link>
+                    <Link href='/' className=' hover:underline pr-4'>{homeLabel}</Link>
+                    <p>{' > '}</p>
+                    <Link href='/cookies' className='pl-4 hover:underline'>{t.breadcrumbTitle}</Link>
                 </div>
                 <div className='flex-1 w-full flex flex-col pt-6]'>
-                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Політика використання файлів cookie</h1>
-                    
-                    <p className='text-xl pt-10'>
-                        Це сторінка нашої політики використання файлів cookie. Тут ви можете знайти інформацію про те, як ми використовуємо файли cookie на нашому веб-сайті.
-                    </p>
-
-                    <p className='text-xl pt-4'>
-                        Останнє оновлення: 29 Серпня 2025 року
-                    </p>
-
-                    <p className='text-2xl pt-4'>
-                        Cargix та його сторонні партнери використовують «кукі» та інші технології відстеження (разом — «Технології відстеження»), включаючи сторонні Технології відстеження, на вебсайтах, мобільних додатках, електронних листах, рекламних оголошеннях та інших онлайн-сервісах Cargix (разом — «Онлайн-ресурси»).
-                        Ці технології використовуються для забезпечення роботи сервісів Cargix («Сервіси»), їх покращення, персоналізації та аналізу використання Онлайн-ресурсів, а також для показу персоналізованої реклами.
-                    </p>
-                    <p className='text-2xl pt-2'>
-                        Це Повідомлення описує Технології відстеження, які ми та наші партнери використовуємо, як ми їх застосовуємо, а також ваші можливості щодо вибору використання таких Технологій.
-                        Для отримання додаткової інформації про збір та використання персональних даних Cargix, будь ласка, ознайомтеся з нашою Політикою конфіденційності.
-                    </p>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>{t.title}</h1>
+                    <p className='text-xl pt-10'>{t.intro1}</p>
+                    <p className='text-xl pt-4'>{t.lastUpdated.replace('{date}', formattedDate)}</p>
+                    <p className='text-2xl pt-4'>{t.intro2}</p>
+                    <p className='text-2xl pt-2'>{t.intro3}</p>
                 </div>
                 <div className='flex-1 w-full flex flex-col pt-6'>
-                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Технології відстеження які ми використовуємо</h1>
-                    <p className='text-2xl pt-10'>
-                        Ми використовуємо такі Технології відстеження для цілей, описаних у цьому Повідомленні:
-                    </p>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>{t.tech.title}</h1>
+                    <p className='text-2xl pt-10'>{t.tech.intro}</p>
                     <ul className='pl-10 pt-4 text-xl list-disc space-y-4 md:space-y-2'>
-                        <li>
-                            Файли cookie — це невеликі текстові файли, які розміщуються та зберігаються 
-                            у вашому браузері під час відвідування вебсайту або на вашому пристрої під час
-                            використання додатку. Файли cookie можуть створюватися та розміщуватися вебсайтом або додатком,
-                            який ви відвідуєте («власні файли cookie»), 
-                            або іншими вебсайтами чи додатками («сторонні файли cookie»). 
-                            Ми використовуємо як сесійні файли cookie, які видаляються після закриття браузера, 
-                            так і постійні файли cookie, які зберігаються протягом визначеного часу,
-                            навіть після закриття браузера.
-                        </li>
-                        <li>
-                            Піксельні теги (також називаються «маяками») — це невеликі блоки коду,
-                            розміщені на вебсторінках, у додатках, електронних листах або рекламних оголошеннях,
-                            які допомагають нам ідентифікувати користувачів і відстежувати взаємодії з нашими Онлайн-ресурсами.
-                        </li>
-                        <li>
-                            Набори для розробки програмного забезпечення (SDK) — це блоки коду,
-                            що використовуються переважно в мобільних додатках, 
-                            подібні до файлів cookie та піксельних тегів. SDK дозволяють розробникам збирати інформацію про ваш пристрій,
-                            мережу та використання додатка.
-                        </li>
-                        <li>
-                            Локальне сховище — це файли, створені додатками або вебсайтами та збережені на вашому пристрої або в браузері.
-                            Вони функціонують подібно до файлів cookie.
-                        </li>
+                        <li>{t.tech.list.cookies}</li>
+                        <li>{t.tech.list.pixelTags}</li>
+                        <li>{t.tech.list.sdks}</li>
+                        <li>{t.tech.list.localStorage}</li>
                     </ul>
                 </div>
                 <div className='flex-1 w-full flex flex-col pt-6 '>
-                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>Як ми використовуємо Технології відстеження</h1>
-                    <p className='text-2xl pt-10'>
-                        У наступній таблиці наведено категорії Технологій відстеження
-                        (включаючи файли cookie, піксельні теги, SDK та файли локального сховища),
-                        які можуть бути розміщені на Онлайн-ресурсах, їхні цілі,
-                        а також інформацію про те, чи розміщуються вони компанією Cargix чи сторонніми партнерами.
-                    </p>
+                    <h1 className='text-[40px] md:text-5xl font-bold pt-10'>{t.howWeUse.title}</h1>
+                    <p className='text-2xl pt-10'>{t.howWeUse.intro}</p>
 
                     <div className='flex-1 w-full flex flex-col py-10 gap-y-8 md:hidden'>
                         <div className='flex flex-col gap-y-8 '>
                             <div className='text-[24px]'>
-                                Категорія: Необхідні файли cookie
+                                {t.howWeUse.prefixes.category} {t.howWeUse.categories.necessary.title}
                             </div>
                             <div className='text-[20px]'>
-                                Ціль: Ці файли cookie є необхідними для роботи наших Онлайн-ресурсів і не можуть бути вимкнені в наших системах. Вони зазвичай встановлюються лише у відповідь на дії, які ви здійснюєте і які становлять запит на послугу, наприклад, встановлення ваших уподобань конфіденційності, входу або заповнення форм. Ви можете налаштувати свій браузер на блокування або сповіщення про ці файли cookie, але деякі частини Онлайн-ресурсів не працюватимуть.
+                                {t.howWeUse.prefixes.purpose} {t.howWeUse.categories.necessary.purpose}
                             </div>
                             <div className='text-[20px]'>
-                                Власник: Cargix
+                                {t.howWeUse.prefixes.owner} {t.howWeUse.categories.necessary.owner}
                             </div>
 
                             <div className='w-full h-[1px] bg-lighter'></div>
                         </div>
                         <div className='flex flex-col gap-y-8 '>
                             <div className='text-[24px]'>
-                                Категорія: Аналітичні/продуктивні файли cookie
+                                {t.howWeUse.prefixes.category} {t.howWeUse.categories.analytics.title}
                             </div>
                             <div className='text-[20px]'>
-                                Ціль: Ці файли cookie дозволяють нам рахувати відвідувачів і джерела трафіку, щоб ми могли вимірювати та покращувати продуктивність наших Онлайн-ресурсів. Вони допомагають нам дізнатися, які сторінки є найпопулярнішими, а також бачити, як відвідувачі пересуваються по Онлайн-ресурсах. Вся інформація, яку збирають ці файли cookie, є агрегованою і тому анонімною. Якщо ви не дозволите ці файли cookie, ми не знатимемо, коли ви відвідували наші Онлайн-ресурси, і не зможемо відстежувати їхню продуктивність.
+                                {t.howWeUse.prefixes.purpose} {t.howWeUse.categories.analytics.purpose}
                             </div>
                             <div className='text-[20px]'>
-                                Власник: Cargix, Google Analytics
+                                {t.howWeUse.prefixes.owner} {t.howWeUse.categories.analytics.owner}
                             </div>
 
                             <div className='w-full h-[1px] bg-lighter'></div>
                         </div>
                         <div className='flex flex-col gap-y-8 '>
                             <div className='text-[24px]'>
-                                Категорія: Файли cookie для реклами
+                                {t.howWeUse.prefixes.category} {t.howWeUse.categories.advertising.title}
                             </div>
                             <div className='text-[20px]'>
-                                Ціль: Ці файли cookie можуть бути встановлені через наші Онлайн-ресурси нашими рекламними партнерами. Вони використовуються для створення профілів ваших інтересів та показу вам релевантної реклами на інших сайтах. Якщо ви не дозволите ці файли cookie, ви отримаєте менш цільову рекламу.
+                                {t.howWeUse.prefixes.purpose} {t.howWeUse.categories.advertising.purpose}
                             </div>
                             <div className='text-[20px]'>
-                                Власник: Сторонні партнери
+                                {t.howWeUse.prefixes.owner} {t.howWeUse.categories.advertising.owner}
                             </div>
                         </div>
                     </div>
@@ -118,28 +82,28 @@ class CookiesPage extends Component {
                         <table className='w-full text-left mt-10'>
                             <thead>
                                 <tr>
-                                    <th className='border-t w-[20%] border-[rgba(29,29,29,1)] px-4 py-2'>Категорія</th>
-                                    <th className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Ціль</th>
-                                    <th className='border-t w-[10%] border-[rgba(29,29,29,1)] px-4 py-2'>Власник</th>
+                                    <th className='border-t w-[20%] border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.tableHeaders.category}</th>
+                                    <th className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.tableHeaders.purpose}</th>
+                                    <th className='border-t w-[10%] border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.tableHeaders.owner}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr className=''>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Необхідні файли cookie</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Ці файли cookie є необхідними для роботи наших Онлайн-ресурсів і не можуть бути вимкнені в наших системах. Вони зазвичай встановлюються лише у відповідь на дії, які ви здійснюєте і які становлять запит на послугу, наприклад, встановлення ваших уподобань конфіденційності, входу або заповнення форм. Ви можете налаштувати свій браузер на блокування або сповіщення про ці файли cookie, але деякі частини Онлайн-ресурсів не працюватимуть.</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Cargix</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.necessary.title}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.necessary.purpose}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.necessary.owner}</td>
                                 </tr>
 
                                 <tr>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Аналітичні/продуктивні файли cookie</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Ці файли cookie дозволяють нам рахувати відвідувачів і джерела трафіку, щоб ми могли вимірювати та покращувати продуктивність наших Онлайн-ресурсів. Вони допомагають нам дізнатися, які сторінки є найпопулярнішими, а також бачити, як відвідувачі пересуваються по Онлайн-ресурсах. Вся інформація, яку збирають ці файли cookie, є агрегованою і тому анонімною. Якщо ви не дозволите ці файли cookie, ми не знатимемо, коли ви відвідували наші Онлайн-ресурси, і не зможемо відстежувати їхню продуктивність.</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Cargix, Google Analytics</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.analytics.title}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.analytics.purpose}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.analytics.owner}</td>
                                 </tr>
 
                                 <tr>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Файли cookie для реклами</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Ці файли cookie можуть бути встановлені через наші Онлайн-ресурси нашими рекламними партнерами. Вони використовуються для створення профілів ваших інтересів та показу вам релевантної реклами на інших сайтах. Якщо ви не дозволите ці файли cookie, ви отримаєте менш цільову рекламу.</td>
-                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>Сторонні партнери</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.advertising.title}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.advertising.purpose}</td>
+                                    <td className='border-t border-[rgba(29,29,29,1)] px-4 py-2'>{t.howWeUse.categories.advertising.owner}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -150,4 +114,9 @@ class CookiesPage extends Component {
     }
 }
 
-export default CookiesPage;
+const CookiesPageWrapper = (props: any) => {
+    const { messages, language } = useI18n();
+    return <CookiesPage {...props} t={messages} language={language} />;
+};
+
+export default CookiesPageWrapper;

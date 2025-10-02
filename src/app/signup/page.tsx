@@ -10,6 +10,7 @@ import Button from '@/components/ui/button';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import Link from 'next/link';
+import { useI18n } from '@/i18n/I18nProvider';
 
 class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     constructor(props: SignupPageProps) {
@@ -61,8 +62,8 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     handlePasswordChange = (password: string) => {
         this.setState({ password });
 
-        if (password.length < 8 && password.length > 0) 
-            this.setState({ error: 'Password must be at least 8 characters long' });
+        if (password.length > 0 && password.length < 8) 
+            this.setState({ error: this.props.t?.signup?.stage2?.passwordError ?? 'Password must be at least 8 characters long' });
         else 
             this.setState({ error: undefined });
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
@@ -127,7 +128,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         if (response?.success) 
             this.setState({ stage: 4 });
         else 
-            this.setState({ error: 'Sign up failed. Please try again.' });
+            this.setState({ error: this.props.t?.signup?.signUpFailed ?? 'Sign up failed. Please try again.' });
         
     };
 
@@ -154,26 +155,27 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
 
     renderContentForStage1 = () => {
+        const t = this.props.t;
         return (
             <ContentBox>
                 
                 <form className='flex-1 flex flex-col h-full items-center' onSubmit={this.handleSignupStage1}>
                        
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60}/>
 
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Створіть свій обліковий запис в Cargix
+                            {t?.signup?.stage1?.title ?? 'Create your Cargix account'}
                         </h1>
 
                         <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть вашу електронну адресу, щоб продовжити. 
+                           {t?.signup?.stage1?.subtitle ?? 'Enter your email address to continue.'}
                         </p>
                     </div>
 
                     <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
                         <TextInputGroup
-                                label="E-mail"
+                                label={t?.signup?.emailLabel ?? 'E-mail'}
                                 value={this.state.email}
                                 onChange={(e) => this.handleEmailChange(e.target.value)}
                                 type="email"
@@ -183,16 +185,16 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
                                 placeholder=""
                             />
 
-                        <input type="submit" value='Продовжити'
+                        <input type="submit" value={t?.signup?.stage1?.continueButton ?? 'Continue'}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
                         
                         <div className="flex-1 pt-4 space-y-4">
                             <div className="font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
                                 <span className="text-[#e4e4e4] pr-2">
-                                    Маєте аккаунт?
+                                    {t?.signup?.stage1?.hasAccount ?? 'Have an account?'}
                                 </span>
-                                <Button onClick={() => this.props.router?.push('/signin')} text='ввійти'
+                                <Button onClick={() => this.props.router?.push('/signin')} text={t?.signup?.stage1?.login ?? 'Login'}
                                     className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                                     />
                             </div>
@@ -217,26 +219,27 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     }
 
     renderContentForStage2 = () => {
+        const t = this.props.t;
         return (
             <ContentBox>
                 
                 <form className='flex-1 flex flex-col h-full items-center ' onSubmit={this.handleSignupStage2}>
                        
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60}/>
                         
                         <h1 className="font-title-2 mt-2 mb-4 text-center">
-                            Встановіть пароль
+                            {t?.signup?.stage2?.title ?? 'Set a password'}
                         </h1>
 
                         <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть пароль для облікового запису.
+                           {t?.signup?.stage2?.subtitle ?? 'Enter a password for your account.'}
                         </p>
                     </div>
 
                     <div className="flex-1 w-full max-w-[500px] space-y-5 flex flex-col">
                         <TextInputGroup
-                                label="Пароль"
+                                label={t?.signup?.stage2?.passwordLabel ?? 'Password'}
                                 value={this.state.password}
                                 onChange={(e) => this.handlePasswordChange(e.target.value)}
                                 type="password"
@@ -248,20 +251,20 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
                         {!this.state.error && (
                         <p className='text-sm text-stretch mt-[4px] pl-[12px]'>
-                           Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
+                           {t?.signup?.stage2?.passwordHint ?? 'Password must be at least 8 characters long, including upper and lower case letters, numbers and special characters.'}
                         </p>
                         )}
                         {this.state.passwordError && (
                             <div className={`flex flex-row items-center  mt-[8px]`}>
                                 <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
                                 <p className='text-[#ED2B2B] text-sm text-stretch'>
-                                    Пароль має містити не менше 8 символів, включаючи великі та малі літери, цифри та спеціальні символи.
+                                    {t?.signup?.stage2?.passwordError ?? 'Password must be at least 8 characters long, including upper and lower case letters, numbers and special characters.'}
                                 </p>
                             </div>
                         )}
 
                         <TextInputGroup
-                                label="Підтвердження пароля"
+                                label={t?.signup?.stage2?.confirmPasswordLabel ?? 'Confirm password'}
                                 value={this.state.confirmPassword}
                                 onChange={(e) => this.handleConfirmPasswordChange(e.target.value)}
                                 type="password"
@@ -275,12 +278,12 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
                             <div className={`flex flex-row items-center mt-[8px]`}>
                                 <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
                                 <p className='text-[#ED2B2B] text-sm text-stretch'>
-                                    Паролі мають співпадати.
+                                    {t?.signup?.stage2?.confirmPasswordError ?? 'Passwords must match.'}
                                 </p>
                             </div>
                         )}
 
-                        <input type="submit" value='Продовжити'
+                        <input type="submit" value={t?.signup?.stage2?.continueButton ?? 'Continue'}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
 
@@ -295,19 +298,20 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
 // Stage 3
 renderContentForStage3 = () => {
+    const t = this.props.t;
     return (
         <ContentBox>
             <form className='flex-1 flex flex-col h-full items-center ' onSubmit={this.handleSignUp}>
                 
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60}/>
+                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60}/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mt-2 mb-4 text-center">
-                            Останній крок
+                            {t?.signup?.stage3?.title ?? 'Last step'}
                         </h1>
 
                         <p className='font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                           Введіть вказану інформацію.
+                           {t?.signup?.stage3?.subtitle ?? 'Enter the specified information.'}
                         </p>
                     </div>
                     
@@ -315,20 +319,20 @@ renderContentForStage3 = () => {
                         
                         <div className='flex flex-col md:flex-row space-x-2'>
                             <TextInputGroup
-                                label="Ім'я"
+                                label={t?.signup?.stage3?.firstNameLabel ?? 'First name'}
                                 value={this.state.firstName}
                                 type='text'
                                 onChange={(e) => this.handleFirstNameChange(e.target.value)} />
 
                             <TextInputGroup
-                                label="Прізвище"
+                                label={t?.signup?.stage3?.lastNameLabel ?? 'Last name'}
                                 value={this.state.lastName}
                                 type='text'
                                 onChange={(e) => this.handleLastNameChange(e.target.value)} />
                         </div>
 
                         <DateInputGroup
-                            label='Дата народження'
+                            label={t?.signup?.stage3?.birthDateLabel ?? 'Date of birth'}
                             value={this.state.birthDate}
                             onChange={(e) => this.handleBirthDateChange(e.target.value)}
                             className={`${this.state.birthDateError ? 'floating-input-group-without-margin' : ''}`}
@@ -337,7 +341,7 @@ renderContentForStage3 = () => {
                         />
 
                         <TextInputGroup
-                            label="Номер телефону"
+                            label={t?.signup?.stage3?.phoneNumberLabel ?? 'Phone number'}
                             value={this.state.phoneNumber}
                             type='tel'
                             className={`${this.state.phoneNumberError ? 'floating-input-group-without-margin' : ''}`}
@@ -345,7 +349,7 @@ renderContentForStage3 = () => {
                             labelClassName={`${this.state.phoneNumber ? ' filled' : ''} ${this.state.phoneNumberError ? ' floating-label-error' : ''}`}
                             onChange={(e) => this.handlePhoneNumberChange(e.target.value)} />
 
-                        <input type="submit" value='Продовжити'
+                        <input type="submit" value={t?.signup?.stage3?.continueButton ?? 'Continue'}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
                     </div>
@@ -357,23 +361,24 @@ renderContentForStage3 = () => {
 
 // Stage 4 - Final
 renderContentForStage4 = () =>{
+    const t = this.props.t;
     return (
         <ContentBox height='760px' lheight='700px'>
             <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
                 <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                    <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                    <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60} className='mb-2'/>
                     <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                        Залишився останній крок
+                        {t?.signup?.stage4?.title ?? 'One last step'}
                     </h1>
                     <p className='pb-4 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                        Ваш обліковий запис успішно створено. для завершення процесу реєстрації перейдіть на вказану електронну пошту та підтвердіть свою реєстрацію.
+                        {t?.signup?.stage4?.subtitle ?? 'Your account has been successfully created. To complete the registration process, please check your email and confirm your registration.'}
                     </p>
-                    <Image src='/SuccessVector1.png' alt='success' width={126} height={126} className=''/>
+                    <Image src='/SuccessVector1.png' alt={t?.signup?.stage4?.successAlt ?? 'Success'} width={126} height={126} className='' />
 
                 </div>
                 <div className="flex-1 w-full max-w-[500px]">
                     <div className="space-y-10 flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                        <Link href='/' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">Головна</Link>
+                        <Link href='/' className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center">{t?.signup?.stage4?.mainButton ?? 'Home'}</Link>
                     </div>
                 </div>
             </div>
@@ -400,5 +405,6 @@ renderContentForStage4 = () =>{
 
 export default function SignupPageWrapper(props: SignupPageProps) {
     const router = useRouter();
-    return <SignupPage {...props} router={router} />;
+    const { messages: t } = useI18n();
+    return <SignupPage {...props} router={router} t={t} />;
 }
