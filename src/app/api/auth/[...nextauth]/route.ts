@@ -177,20 +177,12 @@ const handler = NextAuth({
           
           if (rememberBool) payload.rememberMe = true; // only include if true
 
-          console.log("CSRF Token:", csrfToken);
-          console.log("Authorization payload:", payload);
-
-          const cookieStore = await cookies();
-
           const response = await ApiClient.post<any>("/auth/signin", payload, {
             headers: {
               ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
-              "Cookie": cookieStore.toString() || "",
+              "Cookie": (await cookies()).toString() || "",
             },
           });
-
-
-          console.log("Authorization response:", response);
 
           // Parse the refreshToken cookie from the Set-Cookie header
             const setCookieHeader: string[] = response.headers["set-cookie"] || [];
