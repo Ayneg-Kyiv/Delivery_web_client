@@ -180,12 +180,25 @@ const handler = NextAuth({
           console.log("CSRF Token:", csrfToken);
           console.log("Authorization payload:", payload);
 
-          const response = await ApiClient.post<any>("/auth/signin", payload, {
+          // const response = await ApiClient.post<any>("/auth/signin", payload, {
+          //   headers: {
+          //     ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
+          //     "Cookie": (await cookies()).toString() || "",
+          //   },
+          // });
+
+          const responseRaw = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,  {
+            method: "POST",
             headers: {
-              ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
-              "Cookie": (await cookies()).toString() || "",
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": csrfToken || "",
+            "Cookie": (await cookies()).toString() || "",
             },
+            body: JSON.stringify(payload),
+            credentials: "include"
           });
+
+          const response = await responseRaw.json();
 
           console.log("Authorization response:", response);
 
