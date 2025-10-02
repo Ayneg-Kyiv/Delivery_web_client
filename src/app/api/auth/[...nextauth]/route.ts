@@ -22,6 +22,7 @@ async function getCsrfToken()  {
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
+    console.log("Refreshing access token..., CSRF Token:", csrfToken);
 
     const responseRaw = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-session`, {
       method: "POST",
