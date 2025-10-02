@@ -4,9 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { format } from 'date-fns';
+// Removed date-fns locale usage due to version constraints; using Intl instead
 import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const SIGNALR_URL = (process.env.NEXT_PUBLIC_SIGNALR_URL || '') + '/messagingHub';
 
@@ -34,6 +35,11 @@ const ChatOrderPage: React.FC = () => {
     const [connection, setConnection] = useState<HubConnection | null>(null);
     const [loading, setLoading] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const { messages: m, language } = useI18n();
+    const t = m.chat;
+    const localeTag = language === 'uk' ? 'uk-UA' : 'en-US';
+    const dayMonth = (d: Date) => d.toLocaleDateString(localeTag, { day: 'numeric', month: 'long' });
+    const hhmm = (d: Date) => d.toLocaleTimeString(localeTag, { hour: '2-digit', minute: '2-digit', hour12: false });
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -94,7 +100,7 @@ const ChatOrderPage: React.FC = () => {
     };
 
     if (loading || !order || !me) {
-        return <div className="text-white text-center py-20">Завантаження...</div>;
+        return <div className="text-white text-center py-20">{t.loading}</div>;
     }
 
     const otherUser = role === 'driver' ? order.sender : order.driver;
@@ -118,7 +124,7 @@ const ChatOrderPage: React.FC = () => {
                     />
                     <div>
                         <div className="font-bold text-white text-lg">{otherUser?.name}</div>
-                        <div className="text-[#b6a7e6] text-sm">{role === 'driver' ? 'Відправник' : 'Водій'}</div>
+                        <div className="text-[#b6a7e6] text-sm">{role === 'driver' ? t.role.sender : t.role.driver}</div>
                         <div className="flex items-center gap-2 text-yellow-400 text-sm">
                             {'★'.repeat(Math.round(otherUser?.rating || 0))}
                             <span className="text-white ml-2">{otherUser?.rating?.toFixed(1)}</span>
@@ -126,7 +132,7 @@ const ChatOrderPage: React.FC = () => {
                     </div>
                     <div className="ml-auto flex gap-4">
                         {otherUser?.phoneNumber && (
-                            <a href={`tel:${otherUser.phoneNumber}`} className="text-[#7c3aed] text-xl" title="Call">
+                            <a href={`tel:${otherUser.phoneNumber}`} className="text-[#7c3aed] text-xl" title={t.callTitle}>
                                 <svg width="24" height="24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3.09 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 6.29 6.29l1.27-1.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z" /></svg>
                             </a>
                         )}
@@ -135,20 +141,19 @@ const ChatOrderPage: React.FC = () => {
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto bg-[#1a093a] px-6 py-4">
                     {messages.length === 0 && (
-                        <div className="text-center text-[#b6a7e6] mt-10">Немає повідомлень</div>
+                        <div className="text-center text-[#b6a7e6] mt-10">{t.noMessages}</div>
                     )}
                     {messages.map((msg, idx) => {
                         const isMe = msg.senderId === me.id;
                         const showDate =
                             idx === 0 ||
-                            format(new Date(msg.sentAt), 'dd MMMM') !==
-                                format(new Date(messages[idx - 1].sentAt), 'dd MMMM');
+                            dayMonth(new Date(msg.sentAt)) !== dayMonth(new Date(messages[idx - 1].sentAt));
                         return (
                             <React.Fragment key={msg.id}>
                                 {showDate && (
                                     <div className="flex justify-center my-2">
                                         <span className="bg-[#7c3aed] text-white px-4 py-1 rounded-full text-xs">
-                                            {format(new Date(msg.sentAt), 'd MMMM')}
+                                            {dayMonth(new Date(msg.sentAt))}
                                         </span>
                                     </div>
                                 )}
@@ -175,7 +180,7 @@ const ChatOrderPage: React.FC = () => {
                                     >
                                         <div className="text-sm">{msg.text}</div>
                                         <div className="text-xs text-right mt-1 opacity-70">
-                                            {format(new Date(msg.sentAt), 'HH:mm')}
+                                            {hhmm(new Date(msg.sentAt))}
                                         </div>
                                     </div>
                                     {isMe && (
@@ -202,47 +207,47 @@ const ChatOrderPage: React.FC = () => {
                     {role === 'driver' && (
                         <div className="flex gap-2 mb-2">
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Уточніть, будь ласка, місце доставки.'); }}>
-                                Уточнити місце доставки
+                                onClick={() => { setInput(t.quickReplies.driver.clarifyDeliveryPlace.value); }}>
+                                {t.quickReplies.driver.clarifyDeliveryPlace.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Я на місці.'); }}>
-                                Я на місці
+                                onClick={() => { setInput(t.quickReplies.driver.imHere.value); }}>
+                                {t.quickReplies.driver.imHere.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Затримуюсь на 5 хв.'); }}>
-                                Затримуюсь на 5 хв
+                                onClick={() => { setInput(t.quickReplies.driver.delay5min.value); }}>
+                                {t.quickReplies.driver.delay5min.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Де Вас можна знайти?'); }}>
-                                Де Вас можна знайти?
+                                onClick={() => { setInput(t.quickReplies.driver.whereCanIFindYou.value); }}>
+                                {t.quickReplies.driver.whereCanIFindYou.label}
                             </button>
                         </div>
                     )}
                     {role === 'sender' && (
                         <div className="flex gap-2 mb-2">
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Я на місці.'); }}>
-                                Я на місці
+                                onClick={() => { setInput(t.quickReplies.sender.imHere.value); }}>
+                                {t.quickReplies.sender.imHere.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Затримуюсь на 5 хв.'); }}>
-                                Затримуюсь на 5 хв
+                                onClick={() => { setInput(t.quickReplies.sender.delay5min.value); }}>
+                                {t.quickReplies.sender.delay5min.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Де Ви?'); }}>
-                                Де Ви?
+                                onClick={() => { setInput(t.quickReplies.sender.whereAreYou.value); }}>
+                                {t.quickReplies.sender.whereAreYou.label}
                             </button>
                             <button className="flex-1 bg-[#b6a7e6] text-[#2d1857] rounded-lg px-3 py-2 text-sm font-semibold"
-                                onClick={() => { setInput('Чи все ще їдете?'); }}>
-                                Чи все ще їдете?
+                                onClick={() => { setInput(t.quickReplies.sender.stillOnTheWay.value); }}>
+                                {t.quickReplies.sender.stillOnTheWay.label}
                             </button>
                         </div>
                     )}
                     <div className="flex gap-2">
                         <input
                             className="flex-1 rounded-lg px-4 py-2 bg-[#1a093a] text-white outline-none"
-                            placeholder="Написати повідомлення"
+                            placeholder={t.inputPlaceholder}
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={e => {
@@ -283,35 +288,35 @@ const ChatOrderPage: React.FC = () => {
                 <hr className="my-4 border-[#b6a7e6]" />
                 <div className="flex flex-col gap-4">
                     <div>
-                        <div className="font-bold text-[#7c3aed]">{order.startLocation.city} {format(new Date(order.startLocation.dateTime), 'HH:mm')}</div>
+                        <div className="font-bold text-[#7c3aed]">{order.startLocation.city} {hhmm(new Date(order.startLocation.dateTime))}</div>
                         <div className="text-[#18102a] text-sm">
-                            Місце отримання: {order.startLocation.address}
+                            {t.sidebar.pickupPlace}: {order.startLocation.address}
                         </div>
                     </div>
                     <div>
-                        <div className="font-bold text-[#7c3aed]">{order.endLocation.city} {format(new Date(order.endLocation.dateTime), 'HH:mm')}</div>
+                        <div className="font-bold text-[#7c3aed]">{order.endLocation.city} {hhmm(new Date(order.endLocation.dateTime))}</div>
                         <div className="text-[#18102a] text-sm">
-                            Місце доставки: {order.endLocation.address}
+                            {t.sidebar.deliveryPlace}: {order.endLocation.address}
                         </div>
                     </div>
                     <div className="text-[#18102a] text-sm">
-                        <span className="font-bold">Статус: </span>
+                        <span className="font-bold">{t.orderSidebar.status}:</span>{' '}
                         {order.isDeclined
-                            ? 'Відхилено'
+                            ? t.orderSidebar.statuses.declined
                             : order.isAccepted
                                 ? order.isDelivered
-                                    ? 'Доставлено'
+                                    ? t.orderSidebar.statuses.delivered
                                     : order.isPickedUp
-                                        ? 'В дорозі'
-                                        : 'Підтверджено'
-                                : 'Очікує підтвердження'}
+                                        ? t.orderSidebar.statuses.inTransit
+                                        : t.orderSidebar.statuses.confirmed
+                                : t.orderSidebar.statuses.awaitingConfirmation}
                     </div>
                     {order.comment && (
-                        <div className="text-[#18102a] text-xs mt-2">Коментар: {order.comment}</div>
+                        <div className="text-[#18102a] text-xs mt-2">{t.orderSidebar.comment}: {order.comment}</div>
                     )}
                     <div className="text-[#18102a] text-sm">
-                        <span className="font-bold">Вартість: </span>
-                        {order.deliverySlot?.approximatePrice ?? '-'} грн
+                        <span className="font-bold">{t.orderSidebar.cost}: </span>
+                        {order.deliverySlot?.approximatePrice ?? '-'} {t.orderSidebar.currency}
                     </div>
                 </div>
             </div>

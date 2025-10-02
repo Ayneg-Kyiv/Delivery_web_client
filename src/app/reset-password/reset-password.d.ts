@@ -3,6 +3,7 @@ interface ResetPasswordPageProps {
     router?: ReturnType<typeof useRouter>;
     token: string;
     email: string;
+    t?: typeof import("@/i18n/messages/en").default | typeof import("@/i18n/messages/uk").default;
 }
 
 interface ResetPasswordPageState {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapsService } from './google-maps-component';
+import { useI18n } from '@/i18n/I18nProvider';
 
 // Import LocationState type
 interface LocationState {
@@ -30,6 +31,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
   onStartLocationSelect,
   onEndLocationSelect 
 }) => {
+  const { messages: t } = useI18n();
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer | null>(null);
@@ -96,8 +98,8 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
           setDirectionsRenderer(rendererInstance);
         }
       } catch (err) {
-        console.error('Error initializing map:', err);
-        setError('Не вдалося завантажити карту');
+  console.error('Error initializing map:', err);
+  setError(t.map.errors.loadMap);
       } finally {
         setIsLoading(false);
       }
@@ -211,7 +213,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
         const newMarker = new google.maps.Marker({
           position: latLng,
           map: map,
-          title: 'Початкова точка',
+          title: t.map.originTitle,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
@@ -250,7 +252,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
         const newMarker = new google.maps.Marker({
           position: latLng,
           map: map,
-          title: 'Кінцева точка',
+          title: t.map.destinationTitle,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
@@ -304,7 +306,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
         const newMarker = new google.maps.Marker({
           position: latLng,
           map: map,
-          title: 'Початкова точка',
+          title: t.map.originTitle,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
@@ -330,7 +332,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
         const newMarker = new google.maps.Marker({
           position: latLng,
           map: map,
-          title: 'Кінцева точка',
+          title: t.map.destinationTitle,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10,
@@ -417,7 +419,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
           const newMarker = new google.maps.Marker({
             position: latLng,
             map: map,
-            title: 'Початкова точка',
+            title: t.map.originTitle,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 10,
@@ -509,7 +511,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
           const newMarker = new google.maps.Marker({
             position: latLng,
             map: map,
-            title: 'Кінцева точка',
+            title: t.map.destinationTitle,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
               scale: 10,
@@ -678,7 +680,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
               ? 'bg-[#c84cd8] text-white' 
               : 'bg-[#241c2d] border border-[#3d2a5a] hover:border-[#c84cd8] text-white'}`}
         >
-          {selectionMode === 'origin' ? 'Скасувати' : 'Вказати початок'}
+          {selectionMode === 'origin' ? t.map.controls.cancel : t.map.controls.setOrigin}
         </button>
         <button
           onClick={() => setSelectionMode(prev => prev === 'destination' ? null : 'destination')}
@@ -687,7 +689,7 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
               ? 'bg-[#7f51b3] text-white' 
               : 'bg-[#241c2d] border border-[#3d2a5a] hover:border-[#7f51b3] text-white'}`}
         >
-          {selectionMode === 'destination' ? 'Скасувати' : 'Вказати кінець'}
+          {selectionMode === 'destination' ? t.map.controls.cancel : t.map.controls.setDestination}
         </button>
       </div>
       
@@ -695,8 +697,8 @@ const DeliveryMapToSelect: React.FC<DeliveryMapProps> = ({
         <div className="absolute top-4 left-4 z-20 bg-[#241c2d]/90 border border-[#3d2a5a] rounded-lg p-3 max-w-[220px]">
           <p className="text-sm text-white">
             {selectionMode === 'origin' 
-              ? 'Натисніть на карті, щоб вказати початкову точку' 
-              : 'Натисніть на карті, щоб вказати кінцеву точку'}
+              ? t.map.controls.hintOrigin 
+              : t.map.controls.hintDestination}
           </p>
         </div>
       )}

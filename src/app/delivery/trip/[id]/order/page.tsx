@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const OrderDeliveryPage: React.FC = () => {
     const { id: tripId } = useParams<{ id: string }>();
@@ -14,6 +15,8 @@ const OrderDeliveryPage: React.FC = () => {
     const session = useSession();
     const [trip, setTrip] = useState<Trip | null>(null);
     const [loading, setLoading] = useState(true);
+    const { messages } = useI18n();
+    const t = messages.tripOrder;
 
     // Form state
     const [slotId, setSlotId] = useState<string>('');
@@ -102,7 +105,7 @@ const OrderDeliveryPage: React.FC = () => {
     if (session.status === 'loading' || loading) {
         return (
             <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-                <div className="text-white text-center py-20">Завантаження...</div>
+                <div className="text-white text-center py-20">{t.loading}</div>
             </div>
         );
     }
@@ -110,7 +113,7 @@ const OrderDeliveryPage: React.FC = () => {
     if (!trip) {
         return (
             <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-                <div className="text-white text-center py-20">Поїздка не знайдена</div>
+                <div className="text-white text-center py-20">{t.notFound}</div>
             </div>
         );
     }
@@ -119,11 +122,11 @@ const OrderDeliveryPage: React.FC = () => {
         e.preventDefault();
 
         if (!slotId) {
-            alert('Оберіть варіант доставки');
+            alert(t.errors.chooseSlot);
             return;
         }
         if (!senderName || !senderPhoneNumber || !receiverName || !receiverPhoneNumber) {
-            alert('Заповніть всі обов\'язкові поля');
+            alert(t.errors.fillRequired);
             return;
         }
 
@@ -169,10 +172,10 @@ const OrderDeliveryPage: React.FC = () => {
             if (res.success) {
                 router.push('/delivery/trip/list');
             } else {
-                alert('Не вдалося створити замовлення');
+                alert(t.errors.createFailed);
             }
         } catch {
-            alert('Сталася помилка при створенні замовлення');
+            alert(t.errors.createError);
         }
     };
 
@@ -207,21 +210,21 @@ const OrderDeliveryPage: React.FC = () => {
     return (
         <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-120">
             <div className="text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]">
-                <h1 className="text-2xl font-bold py-3 text-[#724C9D]">Замовити доставку</h1>
+                <h1 className="text-2xl font-bold py-3 text-[#724C9D]">{t.title}</h1>
                 <form className="w-full max-w-lg mt-6" onSubmit={handleSubmit}>
                     {/* Delivery Slot */}
                     <div className="mb-6">
-                        <label className="text-xl font-semibold text-black mb-2">Варіант доставки</label>
+                        <label className="text-xl font-semibold text-black mb-2">{t.slot.section}</label>
                         <select
                             value={slotId}
                             onChange={e => setSlotId(e.target.value)}
                             className="border rounded-lg px-4 py-5 focus:outline-none focus:ring-2 focus:ring-[#724C9D] text-black w-full"
                             required
                         >
-                            <option value="">Оберіть варіант доставки</option>
+                            <option value="">{t.slot.placeholder}</option>
                             {trip.deliverySlots.map(slot => (
                                 <option key={slot.id} value={slot.id}>
-                                    {slot.cargoSlotTypeName} — {slot.approximatePrice} грн
+                                    {slot.cargoSlotTypeName} — {slot.approximatePrice} {t.currency}
                                 </option>
                             ))}
                         </select>
@@ -231,7 +234,7 @@ const OrderDeliveryPage: React.FC = () => {
                     {/* Map for custom locations */}
                     
                         <div className="mb-6">
-                            <h2 className="text-xl font-semibold mb-2 text-black">Виберіть точки на карті</h2>
+                            <h2 className="text-xl font-semibold mb-2 text-black">{t.map.title}</h2>
                             <DeliveryMapToSelect
                                 startLocation={mapToLocationState(startLocation)}
                                 endLocation={mapToLocationState(endLocation)}
@@ -240,9 +243,9 @@ const OrderDeliveryPage: React.FC = () => {
                                 className="w-full h-[350px] mb-4 rounded-lg"
                             />
                             <div className="text-xs text-gray-500">
-                                {(!useTripStartLocation && !useTripEndLocation) && "Вкажіть точки на карті для відправлення та отримання."}
-                                {(!useTripStartLocation && useTripEndLocation) && "Вкажіть точку на карті для відправлення."}
-                                {(useTripStartLocation && !useTripEndLocation) && "Вкажіть точку на карті для отримання."}
+                                {(!useTripStartLocation && !useTripEndLocation) && t.map.hintBoth}
+                                {(!useTripStartLocation && useTripEndLocation) && t.map.hintStartOnly}
+                                {(useTripStartLocation && !useTripEndLocation) && t.map.hintEndOnly}
                             </div>
                         </div>
                     
@@ -250,7 +253,7 @@ const OrderDeliveryPage: React.FC = () => {
                     {/* Start Location */}
                     <div className="mb-6">
                         <div className="flex items-center mb-2">
-                            <h2 className="text-xl font-semibold text-black">Локація відправлення</h2>
+                            <h2 className="text-xl font-semibold text-black">{t.start.section}</h2>
                             <label className="ml-4 flex items-center text-sm text-black">
                                 <input
                                     type="checkbox"
@@ -258,13 +261,13 @@ const OrderDeliveryPage: React.FC = () => {
                                     onChange={e => setUseTripStartLocation(e.target.checked)}
                                     className="mr-2"
                                 />
-                                Використати локацію маршруту
+                                {t.start.useTripLocation}
                             </label>
                         </div>
                         {!useTripStartLocation && (
                             <>
                                 <TextInputGroup
-                                    label="Країна"
+                                    label={t.start.country}
                                     value={startLocation.country}
                                     onChange={e => setStartLocation({ ...startLocation, country: e.target.value })}
                                     inputClassName="floating-input-black"
@@ -272,7 +275,7 @@ const OrderDeliveryPage: React.FC = () => {
                                     type="text"
                                 />
                                 <TextInputGroup
-                                    label="Місто"
+                                    label={t.start.city}
                                     value={startLocation.city}
                                     onChange={e => setStartLocation({ ...startLocation, city: e.target.value })}
                                     inputClassName="floating-input-black"
@@ -280,14 +283,14 @@ const OrderDeliveryPage: React.FC = () => {
                                     type="text"
                                 />
                                 <TextInputGroup
-                                    label="Адреса"
+                                    label={t.start.address}
                                     value={startLocation.address}
                                     onChange={e => setStartLocation({ ...startLocation, address: e.target.value })}
                                     inputClassName="floating-input-black"
                                     labelClassName={startLocation.address ? 'filled' : ''}
                                     type="text"
                                 />
-                                <label className="font-semibold text-black">Дата</label>
+                                <label className="font-semibold text-black">{t.start.date}</label>
                                 <DateInputGroup
                                     label=""
                                     value={startDate}
@@ -295,7 +298,7 @@ const OrderDeliveryPage: React.FC = () => {
                                     inputClassName="floating-input-black"
                                     labelClassName={startDate ? 'filled' : ''}
                                 />
-                                <label className="font-semibold text-black">Час</label>
+                                <label className="font-semibold text-black">{t.start.time}</label>
                                 <input
                                     type="time"
                                     value={startTime}
@@ -309,7 +312,7 @@ const OrderDeliveryPage: React.FC = () => {
                     {/* End Location */}
                     <div className="mb-6">
                         <div className="flex items-center mb-2">
-                            <h2 className="text-xl font-semibold text-black">Локація отримання</h2>
+                            <h2 className="text-xl font-semibold text-black">{t.end.section}</h2>
                             <label className="ml-4 flex items-center text-sm text-black">
                                 <input
                                     type="checkbox"
@@ -317,13 +320,13 @@ const OrderDeliveryPage: React.FC = () => {
                                     onChange={e => setUseTripEndLocation(e.target.checked)}
                                     className="mr-2"
                                 />
-                                Використати локацію маршруту
+                                {t.end.useTripLocation}
                             </label>
                         </div>
                         {!useTripEndLocation && (
                             <>
                                 <TextInputGroup
-                                    label="Країна"
+                                    label={t.end.country}
                                     value={endLocation.country}
                                     onChange={e => setEndLocation({ ...endLocation, country: e.target.value })}
                                     inputClassName="floating-input-black"
@@ -331,7 +334,7 @@ const OrderDeliveryPage: React.FC = () => {
                                     type="text"
                                 />
                                 <TextInputGroup
-                                    label="Місто"
+                                    label={t.end.city}
                                     value={endLocation.city}
                                     onChange={e => setEndLocation({ ...endLocation, city: e.target.value })}
                                     inputClassName="floating-input-black"
@@ -339,14 +342,14 @@ const OrderDeliveryPage: React.FC = () => {
                                     type="text"
                                 />
                                 <TextInputGroup
-                                    label="Адреса"
+                                    label={t.end.address}
                                     value={endLocation.address}
                                     onChange={e => setEndLocation({ ...endLocation, address: e.target.value })}
                                     inputClassName="floating-input-black"
                                     labelClassName={endLocation.address ? 'filled' : ''}
                                     type="text"
                                 />
-                                <label className="font-semibold text-black">Дата</label>
+                                <label className="font-semibold text-black">{t.end.date}</label>
                                 <DateInputGroup
                                     label=""
                                     value={endDate}
@@ -354,7 +357,7 @@ const OrderDeliveryPage: React.FC = () => {
                                     inputClassName="floating-input-black"
                                     labelClassName={endDate ? 'filled' : ''}
                                 />
-                                <label className="font-semibold text-black">Час</label>
+                                <label className="font-semibold text-black">{t.end.time}</label>
                                 <input
                                     type="time"
                                     value={endTime}
@@ -367,9 +370,9 @@ const OrderDeliveryPage: React.FC = () => {
                     <div className='h-[2px] bg-lighter rounded-sm my-4'></div>
                     {/* Sender/Receiver Info */}
                     <div className="mb-6">
-                        <h2 className="text-xl font-semibold mb-4 text-black">Дані відправника</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-black">{t.sender.section}</h2>
                         <TextInputGroup
-                            label="Ім'я відправника"
+                            label={t.sender.name}
                             value={senderName}
                             onChange={e => setSenderName(e.target.value)}
                             inputClassName="floating-input-black"
@@ -377,7 +380,7 @@ const OrderDeliveryPage: React.FC = () => {
                             type="text"
                         />
                         <TextInputGroup
-                            label="Телефон відправника"
+                            label={t.sender.phone}
                             value={senderPhoneNumber}
                             onChange={e => setSenderPhoneNumber(e.target.value)}
                             inputClassName="floating-input-black"
@@ -385,7 +388,7 @@ const OrderDeliveryPage: React.FC = () => {
                             type="tel"
                         />
                         <TextInputGroup
-                            label="Email відправника (необов'язково)"
+                            label={t.sender.emailOptional}
                             value={senderEmail}
                             required={false}
                             onChange={e => setSenderEmail(e.target.value)}
@@ -394,9 +397,9 @@ const OrderDeliveryPage: React.FC = () => {
                             type="email"
                         />
                         <div className='h-[2px] bg-lighter rounded-sm my-4'></div>
-                        <h2 className="text-xl font-semibold mb-4 text-black">Дані отримувача</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-black">{t.receiver.section}</h2>
                         <TextInputGroup
-                            label="Ім'я отримувача"
+                            label={t.receiver.name}
                             value={receiverName}
                             onChange={e => setReceiverName(e.target.value)}
                             inputClassName="floating-input-black"
@@ -404,7 +407,7 @@ const OrderDeliveryPage: React.FC = () => {
                             type="text"
                         />
                         <TextInputGroup
-                            label="Телефон отримувача"
+                            label={t.receiver.phone}
                             value={receiverPhoneNumber}
                             onChange={e => setReceiverPhoneNumber(e.target.value)}
                             inputClassName="floating-input-black"
@@ -416,7 +419,7 @@ const OrderDeliveryPage: React.FC = () => {
                     {/* Comment */}
                     <div className="mb-6">
                         <TextInputGroup
-                            label="Коментар (необов'язково)"
+                            label={t.commentOptional}
                             required={false}
                             value={comment}
                             onChange={e => setComment(e.target.value)}
@@ -430,7 +433,7 @@ const OrderDeliveryPage: React.FC = () => {
                             type="submit"
                             className="w-full px-6 py-6 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors"
                         >
-                            Замовити доставку
+                            {t.buttons.submit}
                         </button>
                     </div>
                 </form>

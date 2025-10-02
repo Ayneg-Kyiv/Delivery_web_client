@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { regions } from '@/data/regions';
 import { monts } from '@/data/monts';
+import { useI18n } from '@/i18n/I18nProvider';
 
 // HOC to inject session into class components
 const withSession = (Component: React.ComponentType<any>) => {
@@ -141,12 +142,13 @@ class RequestListPage extends React.Component<any, RequestListState> {
 
     render() {
         const { requests, filters, currentPage, totalPages, loading } = this.state;
+        const t = (this.props as any).t;
         return (
             <div className='w-full relative '>
                 <div className="h-[600px] md:h-[500px] bg-[url('/Rectangle47.png')] z-0 bg-cover bg-[50%_50%] relative top-0 left-0">
                     <div className="w-full h-[600px] md:h-[500px] bg-[#00000099]">
                     <div className="flex flex-col justify-center items-center absolute top-0 left-0 right-0 z-10 h-[500px] px-8 md:px-10 lg:px-20">
-                        <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4">Знайдіть запит на доставку</h1>
+                        <h1 className="mt-18 text-2xl md:text-4xl font-bold mb-4">{t.heroTitle}</h1>
                         <div className="w-full flex flex-col md:flex-row justify-center items-center rounded-lg gap-x-4 gap-y-4">
                             <select
                                 name="cityFrom"
@@ -159,7 +161,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                     color: 'black',
                                 }}
                             >
-                                <option value="">Звідки</option>
+                                <option value="">{t.filters.from}</option>
                                 {this.state.cities.map(city => (
                                     <option key={city} value={city}>{city}</option>
                                 ))}
@@ -175,7 +177,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                     color: 'black',
                                 }}
                             >
-                                <option value="">Куди</option>
+                                <option value="">{t.filters.to}</option>
                                 {this.state.cities.map(city => (
                                     <option key={city} value={city}>{city}</option>
                                 ))}
@@ -203,13 +205,13 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                     color: 'black',
                                 }}
                             >
-                                <option value="">Розмір</option>
-                                <option value="XS">XS до 1 кг</option>
-                                <option value="S">S до 5 кг</option>
-                                <option value="M">M до 15 кг</option>
-                                <option value="L">L до 30 кг</option>
-                                <option value="XL">XL до 60 кг</option>
-                                <option value="XXL">XXL від 61 кг</option>
+                                <option value="">{t.filters.size}</option>
+                                <option value="XS">{t.filters.sizes.xs}</option>
+                                <option value="S">{t.filters.sizes.s}</option>
+                                <option value="M">{t.filters.sizes.m}</option>
+                                <option value="L">{t.filters.sizes.l}</option>
+                                <option value="XL">{t.filters.sizes.xl}</option>
+                                <option value="XXL">{t.filters.sizes.xxl}</option>
                             </select>
                         </div>
                         <div className='mt-6 w-full flex flex-col md:flex-row gap-4 justify-center items-center'>
@@ -217,13 +219,13 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                 className="bg-[#7c3aed] button-type-1 py-4 w-full md:w-[252px] rounded-lg font-bold"
                                 onClick={() => this.fetchRequests(1)}
                             >
-                                Знайти запит
+                                {t.buttons.find}
                             </button>
                             {
                                 this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') &&
                                 (
                                     <Link href={'/delivery/request/add'} className="md:ml-6 bg-white button-type-1 py-4 w-full md:w-[252px] rounded-lg font-bold flex items-center justify-center">
-                                        Створити запит
+                                        {t.buttons.create}
                                     </Link>
                                 )
                             }
@@ -235,9 +237,9 @@ class RequestListPage extends React.Component<any, RequestListState> {
                     {/* Requests List */}
                     <div className="w-fullflex flex-col gap-6">
                         {loading ? (
-                            <div className="text-white text-center py-20">Завантаження...</div>
+                            <div className="text-white text-center py-20">{t.loading}</div>
                         ) : requests.length === 0 ? (
-                            <div className="text-white text-center py-20">Немає доступних запитів</div>
+                            <div className="text-white text-center py-20">{t.empty}</div>
                         ) : (
                             requests.map(request => (
                                 <div key={request.id} className="bg-white text-black w-full rounded-xl flex flex-col md:flex-row  items-center mb-10 p-4 shadow-lg">
@@ -258,17 +260,17 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                             </div>
                                             <div className="flex flex-col gap-4  mt-2">
                                                 <span>
-                                                    Дата: {monts.find(m => m.value === new Date(request.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(request.endLocation.dateTime).getDay() !== new Date(request.startLocation.dateTime).getDay()) ? ` ${new Date(request.endLocation.dateTime).getDate()}` : '' }
+                                                    {t.labels.date}: {monts.find(m => m.value === new Date(request.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(request.endLocation.dateTime).getDay() !== new Date(request.startLocation.dateTime).getDay()) ? ` ${new Date(request.endLocation.dateTime).getDate()}` : '' }
                                                 </span>
                                                 <span>
-                                                    Час: {new Date(request.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(request.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                                    {t.labels.time}: {new Date(request.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(request.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
                             
                                             <div className="flex flex-col md:flex-row gap-2 items-start  mt-4">
-                                                <span>Вантаж: {request.objectName}</span>
-                                                <span>Тип: {request.cargoSlotType}</span>
-                                                <span>Вага: {request.objectWeight} кг</span>
+                                                <span>{t.labels.cargo}: {request.objectName}</span>
+                                                <span>{t.labels.type}: {request.cargoSlotType}</span>
+                                                <span>{t.labels.weight}: {request.objectWeight} {t.labels.kg}</span>
                                             </div>
                                         </div>
 
@@ -290,12 +292,12 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                     </div>
                                     <div className="w-full md:w-[30%] lg:w-[25%] flex flex-col items-end gap-2">
                                         <div className="w-full bg-[#7c3aed] px-4 py-2 rounded-lg font-bold text-xl">
-                                            {request.estimatedPrice ? `${request.estimatedPrice} грн` : 'Ціна не вказана'}
+                                            {request.estimatedPrice ? `${request.estimatedPrice} ${t.currency}` : t.priceNotSpecified}
                                         </div>
-                                        <div className="text-s">Пропонована ціна, може бути змінена при прийнятті пропозиції</div>
+                                        <div className="text-s">{t.priceDisclaimer}</div>
                                         {this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') && (
                                             <Link href={`/delivery/request/${request.id}`} className='w-full'>
-                                                <button className="w-full button-type-2 px-6 py-2 rounded-lg font-bold mt-2">Деталі</button>
+                                                <button className="w-full button-type-2 px-6 py-2 rounded-lg font-bold mt-2">{t.buttons.details}</button>
                                             </Link>
                                         )}
                                     </div>
@@ -344,5 +346,11 @@ class RequestListPage extends React.Component<any, RequestListState> {
         );
     }
 }
+const RequestListWithSession = withSession(RequestListPage);
+const RequestListWrapper = (props: any) => {
+    const { messages } = useI18n();
+    const t = messages.requestList;
+    return <RequestListWithSession {...props} t={t} />;
+};
 
-export default withSession(RequestListPage);
+export default RequestListWrapper;

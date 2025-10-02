@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const batchSize = 10;
 
@@ -11,6 +12,7 @@ interface MyReviewsProps {
 }
 
 const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
+    const { messages: t } = useI18n();
     const [reviews, setReviews] = useState<ReviewDto[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -34,12 +36,12 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
 
     return (
         <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
-            <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">Мої відгуки</h2>
+            <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myReviews.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
-                    <div className="text-white text-center py-20">Завантаження...</div>
+                    <div className="text-white text-center py-20">{t.profile.myTrips.loading}</div>
                 ) : reviews.length === 0 ? (
-                    <div className="text-white text-center py-20">Немає відгуків</div>
+                    <div className="text-white text-center py-20">{t.profile.myReviews.noReviews}</div>
                 ) : (
                     reviews.map(review => (
                         <div key={review.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
@@ -59,7 +61,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
                                     <span className="text-yellow-400">★ {review.reviewer?.rating?.toFixed(1)}</span>
                                 </div>
                                 <div className="flex flex-col gap-2 mt-4">
-                                    <div className="text-white font-bold">Оцінка: <span className="text-yellow-400">{review.rating}</span></div>
+                                    <div className="text-white font-bold">{t.profile.myReviews.review}: <span className="text-yellow-400">{review.rating}</span></div>
                                     <div className="text-white text-sm">{review.text}</div>
                                 </div>
                             </div>

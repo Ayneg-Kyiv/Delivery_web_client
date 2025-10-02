@@ -1,4 +1,10 @@
 const messages = {
+  units: {
+    km: 'km',
+    hourShort: 'h',
+    currency: 'UAH',
+    currencySymbol: '₴'
+  },
   nav: {
     help: 'Help',
     register: 'Sign up',
@@ -9,7 +15,42 @@ const messages = {
     menuTitle: 'Menu',
     closeMenu: 'Close menu',
     profile: 'Profile',
-    logout: 'Logout'
+    logout: 'Logout',
+    items: {
+      ordersBoard: 'Orders board',
+      tripsList: 'Trips list',
+      about: 'About us',
+      policy: 'Policy',
+      helpCenter: 'Help center',
+      news: 'Latest news',
+      terms: 'Terms of use',
+      help: 'Help',
+      helpDriver: 'Help for driver',
+      helpSender: 'Help for sender',
+      adminPanel: 'Admin panel',
+      signIn: 'Sign in',
+      signUp: 'Sign up'
+    }
+  },
+  cookieBanner: {
+    title: "This site uses cookies",
+    description: "We use cookies to improve your experience on our site.",
+    decline: "Decline",
+    accept: "Accept"
+  },
+  map: {
+    errors: {
+      loadMap: "Failed to load the map"
+    },
+    originTitle: "Origin",
+    destinationTitle: "Destination",
+    controls: {
+      cancel: "Cancel",
+      setOrigin: "Set origin",
+      setDestination: "Set destination",
+      hintOrigin: "Click on the map to set the origin",
+      hintDestination: "Click on the map to set the destination"
+    }
   },
   home: {
     hero: {
@@ -44,6 +85,7 @@ const messages = {
       howParagraph: 'You leave a request with shipment details, we pick the nearest passing driver who takes your parcel on the way. Communicate with the driver in chat and leave a review after successful delivery.',
       fastDelivery: 'Fast delivery'
     },
+    imageAlt: 'Ecological delivery',
     mission: {
       sectionTitle: 'Our mission',
       title: 'We make delivery humane, affordable and environmentally responsible',
@@ -125,7 +167,13 @@ const messages = {
         fill: 'Trunk fill',
         cost: 'Cost range',
         time: 'Time on the road',
-        suggestionDefault: 'An optimization tip will appear after calculation.'
+        suggestionDefault: 'An optimization tip will appear after calculation.',
+        suggestions: {
+          highFill: 'Consider combining with another request or a more flexible date.',
+          noDims: 'Add dimensions for a more accurate estimate.',
+          pointTransfer: 'Drop-off transfer already reduced the cost.',
+          default: 'Try a flexible date or a pickup point for potential savings.'
+        }
       }
     },
     news: {
@@ -188,7 +236,9 @@ const messages = {
     loginWith: "Login with:",
     noAccount: "Don't have an account?",
     createAccount: "Create an account",
-    error: "Invalid email or password"
+    error: "Invalid email or password",
+    initFailed: "Failed to initialize sign-in. Please try again.",
+    signInFailed: "Sign in failed. Please try again."
   },
   signup: {
     stage1: {
@@ -220,9 +270,11 @@ const messages = {
     stage4: {
       title: "One last step",
       subtitle: "Your account has been successfully created. To complete the registration process, please go to the specified email and confirm your registration.",
-      mainButton: "Home"
+      mainButton: "Home",
+      successAlt: "Success"
     },
-    emailLabel: "E-mail"
+    emailLabel: "E-mail",
+    signUpFailed: "Sign up failed. Please try again."
   },
   policy: {
     title: "Privacy Policy",
@@ -358,6 +410,7 @@ const messages = {
         changePhoto: "Change photo",
         rating: "Rating",
         editProfile: "Edit profile",
+        changePassword: "Change password",
         adminPanel: "Admin panel",
         tabs: {
           profile: "Profile",
@@ -529,7 +582,14 @@ const messages = {
     subtitle: "Here you will find the latest news, service updates and useful delivery tips. Follow the changes to be aware of new opportunities and promotions on the Cargix platform.",
     allAuthors: "All authors",
     allCategories: "All categories",
-    published: "Published: {date}"
+    published: "Published: {date}",
+    empty: "No news found.",
+    pagination: {
+      first: "First page",
+      last: "Last page",
+      goToPage: "Go to page {page}",
+      currentPage: "Current page: {page}"
+    }
   },
   helpPage: {
     title: "Help and FAQs",
@@ -740,9 +800,12 @@ const messages = {
       kg: "kg",
       description: "Description",
       comment: "Comment",
+      date: "Date",
+      time: "Time",
     },
     currency: "UAH",
     priceNotSpecified: "Price not specified",
+    priceDisclaimer: "Offered price, may change upon offer acceptance",
     loading: "Loading...",
     empty: "No available requests",
   }
@@ -775,9 +838,79 @@ const messages = {
     },
     loading: "Loading...",
     empty: "No available trips",
-    labels: { driver: "Driver", departure: "departure", arrival: "arrival" },
+    labels: { driver: "Driver", departure: "departure", arrival: "arrival", date: "Date", time: "Time" },
     currency: "UAH",
     priceDisclaimer: "Price may vary depending on parcel size",
+  }
+  ,
+  vehiclePage: {
+    loading: "Loading...",
+    errors: {
+      loadError: "Failed to load data.",
+      fillAll: "Please fill in all fields.",
+      invalidStage: "Invalid stage."
+    },
+    buttons: { continue: "Continue" },
+    stage0: {
+      title: "Enter required data",
+      descriptionNoPhone: "For access, please provide or confirm your phone number.",
+      descriptionGeneric: "For access, please provide or confirm the required data.",
+      phoneLabel: "Phone number",
+      agreePrefix: "I agree to the",
+      agreeCookiesSuffix: "and the use of cookies in the project"
+    },
+    stage1: {
+      title: "Enter required data",
+      description: "For access, please provide the required images: profile photo and driver's license photo.",
+      uploadProfileButton: "Upload profile photo",
+      uploadProfileTitle: "Upload profile photo",
+      uploadLicenseButton: "Upload driver's license photo",
+      uploadLicenseTitle: "Upload driver's license photo"
+    },
+    stage2: {
+      title: "Vehicles",
+      becomeDriverInfo: "To become a driver, add at least one vehicle and wait for admin confirmation.",
+      noVehicles: "No vehicles added",
+      addVehicle: "Add vehicle"
+    },
+    labels: {
+      type: "Type",
+      color: "Color",
+      plate: "License plate"
+    }
+  }
+  ,
+  addVehicle: {
+    errors: {
+      fillAll: "Please fill in all fields.",
+      bothPhotos: "Please upload both photos.",
+      addError: "Add error.",
+      invalidStage: "Invalid stage."
+    },
+    buttons: {
+      continue: "Continue",
+      add: "Add",
+      adding: "Adding..."
+    },
+    backToVehicles: "Back to vehicles",
+    title: "Add vehicle",
+    typeLabel: "Vehicle type",
+    chooseTypePlaceholder: "Choose type",
+    types: ["Car", "Motorcycle", "Truck", "Bus"],
+    brandLabel: "Brand",
+    modelLabel: "Model",
+    colorLabel: "Color",
+    licensePlateLabel: "License plate",
+    stage1: {
+      title: "Upload vehicle photos",
+      uploadFrontButton: "Upload photo (front)",
+      uploadBackButton: "Upload photo (rear)",
+      frontModalTitle: "Upload vehicle photo (front)",
+      backModalTitle: "Upload vehicle photo (rear)"
+    },
+    stage2: {
+      successTitle: "Vehicle added successfully!"
+    }
   }
   ,
   editProfile: {
@@ -836,10 +969,21 @@ const messages = {
     backToLogin: "Back to sign in"
   }
   ,
+  resetPassword: {
+    title: "Reset your password",
+    subtitle: "Enter a new password for your account.",
+    submit: "Reset password"
+  }
+  ,
   resetPasswordSuccess: {
     title: "Password changed successfully",
     subtitle: "Your new password has been saved. You can now sign in with your new password.",
     goToSignIn: "Go to sign in page"
+  },
+  forgotPasswordConfirmation: {
+    title: "{email} Check your email",
+    subtitle: "If an account with this email exists, we have sent you a link to reset your password.",
+    resend: "Resend email"
   },
   changePassword: {
     header: "Password and security",
@@ -867,7 +1011,7 @@ const messages = {
   cookiesPage: {
     breadcrumbTitle: "Cookies",
     title: "Cookies Policy",
-    lastUpdated: "Last updated: August 29, 2025",
+    lastUpdated: "Last updated: {date}",
     intro1: "This is our cookies policy page. Here you can find information about how we use cookies on our website.",
     intro2: "Cargix and its third-party partners use cookies and other tracking technologies (together — 'Tracking Technologies'), including third-party Tracking Technologies, on websites, mobile apps, emails, ads, and other online services of Cargix (collectively — 'Online Resources'). These technologies are used to operate the Cargix services ('Services'), improve them, personalize experiences and analyze usage of Online Resources, as well as to show personalized ads.",
     intro3: "This Notice describes the Tracking Technologies we and our partners use, how we apply them, and your choices regarding the use of such technologies. For more information about how Cargix collects and uses personal data, please see our Privacy Policy.",
@@ -923,6 +1067,292 @@ const messages = {
     breadcrumb: {
       home: "Home",
       news: "News"
+    },
+    backToNews: "Back to news"
+  }
+  ,
+  requestDetail: {
+    loading: "Loading...",
+    notFound: "Request not found",
+    heroTitle: "Delivery request details",
+    labels: {
+      departureShort: "Departure",
+      deliveryShort: "Delivery",
+      route: "Route",
+      from: "From",
+      to: "To",
+      departureDate: "Departure date",
+      deliveryDate: "Delivery date",
+      comment: "Comment",
+      phone: "Phone",
+      senderReviews: "Sender reviews",
+      noReviews: "No reviews yet",
+      deliveryStatus: "Delivery status",
+      statusAccepted: "Accepted",
+      statusSearching: "Searching for driver",
+      estimatedCost: "Estimated cost",
+      currency: "UAH"
+    },
+    actions: {
+      sendOffer: "Send delivery offer"
+    }
+  }
+  ,
+  tripDetail: {
+    loading: "Loading...",
+    notFound: "Trip not found",
+    heroTitle: "Trip details",
+    labels: {
+      departureShort: "Departure",
+      deliveryShort: "Delivery",
+      route: "Route",
+      from: "From",
+      to: "To",
+      departureDate: "Departure date",
+      arrivalDate: "Arrival date",
+      transportType: "Transport type",
+      phone: "Phone",
+      driverReviews: "Driver reviews",
+      noReviews: "No reviews yet",
+      vehicle: "Vehicle",
+      type: "Type",
+      color: "Color",
+      plate: "Plate",
+      deliveryOptions: "Delivery options",
+      deliveryOptionsNotSpecified: "Delivery options not specified",
+      currency: "UAH"
+    },
+    actions: {
+      sendParcel: "Send parcel"
+    },
+    priceDisclaimer: "Price may vary depending on parcel size"
+  }
+  ,
+  addTrip: {
+    title: "Create a route",
+    map: {
+      title: "Select points on the map",
+      hint: "Click \"Set start\" or \"Set end\", then choose a point on the map."
+    },
+    start: {
+      dateLabel: "Departure date",
+      timeLabel: "Departure time"
+    },
+    end: {
+      sectionTitle: "End location",
+      dateLabel: "Date",
+      timeLabel: "Time"
+    },
+    personal: {
+      sectionTitle: "Your details",
+      fullName: "Full name",
+      email: "Email",
+      phone: "Phone number"
+    },
+    vehicle: {
+      sectionTitle: "Vehicle",
+      loading: "Loading vehicles...",
+      choosePlaceholder: "Choose a vehicle",
+      noneMessage: "You have no added vehicles.",
+      addLink: "Add"
+    },
+    slots: {
+      sectionTitle: "Add delivery slots",
+      selectTypePlaceholder: "Choose slot type",
+      priceLabel: "Price",
+      addSlot: "Add slot",
+      delete: "Delete"
+    },
+    buttons: {
+      save: "Save"
+    },
+    errors: {
+      requiredFields: "Please fill in all required fields",
+      noSlots: "Add at least one delivery slot",
+      saveFailed: "Failed to save route",
+      saveError: "An error occurred while saving the route"
+    },
+    currency: "UAH"
+  }
+  ,
+  addRequest: {
+    title: "Create delivery request",
+    map: {
+      title: "Select points on the map",
+      hint: "Click \"Set start\" or \"Set end\", then choose a point on the map."
+    },
+    pickup: {
+      sectionTitle: "Pickup date and time",
+      dateLabel: "Date",
+      timeLabel: "Time"
+    },
+    delivery: {
+      sectionTitle: "Delivery date and time",
+      dateLabel: "Date",
+      timeLabel: "Time"
+    },
+    sender: {
+      sectionTitle: "Sender",
+      name: "Sender name",
+      phone: "Sender phone",
+      email: "Sender email"
+    },
+    cargo: {
+      sectionTitle: "Cargo",
+      objectName: "Object name",
+      slotType: "Slot type",
+      chooseSlotPlaceholder: "Choose slot type",
+      weightWithUnit: "Weight, kg",
+      description: "Cargo description",
+      estimatedPrice: "Proposed delivery price"
+    },
+    receiver: {
+      sectionTitle: "Recipient",
+      name: "Recipient name",
+      phone: "Recipient phone"
+    },
+    comment: "Comment",
+    buttons: {
+      create: "Create request"
+    },
+    errors: {
+      requiredFields: "Please fill in all required fields",
+      createFailed: "Failed to create request",
+      createError: "An error occurred while creating the request"
+    },
+    currency: "UAH"
+  }
+  ,
+  requestOffer: {
+    loading: "Loading...",
+    notFound: "Request not found",
+    title: "Offer delivery",
+    price: {
+      section: "Delivery price",
+      useSuggested: "Use suggested price",
+      yourPrice: "Your price"
+    },
+    collection: {
+      section: "Estimated pickup time",
+      useFromRequest: "Use time from request",
+      date: "Date",
+      time: "Time"
+    },
+    delivery: {
+      section: "Estimated delivery time",
+      useFromRequest: "Use time from request",
+      date: "Date",
+      time: "Time"
+    },
+    buttons: { submit: "Offer delivery" },
+    errors: {
+      enterPrice: "Enter price",
+      enterTimes: "Specify estimated pickup and delivery time",
+      createFailed: "Failed to create offer",
+      createError: "An error occurred while creating the offer"
+    },
+    currency: "UAH"
+  }
+  ,
+  tripOrder: {
+    loading: "Loading...",
+    notFound: "Trip not found",
+    title: "Order delivery",
+    slot: {
+      section: "Delivery option",
+      placeholder: "Choose delivery option"
+    },
+    map: {
+      title: "Select points on the map",
+      hintBoth: "Specify points on the map for pickup and delivery.",
+      hintStartOnly: "Specify a point on the map for pickup.",
+      hintEndOnly: "Specify a point on the map for delivery."
+    },
+    start: {
+      section: "Pickup location",
+      useTripLocation: "Use trip location",
+      country: "Country",
+      city: "City",
+      address: "Address",
+      date: "Date",
+      time: "Time"
+    },
+    end: {
+      section: "Delivery location",
+      useTripLocation: "Use trip location",
+      country: "Country",
+      city: "City",
+      address: "Address",
+      date: "Date",
+      time: "Time"
+    },
+    sender: {
+      section: "Sender details",
+      name: "Sender name",
+      phone: "Sender phone",
+      emailOptional: "Sender email (optional)"
+    },
+    receiver: {
+      section: "Recipient details",
+      name: "Recipient name",
+      phone: "Recipient phone"
+    },
+    commentOptional: "Comment (optional)",
+    buttons: { submit: "Order delivery" },
+    errors: {
+      chooseSlot: "Choose delivery option",
+      fillRequired: "Fill in all required fields",
+      createFailed: "Failed to create order",
+      createError: "An error occurred while creating the order"
+    },
+    currency: "UAH"
+  }
+  ,
+  chat: {
+    loading: "Loading...",
+    role: { driver: "Driver", sender: "Sender" },
+    noMessages: "No messages",
+    inputPlaceholder: "Type a message",
+    callTitle: "Call",
+    quickReplies: {
+      driver: {
+        clarifyDeliveryPlace: {
+          label: "Clarify delivery location",
+          value: "Please clarify the delivery location."
+        },
+        imHere: { label: "I'm here", value: "I'm here." },
+        delay5min: { label: "Running 5 min late", value: "I'm running 5 minutes late." },
+        whereCanIFindYou: {
+          label: "Where can I find you?",
+          value: "Where can I find you?"
+        }
+      },
+      sender: {
+        imHere: { label: "I'm here", value: "I'm here." },
+        delay5min: { label: "Running 5 min late", value: "I'm running 5 minutes late." },
+        whereAreYou: { label: "Where are you?", value: "Where are you?" },
+        stillOnTheWay: {
+          label: "Are you still on the way?",
+          value: "Are you still on the way?"
+        }
+      }
+    },
+    sidebar: {
+      pickupPlace: "Pickup location",
+      deliveryPlace: "Delivery location"
+    },
+    orderSidebar: {
+      status: "Status",
+      comment: "Comment",
+      cost: "Cost",
+      statuses: {
+        declined: "Declined",
+        delivered: "Delivered",
+        inTransit: "In transit",
+        confirmed: "Confirmed",
+        awaitingConfirmation: "Awaiting confirmation"
+      },
+      currency: "UAH"
     }
   }
 };

@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import ContentBox from '@/components/ui/content-box';
 import Image from 'next/image';
 import TextInputGroup from '@/components/ui/text-input-group';
+import { useI18n } from '@/i18n/I18nProvider';
 
 class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token: string; email: string }, ResetPasswordPageState> {
     constructor(props: ResetPasswordPageProps & { token: string; email: string }) {
@@ -58,7 +59,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
 
         const { password, confirmPassword, passwordError, confirmPasswordError } = this.state;
         if (passwordError || confirmPasswordError || !password || !confirmPassword) {
-            this.setState({ error: 'Please fix the errors above.', success: undefined });
+            this.setState({ error: this.props.t?.changePassword?.validate?.fillAll ?? 'Fill in all fields', success: undefined });
             return;
         }
 
@@ -73,33 +74,34 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
             if (response?.success) {
                 this.props.router.push('/reset-password-success');
             } else {
-                this.setState({ error: 'Не вдалося змінити пароль. Спробуйте ще раз.', success: undefined, loading: false });
+                this.setState({ error: this.props.t?.changePassword?.errorChangeDefault ?? 'Error changing password', success: undefined, loading: false });
             }
         } catch (err) {
-            this.setState({ error: `Виникла помилка. ${err} Спробуйте ще раз.`, success: undefined, loading: false });
+            this.setState({ error: this.props.t?.changePassword?.errorChangeDefault ?? 'Error changing password', success: undefined, loading: false });
         }
     };
 
     renderContent = () => {
+        const t = this.props.t;
         return (
             <ContentBox>
                 <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt="Logo" width={215} height={60} className='mb-2'/>
+                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60} className='mb-2'/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                            Встановлення нового паролю
+                            {t?.resetPassword?.title ?? 'Reset your password'}
                         </h1>
                         
                         <p className='md:pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                            Введіть новий пароль для вашого акаунта.
+                            {t?.resetPassword?.subtitle ?? 'Enter a new password for your account.'}
                         </p>
                     </div>
                     
                     <div className="pt-4 flex-1 w-full max-w-[500px] space-y-6">
                         <div className="space-y-5 flex flex-col">
                             <TextInputGroup
-                                label="Новий пароль"
+                                label={t?.changePassword?.placeholder?.newPassword ?? 'New password'}
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
                                 type="password"
@@ -111,7 +113,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
 
 
                             <TextInputGroup
-                                label="Підтвердіть новий пароль"
+                                label={t?.changePassword?.placeholder?.confirmNewPassword ?? 'Confirm new password'}
                                 value={this.state.confirmPassword}
                                 onChange={this.handleConfirmPasswordChange}
                                 type="password"
@@ -122,7 +124,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
 
                             <input
                                 type="submit"
-                                value={this.state.loading ? 'Змінюємо...' : 'Змінити пароль'}
+                                value={this.state.loading ? (t?.changePassword?.submit?.saving ?? 'Saving…') : (t?.resetPassword?.submit ?? 'Reset password')}
                                 disabled={this.state.loading}
                                 className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                             />
@@ -143,5 +145,6 @@ export default function ResetPasswordPageWrapper(props: ResetPasswordPageProps) 
     const searchParams = useSearchParams();
     const token = searchParams.get('token') || '';
     const email = searchParams.get('email') || '';
-    return <ResetPasswordPage {...props} router={router} token={token} email={email} />;
+    const { messages: t } = useI18n();
+    return <ResetPasswordPage {...props} router={router} token={token} email={email} t={t} />;
 }

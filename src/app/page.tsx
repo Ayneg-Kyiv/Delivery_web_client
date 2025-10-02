@@ -101,7 +101,7 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
 
     const weightKg = parseFloat(this.state.weight.replace(',', '.')) || 0;
     const dims = this.parseDims(this.state.dims);
-    const transferType = this.state.transferType.toLowerCase();
+  const transferType = this.state.transferType.toLowerCase();
 
     this.setState({ isCalculating: true });
 
@@ -154,8 +154,11 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
     coreCost += weightKg * 4 + volumeLiters * 0.03;
     
     // Transfer type adjustments
-    if (transferType.includes('точка')) coreCost *= 0.95; // drop-off discount
-    if (transferType.includes('особист')) coreCost *= 1.02; // personal handover slight premium
+  // Support UA and EN keywords for transfer types
+  const isPoint = transferType.includes('точка') || transferType.includes('point');
+  const isPersonal = transferType.includes('особист') || transferType.includes('personal');
+  if (isPoint) coreCost *= 0.95; // drop-off discount
+  if (isPersonal) coreCost *= 1.02; // personal handover slight premium
 
     // Produce range ±8%
     const costMin = Math.max(25, coreCost * 0.92);
@@ -165,12 +168,13 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
     const timeHoursRaw = distanceKm / avgSpeed + 0.3; // add handling buffer
     const timeHours = Math.max(0.5, timeHoursRaw);
 
-    let suggestion = "";
-    
-    if (fillPercent > 60) suggestion = "Розгляньте об’єднання з іншим запитом або гнучкішу дату.";
-    else if (fillPercent === 0) suggestion = "Додайте габарити для точнішої оцінки.";
-    else if (transferType.includes('точка')) suggestion = "Передача на точці вже знизила вартість.";
-    else suggestion = "Спробуйте гнучку дату або точку збору для потенційної економії.";
+  let suggestion = "";
+  const { t } = this.props as any;
+  // Use localized suggestions
+  if (fillPercent > 60) suggestion = t.home.calculate.estimate.suggestions.highFill;
+  else if (fillPercent === 0) suggestion = t.home.calculate.estimate.suggestions.noDims;
+  else if (isPoint) suggestion = t.home.calculate.estimate.suggestions.pointTransfer;
+  else suggestion = t.home.calculate.estimate.suggestions.default;
     
     this.setState({
       isCalculating: false,
@@ -318,7 +322,7 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
             <Link href={"/"}>
               <Image
                 src="/Fast.png"
-                alt="Ecological Delivery"
+                alt={t.home.imageAlt}
                 // Responsive sizes for sm, md, lg
                 width={600}
                 height={200}
@@ -538,7 +542,7 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
                   <div className="grid gap-4">
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
                       <span className="text-sm fg-secondary">{t.home.calculate.estimate.distance}</span>
-                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.distanceKm} км` : '--'}</span>
+                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.distanceKm} ${t.units.km}` : '--'}</span>
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
                       <span className="text-sm fg-secondary">{t.home.calculate.estimate.fill}</span>
@@ -546,11 +550,11 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
                       <span className="text-sm fg-secondary">{t.home.calculate.estimate.cost}</span>
-                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica] text-[#c84cd8]">{this.state.estimate ? `${this.state.estimate.costMin}–${this.state.estimate.costMax} ₴` : '--'}</span>
+                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica] text-[#c84cd8]">{this.state.estimate ? `${this.state.estimate.costMin}–${this.state.estimate.costMax} ${t.units.currencySymbol}` : '--'}</span>
                     </div>
                     <div className="flex items-center justify-between bg-[#241c2d] border border-[#3d2a5a] rounded-xl px-5 py-4">
                       <span className="text-sm fg-secondary">{t.home.calculate.estimate.time}</span>
-                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.timeHours} год` : '--'}</span>
+                      <span className="text-base [font-family:'Bahnschrift-Regular',Helvetica]">{this.state.estimate ? `~ ${this.state.estimate.timeHours} ${t.units.hourShort}` : '--'}</span>
                     </div>
                   </div>
                   <p className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-sm leading-relaxed">

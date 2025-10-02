@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
@@ -219,12 +220,14 @@ class AddTripPage extends React.Component<any, AddTripState> {
         ];
 
         if (requiredFields.some(field => !field)) {
-            alert('Будь ласка, заповніть всі обов\'язкові поля');
+            const t = (this.props as any).t?.addTrip;
+            alert(t?.errors.requiredFields || 'Будь ласка, заповніть всі обов\'язкові поля');
             return;
         }
 
         if (this.state.slots.length === 0) {
-            alert('Додайте хоча б один слот для доставки');
+            const t = (this.props as any).t?.addTrip;
+            alert(t?.errors.noSlots || 'Додайте хоча б один слот для доставки');
             return;
         }
 
@@ -250,19 +253,23 @@ class AddTripPage extends React.Component<any, AddTripState> {
                 // Redirect or show success message
                 window.location.href = '/delivery/trip/list';
             } else {
-                // Handle error
-                alert('Не вдалося зберегти маршрут');
+                const t = (this.props as any).t?.addTrip;
+                alert(t?.errors.saveFailed || 'Не вдалося зберегти маршрут');
             }
         } catch (error) {
-            alert('Сталася помилка при збереженні маршруту');
+            const t = (this.props as any).t?.addTrip;
+            alert(t?.errors.saveError || 'Сталася помилка при збереженні маршруту');
         }
     }
 
     render() {
+        const t = (this.props as any).t?.addTrip;
         return (
             <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
                 <div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff] max-w-[540px]'>
-                    <h1 className='text-2xl font-bold py-3 text-[#724C9D]'>Оформлення маршруту</h1>
+                    <h1 className='text-2xl font-bold py-3 text-[#724C9D]'>
+                        {t?.title || 'Оформлення маршруту'}
+                    </h1>
 
                     <form className="w-full max-w-lg mt-6" onSubmit={this.handleSubmit}>
                         
@@ -272,7 +279,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                             <h2 className="text-xl font-semibold mb-4 text-black"></h2>
 
                             <div className="mb-8">
-                                <h2 className="text-xl font-semibold mb-4 text-black">Виберіть точки на карті</h2>
+                                <h2 className="text-xl font-semibold mb-4 text-black">{t?.map.title || 'Виберіть точки на карті'}</h2>
                                 <DeliveryMapToSelect
                                     startLocation={this.state.startLocation}
                                     endLocation={this.state.endLocation}
@@ -280,15 +287,13 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                     onEndLocationSelect={this.handleEndLocationSelect}
                                     className="w-full h-[350px] mb-4"
                                 />
-                                <div className="text-sm text-gray-500">
-                                    Натисніть &quot;Вказати початок&quot; або &quot;Вказати кінець&quot;, потім виберіть точку на карті.
-                                </div>
+                                <div className="text-sm text-gray-500">{t?.map.hint || 'Натисніть "Вказати початок" або "Вказати кінець", потім виберіть точку на карті.'}</div>
                             </div>
                             
                             <div className='h-[2px] bg-lighter rounded-sm my-4 mb-6'></div>
 
                             <div className="flex flex-col mb-2">
-                                <label className=" font-semibold text-black">Дата виїзду</label>
+                                <label className=" font-semibold text-black">{t?.start.dateLabel || 'Дата виїзду'}</label>
                                 <DateInputGroup
                                     label=""
                                     value={this.state.startDate}
@@ -299,7 +304,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                             </div>
 
                             <div className="flex flex-col mb-2">
-                                <label className=" font-semibold text-black">Час виїзду</label>
+                                <label className=" font-semibold text-black">{t?.start.timeLabel || 'Час виїзду'}</label>
                                 <input
                                     type="time"
                                     value={this.state.startTime}
@@ -313,10 +318,10 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         {/* End Location */}
                         <div className="mb-6">
-                            <h2 className="text-xl font-semibold mb-4 text-black">Кінцева локація</h2>
+                            <h2 className="text-xl font-semibold mb-4 text-black">{t?.end.sectionTitle || 'Кінцева локація'}</h2>
                             
                             <div className="flex flex-col mb-2">
-                                <label className="mb-2 font-semibold text-black">Дата і час</label>
+                                <label className="mb-2 font-semibold text-black">{t?.end.dateLabel || 'Дата'}</label>
                                 <DateInputGroup
                                     label=""
                                     value={this.state.endDate}
@@ -327,7 +332,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                             </div>
 
                             <div className="flex flex-col mb-4">
-                                <label className="mb-2 font-semibold text-black">Час</label>
+                                <label className="mb-2 font-semibold text-black">{t?.end.timeLabel || 'Час'}</label>
                                 <input
                                     type="time"
                                     value={this.state.endTime}
@@ -340,11 +345,11 @@ class AddTripPage extends React.Component<any, AddTripState> {
                     <div className="mb-6">
 
                         
-                        <h2 className="text-xl font-semibold mb-4 text-black">Ваші дані</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-black">{t?.personal.sectionTitle || 'Ваші дані'}</h2>
 
                         <div className="flex flex-col mb-2">
                             <TextInputGroup
-                                label="Повне ім'я"
+                                label={t?.personal.fullName || "Повне ім'я"}
                                 value={this.state.fullName}
                                 onChange={e => this.setState({ fullName: e.target.value })}
                                 inputClassName="floating-input-black"
@@ -355,7 +360,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         <div className="flex flex-col mb-2">
                             <TextInputGroup
-                                label="Email"
+                                label={t?.personal.email || 'Email'}
                                 value={this.state.email}
                                 onChange={e => this.setState({ email: e.target.value })}
                                 inputClassName="floating-input-black"
@@ -366,7 +371,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         <div className="flex flex-col mb-2">
                             <TextInputGroup
-                                label="Номер телефону"
+                                label={t?.personal.phone || 'Номер телефону'}
                                 value={this.state.phoneNumber}
                                 onChange={e => this.setState({ phoneNumber: e.target.value })}
                                 inputClassName="floating-input-black"
@@ -376,9 +381,9 @@ class AddTripPage extends React.Component<any, AddTripState> {
 
                         </div>
                             <div className="flex flex-col mb-2">
-                                <label className="mb-2 text-xl font-semibold text-black">Транспортний засіб</label>
+                                <label className="mb-2 text-xl font-semibold text-black">{t?.vehicle.sectionTitle || 'Транспортний засіб'}</label>
                                 {this.state.loadingVehicles ? (
-                                    <div className="text-gray-500">Завантаження транспортних засобів...</div>
+                                    <div className="text-gray-500">{t?.vehicle.loading || 'Завантаження транспортних засобів...'}</div>
                                 ) : (
                                     <select
                                         id="vehicleId"
@@ -387,7 +392,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                         className="border rounded-lg px-4 py-5 focus:outline-none focus:ring-2 focus:ring-[#724C9D] text-black"
                                         required
                                     >
-                                        <option value="">Оберіть транспортний засіб</option>
+                                        <option value="">{t?.vehicle.choosePlaceholder || 'Оберіть транспортний засіб'}</option>
                                         {this.state.vehicles.map(vehicle => (
                                             <option key={vehicle.id} value={vehicle.id}>
                                                 {vehicle.brand} {vehicle.model} ({vehicle.numberPlate})
@@ -397,7 +402,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                 )}
                                 {this.state.vehicles.length === 0 && !this.state.loadingVehicles && (
                                     <div className="text-red-500 mt-2">
-                                        У вас немає доданих транспортних засобів. <a href="/vehicle/add" className="underline text-blue-600">Додати</a>
+                                        {t?.vehicle.noneMessage || 'У вас немає доданих транспортних засобів.'} <a href="/vehicle/add" className="underline text-blue-600">{t?.vehicle.addLink || 'Додати'}</a>
                                     </div>
                                 )}
                             </div>
@@ -406,7 +411,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                         <div className='h-[2px] bg-lighter rounded-sm my-2'></div>
                             {/* Delivery Slots Section */}
                             <div className="w-full mb-2">
-                                <h2 className="w-full text-xl font-semibold mb-4 text-[#724C9D]">Додати слоти для доставки</h2>
+                                <h2 className="w-full text-xl font-semibold mb-4 text-[#724C9D]">{t?.slots.sectionTitle || 'Додати слоти для доставки'}</h2>
                                 <div className="w-full flex flex-col md:flex-row gap-4 justify-center items-center mb-4">
                                     <select
                                         id='slotType'
@@ -414,7 +419,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                         onChange={this.handleSlotTypeChange}
                                         className="w-full px-4 py-5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#724C9D]"
                                     >
-                                        <option value="">Оберіть тип слота</option>
+                                        <option value="">{t?.slots.selectTypePlaceholder || 'Оберіть тип слота'}</option>
                                         {Object.entries(SLOT_TYPES).map(([key, val]) => (
                                             <option key={key} value={key}>
                                                 {key} ({val.MaxWeight}, {val.MaxVolume})
@@ -423,7 +428,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                     </select>
 
                                     <TextInputGroup
-                                        label="Ціна, грн"
+                                        label={`${t?.slots.priceLabel || 'Ціна'}, ${t?.currency || 'грн'}`}
                                         value={this.state.newSlot.approximatePrice}
                                         onChange={this.handleSlotPriceChange}
                                         className='floating-input-group-without-margin'
@@ -438,7 +443,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                         onClick={this.handleAddSlot}
                                         className="px-4 py-2 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors"
                                     >
-                                        Додати слот
+                                        {t?.slots.addSlot || 'Додати слот'}
                                     </button>
                                 </div>
                                 {/* List of added slots */}
@@ -447,7 +452,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                         {this.state.slots.map(slot => (
                                             <div key={slot.id} className="flex items-center justify-between bg-[#f3f0fa] rounded-lg px-4 py-2">
                                                 <span>
-                                                    <b>{slot.cargoSlotTypeName}</b> — {slot.approximatePrice} грн
+                                                    <b>{slot.cargoSlotTypeName}</b> — {slot.approximatePrice} {t?.currency || 'грн'}
                                                     <span className="text-xs text-gray-500 ml-2">
                                                         ({SLOT_TYPES[slot.cargoSlotTypeName]?.MaxWeight}, {SLOT_TYPES[slot.cargoSlotTypeName]?.MaxVolume})
                                                     </span>
@@ -457,7 +462,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                                     onClick={() => this.handleRemoveSlot(slot.id)}
                                                     className="text-red-500 hover:underline ml-4"
                                                 >
-                                                    Видалити
+                                                    {t?.slots.delete || 'Видалити'}
                                                 </button>
                                             </div>
                                         ))}
@@ -474,7 +479,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
                                 type="submit"
                                 className="w-full px-6 py-6 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors"
                             >
-                                Зберегти
+                                {t?.buttons.save || 'Зберегти'}
                             </button>
                         </div>
                     </form>
@@ -483,5 +488,10 @@ class AddTripPage extends React.Component<any, AddTripState> {
         );
     }
 }
+const AddTripWithSession = withSession(AddTripPage);
+const AddTripWrapper = (props: any) => {
+    const { messages } = useI18n();
+    return <AddTripWithSession {...props} t={messages} />;
+};
 
-export default withSession(AddTripPage);
+export default AddTripWrapper;

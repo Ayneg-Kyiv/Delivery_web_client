@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import CookieBanner from "@/components/cookie-banner";
 import I18nProvider from "@/i18n/I18nProvider";
 import { cookies } from "next/headers";
+import SupportChatClient from "@/components/support-chat-client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default async function RootLayout({
                   {children}
                   <CookieBanner />
                 </main>
+                <SupportChatClient />
                 <Footer />
               </Suspense>
           </AuthProvider>

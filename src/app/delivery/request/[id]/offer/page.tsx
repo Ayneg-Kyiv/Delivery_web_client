@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const OfferDeliveryPage: React.FC = () => {
 	const { id: deliveryRequestId } = useParams<{ id: string }>();
@@ -14,6 +15,8 @@ const OfferDeliveryPage: React.FC = () => {
 	const session = useSession();
 	const [request, setRequest] = useState<DeliveryRequest | null>(null);
 	const [loading, setLoading] = useState(true);
+	const { messages } = useI18n();
+	const t = messages.requestOffer;
 
 	// Form state
 	const [price, setPrice] = useState<string>('');
@@ -78,7 +81,7 @@ const OfferDeliveryPage: React.FC = () => {
 	if (session.status === 'loading' || loading) {
 		return (
 			<div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-				<div className="text-white text-center py-20">Завантаження...</div>
+				<div className="text-white text-center py-20">{t.loading}</div>
 			</div>
 		);
 	}
@@ -86,7 +89,7 @@ const OfferDeliveryPage: React.FC = () => {
 	if (!request) {
 		return (
 			<div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
-				<div className="text-white text-center py-20">Запит не знайдено</div>
+				<div className="text-white text-center py-20">{t.notFound}</div>
 			</div>
 		);
 	}
@@ -94,12 +97,12 @@ const OfferDeliveryPage: React.FC = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!price) {
-			alert('Вкажіть ціну');
+			alert(t.errors.enterPrice);
 			return;
 		}
 
-        if (!estimatedCollectionDate || !estimatedCollectionTime || !estimatedDeliveryDate || !estimatedDeliveryTime) {
-            alert('Вкажіть орієнтовний час забору та доставки');
+		if (!estimatedCollectionDate || !estimatedCollectionTime || !estimatedDeliveryDate || !estimatedDeliveryTime) {
+			alert(t.errors.enterTimes);
             return;
         }
 
@@ -120,21 +123,21 @@ const OfferDeliveryPage: React.FC = () => {
 			if (res.success) {
 				router.push(`/delivery/request/list`);
 			} else {
-				alert('Не вдалося створити пропозицію');
+				alert(t.errors.createFailed);
 			}
 		} catch {
-			alert('Сталася помилка при створенні пропозиції');
+			alert(t.errors.createError);
 		}
 	};
 
 	return (
 		<div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-10 md:px-60 lg:px-120">
 			<div className="text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]">
-				<h1 className="text-2xl font-bold py-3 text-[#724C9D]">Запропонувати доставку</h1>
+				<h1 className="text-2xl font-bold py-3 text-[#724C9D]">{t.title}</h1>
 				<form className="w-full max-w-lg mt-6" onSubmit={handleSubmit}>
 					{/* Price */}
 					<div className="mb-6">
-						<label className="text-xl font-semibold text-black mb-2">Ціна доставки</label>
+						<label className="text-xl font-semibold text-black mb-2">{t.price.section}</label>
 						<div className="flex items-center gap-4">
 							<input
 								type="checkbox"
@@ -143,10 +146,10 @@ const OfferDeliveryPage: React.FC = () => {
 								className="mr-2"
 								id="useSuggestedPrice"
 							/>
-							<label htmlFor="useSuggestedPrice" className="text-black text-sm">Використати рекомендовану ціну ({request.estimatedPrice ? `${request.estimatedPrice} грн` : 'немає'})</label>
+							<label htmlFor="useSuggestedPrice" className="text-black text-sm">{t.price.useSuggested} ({request.estimatedPrice ? `${request.estimatedPrice} ${t.currency}` : '—'})</label>
 						</div>
 						<TextInputGroup
-							label="Ваша ціна (грн)"
+							label={`${t.price.yourPrice} (${t.currency})`}
 							value={price}
 							onChange={e => setPrice(e.target.value)}
 							inputClassName="floating-input-black"
@@ -159,7 +162,7 @@ const OfferDeliveryPage: React.FC = () => {
 					{/* Estimated Collection Time */}
 					<div className="mb-6">
 						<div className="flex items-center mb-2">
-							<label className="text-xl text-black">Орієнтовний час забору</label>
+							<label className="text-xl text-black">{t.collection.section}</label>
 							<label className="ml-4 flex items-center text-sm text-black">
 								<input
 									type="checkbox"
@@ -167,7 +170,7 @@ const OfferDeliveryPage: React.FC = () => {
 									onChange={e => setUseRequestCollection(e.target.checked)}
 									className="mr-2"
 								/>
-								Використати час із запиту
+								{t.collection.useFromRequest}
 							</label>
 						</div>
 						{ !useRequestCollection && (
@@ -179,7 +182,7 @@ const OfferDeliveryPage: React.FC = () => {
 									inputClassName="floating-input-black"
 									labelClassName={estimatedCollectionDate ? 'filled' : ''}
 								/>
-								<label className="font-semibold text-black">Час забору</label>
+								<label className="font-semibold text-black">{t.collection.time}</label>
 								<input
 									type="time"
 									value={estimatedCollectionTime}
@@ -193,7 +196,7 @@ const OfferDeliveryPage: React.FC = () => {
 					{/* Estimated Delivery Time */}
 					<div className="mb-6">
 						<div className="flex items-center mb-2">
-							<label className="text-xl text-black">Орієнтовний час доставки</label>
+							<label className="text-xl text-black">{t.delivery.section}</label>
 							<label className="ml-4 flex items-center text-sm text-black">
 								<input
 									type="checkbox"
@@ -201,7 +204,7 @@ const OfferDeliveryPage: React.FC = () => {
 									onChange={e => setUseRequestDelivery(e.target.checked)}
 									className="mr-2"
 								/>
-								Використати час із запиту
+								{t.delivery.useFromRequest}
 							</label>
 						</div>
 						{!useRequestDelivery && (
@@ -213,7 +216,7 @@ const OfferDeliveryPage: React.FC = () => {
 									inputClassName="floating-input-black"
 									labelClassName={estimatedDeliveryDate ? 'filled' : ''}
 								/>
-								<label className="font-semibold text-black">Час доставки</label>
+								<label className="font-semibold text-black">{t.delivery.time}</label>
 								<input
 									type="time"
 									value={estimatedDeliveryTime}
@@ -228,7 +231,7 @@ const OfferDeliveryPage: React.FC = () => {
 							type="submit"
 							className="w-full px-6 py-6 bg-[#724C9D] text-white rounded-lg hover:bg-[#5d3b80] transition-colors"
 						>
-							Запропонувати доставку
+							{t.buttons.submit}
 						</button>
 					</div>
 				</form>
