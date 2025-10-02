@@ -22,7 +22,6 @@ async function getCsrfToken()  {
 async function refreshAccessToken(token: JWT) {
   try {
     const csrfToken = await getCsrfToken();
-    console.log("Refreshing access token..., CSRF Token:", csrfToken);
 
     const responseRaw = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-session`, {
       method: "POST",
@@ -178,12 +177,17 @@ const handler = NextAuth({
           
           if (rememberBool) payload.rememberMe = true; // only include if true
 
+          console.log("CSRF Token:", csrfToken);
+          console.log("Authorization payload:", payload);
+
           const response = await ApiClient.post<any>("/auth/signin", payload, {
             headers: {
               ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
               "Cookie": (await cookies()).toString() || "",
             },
           });
+
+          console.log("Authorization response:", response);
 
           // Parse the refreshToken cookie from the Set-Cookie header
             const setCookieHeader: string[] = response.headers["set-cookie"] || [];
