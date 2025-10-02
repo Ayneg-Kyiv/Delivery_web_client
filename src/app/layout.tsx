@@ -5,6 +5,7 @@ import { AuthProvider } from "./provider";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Suspense } from "react";
+import CookieBanner from "@/components/cookie-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
               <Navbar />
               <main className="flex-1 md:mt-[2px] flex flex-col md:min-h-[900px] sm:w-full md:w-full lg:w-full">
                 {children}
+                <CookieBanner />
               </main>
             </Suspense>
         </AuthProvider>

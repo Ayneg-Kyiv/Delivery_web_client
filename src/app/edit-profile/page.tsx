@@ -32,8 +32,11 @@ export default function EditProfile(): React.JSX.Element {
       setLoading(true);
       try {
         const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
-        console.log('Шлях запиту до API:', url);
+        
+        // console.log('Шлях запиту до API:', url);
+        
         const token = session?.accessToken;
+        
         const response = await fetch(url, {
           method: 'GET',
           headers: {
@@ -44,9 +47,12 @@ export default function EditProfile(): React.JSX.Element {
           credentials: 'include'
         });
         const data = await response.json();
-        console.log('Дані з API /Account:', data);
+
+        // console.log('Дані з API /Account:', data);
+        
         if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
           const user = data.data[0];
+          
           setFormData({
             Email: user.email || "",
             FirstName: user.firstName || "",
@@ -57,7 +63,7 @@ export default function EditProfile(): React.JSX.Element {
           });
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
+        // console.error('Error loading user data:', error);
       } finally {
         setLoading(false);
       }

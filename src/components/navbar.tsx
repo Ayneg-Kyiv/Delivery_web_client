@@ -22,7 +22,7 @@ export default function Navbar() {
   const handleMenuToggle = () => setMenuOpen((open) => !open);
 
   useEffect(() => {
-    console.log(session);
+    // console.log(session);
     setMenuOpen(false);
   }, [pathname]);
 
@@ -35,7 +35,7 @@ export default function Navbar() {
 
   const handleLanguageChange = (langCode: string) => {
     setSelectedLanguage(langCode);
-    console.log(`Language changed to: ${langCode}`);
+    // console.log(`Language changed to: ${langCode}`);
   };
 
   const authNavigation = (

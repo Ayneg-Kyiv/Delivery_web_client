@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ApiClient } from "./api-client";
 import { MapsService } from "@/components/other/google-maps-component";
 import DeliveryMap from "@/components/other/delivery-map";
+import { formatDateTime } from "@/components/other/date-time-former";
 
 class PageTemplate extends Component {
   state: {
@@ -119,7 +120,7 @@ class PageTemplate extends Component {
         }
 
       } catch (error) {
-        console.error("Error fetching distance and time:", error);
+        // console.error("Error fetching distance and time:", error);
       }
     }
 
@@ -632,7 +633,7 @@ class PageTemplate extends Component {
                       Новини
                     </span>
                     <span className="[font-family:'Inter-Regular',Helvetica] fg-secondary text-xs">
-                      {item.createdAt}
+                      {formatDateTime(item.createdAt || '')}
                     </span>
                   </div>
 

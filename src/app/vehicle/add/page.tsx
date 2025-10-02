@@ -94,7 +94,7 @@ class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            console.log('API Response:', response);
+            // console.log('API Response:', response);
 
             if (response.success) {
                 this.setState({

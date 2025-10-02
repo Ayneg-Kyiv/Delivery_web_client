@@ -24,7 +24,12 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         try {
             await ApiClient.get<null>('/csrf');
         } catch (error) {
-            console.error('Error fetching CSRF token:', error);
+            // console.error('Error fetching CSRF token:', error);
+            this.setState({
+                error: `An error occurred Please try again.`,
+                success: undefined,
+                loading: false,
+            });
         }
     }
 
