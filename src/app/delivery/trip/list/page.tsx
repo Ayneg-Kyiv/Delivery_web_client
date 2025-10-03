@@ -111,7 +111,7 @@ class TripListPage extends React.Component<any, TripListState> {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
-        const res = await apiGet<any>(`/trip/list?${params.toString()}`, {}, this.props.session.data?.user?.accessToken || '');
+        const res = await apiGet<any>(`/trip/list?${params.toString()}`, {}, this.props.session?.data?.accessToken || '');
 
         console.log(res.data);
         this.setState({
