@@ -21,6 +21,7 @@ const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
 const withSession = (Component: React.ComponentType<any>) => {
 	const WrappedComponent = (props: any) => {
 		const session = useSession();
+		
 		const { messages } = useI18n();
 		if (session.status === 'loading') {
 			return <div>Loading...</div>;
@@ -84,6 +85,10 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 			comment: '',
 			submitting: false,
 		};
+	}
+
+	componentDidMount(): void {
+		console.log(this.props.session.data?.accessToken);
 	}
 
 	handleSubmit = async (e: React.FormEvent) => {
