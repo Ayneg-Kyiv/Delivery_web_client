@@ -83,11 +83,13 @@ class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
 
         try {
             const formData = new FormData();
+
             formData.append('type', this.state.selectedType);
             formData.append('brand', this.state.brand);
             formData.append('model', this.state.model);
             formData.append('color', this.state.color);
             formData.append('numberPlate', this.state.licensePlate);
+            
             if (imageFront) formData.append('imageFront', imageFront);
             if (imageBack) formData.append('imageBack', imageBack);
 
