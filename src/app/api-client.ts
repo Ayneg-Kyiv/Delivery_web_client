@@ -1,98 +1,143 @@
+'use server';
+
 import axios, { AxiosRequestConfig } from 'axios';
-import { getSession } from 'next-auth/react';
 import https from 'https';
+import { cookies } from 'next/headers';
 
-function getCsrfTokenSync(): string | null {
-  if (typeof window !== "undefined") {
-    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    
-    return match ? decodeURIComponent(match[1]) : null;
-  }
-  
-  return null;
-}
+async function getCsrfTokenSync() {
+  const cookieStore = await cookies();
+  let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
 
-export const ApiClient = {
-  async request<T = TResponse>(url: string, config: AxiosRequestConfig = {}) {
-    const session = await getSession();
+  if (!csrf ) {
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-      ...Object.fromEntries(
-        Object.entries(config.headers ?? {}).filter(
-          ([, value]) => typeof value === 'string' && value !== null
-        ) as [string, string][]
-      ),
-    };
-    
-    if (session?.accessToken) headers['Authorization'] = `Bearer ${session.accessToken}`;
-
-    // Add CSRF token for mutating requests
-    if (['post', 'put', 'patch', 'delete'].includes((config.method || 'get').toLowerCase())) {
-      const csrfToken = getCsrfTokenSync();
-      
-      if (csrfToken) headers['X-XSRF-TOKEN'] = csrfToken;
-    }
-
-    const agent = new https.Agent({
-      rejectUnauthorized: false // for self-signed, not for production!
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/csrf`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Cookie": (await cookies()).toString() || "",
+      },
     });
 
-    // Build final URL safely (env already has /api)
-    const rawBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
-    let path = url.startsWith('/') ? url : `/${url}`;
-    // remove duplicate /api prefix in path if base already ends with /api
-    if (/\/api$/i.test(rawBase) && path.toLowerCase().startsWith('/api/')) {
-      path = path.substring(4); // remove leading /api
+    console.log('CSRF fetch response headers:', response.headers);
+
+    const setCookieHeader = response.headers.get('set-cookie');
+
+    if (setCookieHeader) {
+      
+      const cookiesArray = setCookieHeader.match(/(?:[^\s,;][^,]*?=[^;]+(?:;[^,]*)*)/g) || [setCookieHeader];
+      for (const cookieString of cookiesArray) {
+        const parts = cookieString.split(";").map(part => part.trim());
+        const [nameValue, ...attributes] = parts;
+        const [name, value] = nameValue.split("=");
+
+        const cookieOptions: Record<string, any> = {
+          name,
+          value: decodeURIComponent(value || ""),
+          httpOnly: false,
+          secure: false,
+          sameSite: undefined,
+          expires: undefined,
+          path: undefined
+        };
+
+        attributes.forEach(attr => {
+          if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
+          if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
+          if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
+          if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
+          if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
+        });
+
+        (await cookies()).set(cookieOptions.name, cookieOptions.value, {
+          httpOnly: cookieOptions.httpOnly,
+          secure: cookieOptions.secure,
+          sameSite: cookieOptions.sameSite,
+          expires: cookieOptions.expires,
+          path: cookieOptions.path
+        });
+      }
     }
-    const finalUrl = rawBase + path;
 
-    try {
-      const response = await axios({
-        url: finalUrl,
-        withCredentials: true,
-        method: config.method || 'get',
-        data: config.data,
-        params: config.params,
-        headers,
-        httpsAgent: agent,
-        responseType: config.responseType,
-      });
+    csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
+  }
+  
+  return csrf;
+}
 
-      if (path === '/auth/signin') {
-        return response as T; // need headers
-      }
-      return response.data as T;
-    } catch (error: any) {
-      if (typeof window === 'undefined') {
-        throw error;
-      }
-      if (error.response?.status === 401 && typeof window !== 'undefined') {
-        window.location.href = '/signin';
-      }
-      if (error.response?.status === 403 && typeof window !== 'undefined') {
-        window.location.href = '/unauthorized';
-      }
-      throw error;
+export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string) {
+
+  console.log('API staaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaart');
+
+  const csrfToken = await getCsrfTokenSync();
+  console.log('CSRF Token:', csrfToken);
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    'Cookie': (await cookies()).toString() || '',
+    ...Object.fromEntries(
+      Object.entries(config.headers ?? {}).filter(
+        ([, value]) => typeof value === 'string' && value !== null
+      ) as [string, string][]
+    ),
+  };
+
+
+  console.log('Token:', token);
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+
+  if (csrfToken) headers['X-XSRF-TOKEN'] = csrfToken;
+
+  const agent = new https.Agent({
+    rejectUnauthorized: false // for self-signed, not for production!
+  });
+
+  const rawBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+  let path = url.startsWith('/') ? url : `/${url}`;
+  if (/\/api$/i.test(rawBase) && path.toLowerCase().startsWith('/api/')) {
+    path = path.substring(4);
+  }
+  const finalUrl = rawBase + path;
+
+  try {
+    const response = await axios({
+      url: finalUrl,
+      withCredentials: true,
+      method: config.method || 'get',
+      data: config.data,
+      params: config.params,
+      headers,
+      httpsAgent: agent,
+      responseType: config.responseType,
+    });
+
+    if (path === '/auth/signin') {
+      return response as T;
     }
-  },
+    return response.data as T;
+  } catch (error: any) {
+    // Server components can't redirect, just throw
+    throw error;
+  }
+}
 
-  get<T = TResponse>(url: string, config?: AxiosRequestConfig) {
-    return this.request<T>(url, { ...config, method: 'get' });
-  },
+// Convenience methods
+export async function apiGet<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
+  return apiRequest<T>(url, { ...config, method: 'get' }, token);
+}
 
-  post<T = TResponse>(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.request<T>(url, { ...config, method: 'post', data });
-  },
+export async function apiPost<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
+  return apiRequest<T>(url, { ...config, method: 'post', data }, token);
+}
 
-  put<T = TResponse>(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.request<T>(url, { ...config, method: 'put', data });
-  },
+export async function apiPut<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
+  return apiRequest<T>(url, { ...config, method: 'put', data }, token);
+}
 
-  delete<T = TResponse>(url: string, config?: AxiosRequestConfig) {
-    return this.request<T>(url, { ...config, method: 'delete' });
-  },
-};
+export async function apiDelete<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
+  return apiRequest<T>(url, { ...config, method: 'delete' }, token);
+}

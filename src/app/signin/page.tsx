@@ -3,7 +3,7 @@
 import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
-import { ApiClient } from '../api-client';
+import {  apiGet} from '../api-client';
 import Button from '@/components/ui/button';
 import TextInputGroup from '@/components/ui/text-input-group';
 import ContentBox from '@/components/ui/content-box';
@@ -27,7 +27,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
 
     async componentDidMount() {
         try {
-            await ApiClient.get<null>('/csrf');
+            await apiGet<null>('/csrf');
         } catch (error) {
             const t = this.props.t;
             this.setState({ error: t?.signin?.initFailed ?? `Failed to initialize sign-in. Please try again.` });

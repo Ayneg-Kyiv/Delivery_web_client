@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { cookies } from "next/headers";
-import { ApiClient } from "../../../api-client";
+import { apiPost } from "../../../api-client";
 import { error } from "console";
 
 async function getCsrfToken()  {
@@ -11,8 +11,54 @@ async function getCsrfToken()  {
   let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
  
   if (!csrf) {
-    // Fallback to fetching CSRF token from the API if not found in cookies
-    await ApiClient.get<any>("/csrf");
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/csrf`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Cookie": (await cookies()).toString() || "",
+      },
+    });
+
+    const setCookieHeader = response.headers.get('set-cookie');
+
+    if (setCookieHeader) {
+      
+      const cookiesArray = setCookieHeader.match(/(?:[^\s,;][^,]*?=[^;]+(?:;[^,]*)*)/g) || [setCookieHeader];
+      for (const cookieString of cookiesArray) {
+        const parts = cookieString.split(";").map(part => part.trim());
+        const [nameValue, ...attributes] = parts;
+        const [name, value] = nameValue.split("=");
+
+        const cookieOptions: Record<string, any> = {
+          name,
+          value: decodeURIComponent(value || ""),
+          httpOnly: false,
+          secure: false,
+          sameSite: undefined,
+          expires: undefined,
+          path: undefined
+        };
+
+        attributes.forEach(attr => {
+          if (attr.toLowerCase() === "httponly") cookieOptions.httpOnly = true;
+          if (attr.toLowerCase() === "secure") cookieOptions.secure = true;
+          if (attr.toLowerCase().startsWith("samesite")) cookieOptions.sameSite = attr.split("=")[1];
+          if (attr.toLowerCase().startsWith("expires")) cookieOptions.expires = new Date(attr.split("=")[1]);
+          if (attr.toLowerCase().startsWith("path")) cookieOptions.path = attr.split("=")[1];
+        });
+
+        (await cookies()).set(cookieOptions.name, cookieOptions.value, {
+          httpOnly: cookieOptions.httpOnly,
+          secure: cookieOptions.secure,
+          sameSite: cookieOptions.sameSite,
+          expires: cookieOptions.expires,
+          path: cookieOptions.path
+        });
+      }
+    }
+
     csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
   }
  
@@ -177,7 +223,7 @@ const handler = NextAuth({
           
           if (rememberBool) payload.rememberMe = true; // only include if true
 
-          const response = await ApiClient.post<any>("/auth/signin", payload, {
+          const response = await apiPost<any>("/auth/signin", payload, {
             headers: {
               ...(csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {}),
               "Cookie": (await cookies()).toString() || "",
@@ -229,6 +275,8 @@ const handler = NextAuth({
                 path: '/'
               });
             }
+
+            (await cookies()).delete("XSRF-TOKEN");
  
           const data = response.data;
           if (!data.success && data.errors) {
@@ -403,22 +451,20 @@ const handler = NextAuth({
 
     async signOut({ token }) {
       try {
+
         const refreshToken = (await cookies()).get('refreshToken')?.value;
         
-        if (refreshToken) {
-
-          await ApiClient.post("/auth/signout", {}, {
+        if (refreshToken) {    
+          await apiPost("/auth/signout", {}, {
             headers: {
               "Authorization": `Bearer ${token.accessToken}`
             },
           });
+          (await cookies()).delete('refreshToken');
         }
 
-        (await cookies()).delete('refreshToken');
         (await cookies()).delete('rememberMe');
-
         sessionStorage.clear();
-
        
       } catch (error) {
         console.error("Sign out error:", error);
@@ -440,4 +486,6 @@ const handler = NextAuth({
   debug: process.env.NODE_ENV === "development",
 });
  
+
+
 export { handler as GET, handler as POST };

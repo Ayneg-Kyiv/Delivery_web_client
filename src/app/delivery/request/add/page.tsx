@@ -5,7 +5,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
-import { ApiClient } from '@/app/api-client';
+import { apiGet, apiPost } from '@/app/api-client';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
@@ -160,7 +160,7 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		};
 
 		try {
-			const response = await ApiClient.post('/request', payload);
+			const response = await apiPost('/request', payload, {}, this.props.session.data?.user?.accessToken);
 			if (response.success) {
 				window.location.href = '/delivery/request/list';
 			} else {

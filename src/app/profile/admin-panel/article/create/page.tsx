@@ -3,7 +3,7 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ApiClient } from "@/app/api-client";
+import { apiPost } from "@/app/api-client";
 import TextInputGroup from "@/components/ui/text-input-group";
 import Link from "next/link";
 import Image from "next/image";
@@ -72,11 +72,12 @@ type Article = {
 };
 
 type CreateArticlePageProps = {
-    session: any;
+    session: ReturnType<typeof useSession>;
 };
 
 type CreateArticlePageState = {
     article: Article;
+    token?: string;
     submitting: boolean;
 };
 
@@ -99,6 +100,10 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
             },
             submitting: false,
         };
+    }
+
+    componentDidMount(): void {
+        const token = this.props.session.data?.accessToken;
     }
 
     handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,9 +217,9 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 formData.append('image', article.image);
             }
 
-            const response = await ApiClient.post<any>(`/article/create`, formData, {
+            const response = await apiPost<any>(`/article/create`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            }, this.props.session.data?.accessToken || '');
 
             console.log("Article created:", response.data);
             const articleId = response.data;
@@ -229,14 +234,14 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 if (block.content) blockFormData.append('content', block.content);
                 if (block.image) blockFormData.append('image', block.image);
 
-                await ApiClient.post(`/article/block/create`,{
+                await apiPost(`/article/block/create`,{
                   "articleId": articleId,
                   "title": (block.title ? block.title : null),
                   "content": (block.content ? block.content: null),
                   "image" : (block.image ? block.image : null)
                 }, {
                     headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                }, this.props.session.data?.accessToken || '');
             }
 
             alert("Article and blocks created successfully");

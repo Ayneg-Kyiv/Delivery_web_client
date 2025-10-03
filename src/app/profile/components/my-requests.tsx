@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ApiClient } from '@/app/api-client';
+import { apiGet, apiPut } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useSession } from 'next-auth/react';
 
 const batchSize = 10;
 
@@ -19,6 +20,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const { data: session } = useSession();
 
     useEffect(() => {
         fetchRequests(currentPage);
@@ -31,7 +33,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
-        const res = await ApiClient.get<any>(`/request/sender?${params.toString()}`);
+        const res = await apiGet<any>(`/request/sender?${params.toString()}`, {}, session?.accessToken || '');
         console.log('Fetch requests response:', res);
         const reqs: DeliveryRequest[] = res.data.data || [];
         setRequests(reqs);
@@ -100,7 +102,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         disabled={request.isPickedUp || !request.isAccepted}
                                         onClick={async () => {
                                             setLoading(true);
-                                            await ApiClient.put(`/request/pickup/${request.id}`);
+                                            await apiPut(`/request/pickup/${request.id}`, {}, {}, session?.accessToken || '');
                                             await fetchRequests(currentPage);
                                         }}
                                     >
@@ -111,7 +113,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         disabled={!request.isPickedUp || request.isDelivered}
                                         onClick={async () => {
                                             setLoading(true);
-                                            await ApiClient.put(`/request/deliver/${request.id}`);
+                                            await apiPut(`/request/deliver/${request.id}`, {}, {}, session?.accessToken || '');
                                             await fetchRequests(currentPage);
                                         }}
                                     >
@@ -154,7 +156,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                                                 className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold"
                                                                 onClick={async () => {
                                                                     setLoading(true);
-                                                                    await ApiClient.put(`/request/offer/accept/${offer.id}`);
+                                                                    await apiPut(`/request/offer/accept/${offer.id}`, {}, {}, session?.accessToken || '');
                                                                     await fetchRequests(currentPage);
                                                                 }}
                                                             >
@@ -164,7 +166,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                                                 className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold"
                                                                 onClick={async () => {
                                                                     setLoading(true);
-                                                                    await ApiClient.put(`/request/offer/decline/${offer.id}`);
+                                                                    await apiPut(`/request/offer/decline/${offer.id}`, {}, {}, session?.accessToken || '');
                                                                     await fetchRequests(currentPage);
                                                                 }}
                                                             >

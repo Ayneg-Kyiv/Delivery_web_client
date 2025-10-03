@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { ProfileService } from "../profile/profile-service";
 import { ChangeUserDataDTO } from "../profile/profile.d";
 import { useI18n } from "@/i18n/I18nProvider";
+import { apiGet } from "../api-client";
 
 export default function EditProfile(): React.JSX.Element {
   const { messages } = useI18n();
@@ -31,12 +32,12 @@ export default function EditProfile(): React.JSX.Element {
   // Load current user data
   const { data: session } = useSession();
   useEffect(() => {
+    
     const loadUserData = async () => {
       setLoading(true);
       try {
+
         const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
-        
-  // console.log('Шлях запиту до API:', url);
         
         const token = session?.accessToken;
         
@@ -141,8 +142,7 @@ export default function EditProfile(): React.JSX.Element {
     }
 
     try {
-      const response = await ProfileService.changeUserData(formData);
-      console.log('Відповідь API на зміну даних:', response);
+      const response = await ProfileService.changeUserData(formData, session?.accessToken || "");
 
       // Accept only Success key (API returns Success: true)
       if (response.Success === true) {

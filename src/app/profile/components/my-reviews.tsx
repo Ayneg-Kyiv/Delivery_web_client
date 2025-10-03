@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ApiClient } from '@/app/api-client';
+import { apiGet } from '@/app/api-client';
 import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useSession } from 'next-auth/react';
 
 const batchSize = 10;
 
@@ -17,6 +18,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const { data: session } = useSession();
 
     useEffect(() => {
         fetchReviews(currentPage);
@@ -28,7 +30,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
         const params = new URLSearchParams();
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
-        const res = await ApiClient.get<any>(`/review/user/${id}?${params.toString()}`);
+        const res = await apiGet<any>(`/review/user/${id}?${params.toString()}`, {}, session?.accessToken || '');
         setReviews(res.data.data || []);
         setTotalPages(res.data.pagination?.totalPages || 1);
         setLoading(false);

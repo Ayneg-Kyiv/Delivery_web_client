@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ApiClient } from '@/app/api-client';
+import { apiPost } from '@/app/api-client';
 
 const ReviewRequestPage: React.FC = () => {
     const searchParams = useSearchParams();
@@ -31,7 +31,7 @@ const ReviewRequestPage: React.FC = () => {
         };
 
         try {
-            const res = await ApiClient.post('/api/review/create', dto);
+            const res = await apiPost('/api/review/create', dto, {}, session.data?.accessToken || '');
 
             if (!res.success) {
                 setError(res.message || 'Помилка при створенні відгуку');
