@@ -6,9 +6,7 @@ import { cookies } from 'next/headers';
 
 async function getCsrfTokenSync() {
   const cookieStore = await cookies();
-  let csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
 
-  if (!csrf ) {
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/csrf`, {
       method: "GET",
@@ -59,15 +57,12 @@ async function getCsrfTokenSync() {
       }
     }
 
-    csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
-  }
+    const csrf =  cookieStore.get("XSRF-TOKEN")?.value || null;
   
   return csrf;
 }
 
 export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string) {
-
-  console.log('API staaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaart');
 
   const csrfToken = await getCsrfTokenSync();
   console.log('CSRF Token:', csrfToken);
