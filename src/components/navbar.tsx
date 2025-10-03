@@ -8,9 +8,9 @@ import Image from 'next/image';
 import Button from './ui/button';
 import dynamic from 'next/dynamic';
 import { useI18n } from '@/i18n/I18nProvider';
-import LanguageSwitcher from '@/components/language-switcher';
 
 const BurgerMenu = dynamic(() => import('./burger-menu'), { ssr: false });
+const LanguageSwitcher = dynamic(() => import('@/components/language-switcher'), { ssr: false });
 
 export default function Navbar() {
   const pathname = usePathname();
