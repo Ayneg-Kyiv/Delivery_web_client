@@ -87,10 +87,6 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		};
 	}
 
-	componentDidMount(): void {
-		console.log(this.props.session.data?.accessToken);
-	}
-
 	handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		this.setState({ submitting: true });
@@ -166,7 +162,8 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		};
 
 		try {
-			const response = await apiPost('/request', payload, {}, this.props.session.data?.accessToken);
+			console.log('accessToken', this.props.session?.data?.accessToken);
+			const response = await apiPost('/request', payload, {}, this.props.session?.data?.accessToken);
 			if (response.success) {
 				window.location.href = '/delivery/request/list';
 			} else {
