@@ -12,6 +12,7 @@ import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 const withSession = (Component: React.ComponentType<any>) => {
     const WrappedComponent = (props: any) => {
         const session = useSession();
+        const { messages } = useI18n();
 
         if (session.status === 'loading') {
             return <div>Loading...</div>;
@@ -31,7 +32,7 @@ const withSession = (Component: React.ComponentType<any>) => {
 
         // Only allow class components
         if (Component.prototype && Component.prototype.render) {
-            return <Component session={session} {...props} />;
+            return <Component session={session} messages={messages} {...props} />;
         }
 
         throw new Error(
@@ -488,10 +489,5 @@ class AddTripPage extends React.Component<any, AddTripState> {
         );
     }
 }
-const AddTripWithSession = withSession(AddTripPage);
-const AddTripWrapper = (props: any) => {
-    const { messages } = useI18n();
-    return <AddTripWithSession {...props} t={messages} />;
-};
 
-export default AddTripWrapper;
+export default withSession(AddTripPage);

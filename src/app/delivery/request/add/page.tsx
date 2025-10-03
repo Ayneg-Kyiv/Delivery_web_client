@@ -21,6 +21,7 @@ const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
 const withSession = (Component: React.ComponentType<any>) => {
 	const WrappedComponent = (props: any) => {
 		const session = useSession();
+		const { messages } = useI18n();
 		if (session.status === 'loading') {
 			return <div>Loading...</div>;
 		}
@@ -28,7 +29,7 @@ const withSession = (Component: React.ComponentType<any>) => {
 			location.href = '/signin';
 		}
 		if (Component.prototype && Component.prototype.render) {
-			return <Component session={session} {...props} />;
+			return <Component session={session} messages={messages} {...props} />;
 		}
 		throw new Error("You passed a function component, `withSession` is not needed.");
 	};
@@ -286,10 +287,5 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		);
 	}
 }
-const AddRequestWithSession = withSession(AddRequestPage);
-const AddRequestWrapper = (props: any) => {
-	const { messages } = useI18n();
-	return <AddRequestWithSession {...props} t={messages} />;
-};
 
-export default AddRequestWrapper;
+export default withSession(AddRequestPage);
