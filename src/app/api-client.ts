@@ -91,7 +91,7 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
     rejectUnauthorized: false // for self-signed, not for production!
   });
 
-  const rawBase = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
+  const rawBase = (process.env.NEXT_API_URL || '').replace(/\/$/, '');
   let path = url.startsWith('/') ? url : `/${url}`;
   if (/\/api$/i.test(rawBase) && path.toLowerCase().startsWith('/api/')) {
     path = path.substring(4);
