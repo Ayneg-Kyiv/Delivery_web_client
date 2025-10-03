@@ -249,7 +249,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
         };
 
         try {
-            const response = await apiPost('/trip/create', payload, {}, this.props.session?.accessToken || '');
+            const response = await apiPost('/trip/create', payload, {}, this.props.session?.data?.accessToken || '');
             if (response.success) {
                 // Redirect or show success message
                 window.location.href = '/delivery/trip/list';
