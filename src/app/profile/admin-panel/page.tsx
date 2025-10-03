@@ -320,7 +320,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                     <button
                                         className="flex-1 px-4 py-2 button-type-2 rounded-lg bg-green-600 text-white"
                                         onClick={async () => {
-                                            await apiPost(`/admin/approve-driver-application/${app.id}`);
+                                            await apiPost(`/admin/approve-driver-application/${app.id}`, {}, {}, this.props.session.data?.accessToken);
                                             this.setState({
                                                 driverApplicationPanel: {
                                                     ...this.state.driverApplicationPanel,
@@ -334,7 +334,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                     <button
                                         className="flex-1 px-4 py-2 button-type-2 rounded-lg bg-red-600 text-white"
                                         onClick={async () => {
-                                            await apiPost(`/admin/reject-driver-application/${app.id}`);
+                                            await apiPost(`/admin/reject-driver-application/${app.id}`, {}, {}, this.props.session.data?.accessToken);
                                             this.setState({
                                                 driverApplicationPanel: {
                                                     ...this.state.driverApplicationPanel,
@@ -354,7 +354,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                             <button
                                 className="px-4 py-2 bg-lighter rounded-lg disabled:bg-darker disabled:cursor-not-allowed"
                                 onClick={async () => {
-                                    const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=1&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                    const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=1&pageSize=${this.state.driverApplicationPanel.batchSize}`, this.props.session.data?.accessToken);
                                     this.setState({
                                         driverApplicationPanel: {
                                             ...this.state.driverApplicationPanel,
@@ -372,7 +372,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                     className="px-4 py-2 bg-default rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
                                     onClick={async () => {
                                         const prevPage = Math.max(1, this.state.driverApplicationPanel.currentPage - 1);
-                                        const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${prevPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                        const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${prevPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`, this.props.session.data?.accessToken);
                                         this.setState({
                                             driverApplicationPanel: {
                                                 ...this.state.driverApplicationPanel,
@@ -395,7 +395,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                         className="px-4 py-2 bg-default rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
                                         onClick={async () => {
                                             const nextPage = Math.min(this.state.driverApplicationPanel.totalPages, this.state.driverApplicationPanel.currentPage + 1);
-                                            const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${nextPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                            const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${nextPage}&pageSize=${this.state.driverApplicationPanel.batchSize}`, this.props.session.data?.accessToken);
                                             this.setState({
                                                 driverApplicationPanel: {
                                                     ...this.state.driverApplicationPanel,
@@ -412,7 +412,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                             <button
                                 className="px-4 py-2 bg-default rounded-lg disabled:bg-darker disabled:cursor-not-allowed"
                                 onClick={async () => {
-                                    const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${this.state.driverApplicationPanel.totalPages}&pageSize=${this.state.driverApplicationPanel.batchSize}`);
+                                    const response = await apiGet<any>(`/admin/driver-applications/?pageNumber=${this.state.driverApplicationPanel.totalPages}&pageSize=${this.state.driverApplicationPanel.batchSize}`, this.props.session.data?.accessToken);
                                     this.setState({
                                         driverApplicationPanel: {
                                             ...this.state.driverApplicationPanel,
