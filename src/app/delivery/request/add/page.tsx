@@ -161,7 +161,7 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		};
 
 		try {
-			const response = await apiPost('/request', payload, {}, this.props.session.data?.user?.accessToken);
+			const response = await apiPost('/request', payload, {}, this.props.session.data?.accessToken);
 			if (response.success) {
 				window.location.href = '/delivery/request/list';
 			} else {

@@ -99,9 +99,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
-        const res = await apiGet<any>(`/request?${params.toString()}`, {}, this.props.session.data?.user?.accessToken);
-
-        console.log(res);
+        const res = await apiGet<any>(`/request?${params.toString()}`, {}, this.props.session?.accessToken);
 
 
         this.setState({
@@ -112,7 +110,9 @@ class RequestListPage extends React.Component<any, RequestListState> {
     }
 
     async fetchLocations() {
-        const res = await apiGet<any>(`/trip/locations/unique`, {}, this.props.session.data?.user?.accessToken);
+        console.log('fetching locations', this.props.session);
+
+        const res = await apiGet<any>(`/trip/locations/unique`, {}, this.props.session?.data?.accessToken);
 
         this.setState({
             cities: res.data || [],
