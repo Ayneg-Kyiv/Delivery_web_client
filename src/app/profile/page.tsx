@@ -37,7 +37,7 @@ export default function Profile(): React.JSX.Element {
     async function loadUserData() {
       setLoading(true);
       try {
-        const response = await ProfileService.getUserProfile();
+        const response = await ProfileService.getUserProfile(session?.data?.accessToken || "");
         
         console.log('Profile API response:', response);
         
@@ -150,7 +150,7 @@ export default function Profile(): React.JSX.Element {
 
     try {
       
-      const result = await ProfileService.updateProfileImage(userData.email, file);
+      const result = await ProfileService.updateProfileImage(userData.email, file, session?.data?.accessToken || "");
       console.log('Update profile image result:', result);
       
       // Try to update local avatar if API returns a path; otherwise refetch profile
@@ -170,7 +170,7 @@ export default function Profile(): React.JSX.Element {
       } else {
         // fallback: reload profile
         try {
-          const refreshed = await ProfileService.getUserProfile();
+          const refreshed = await ProfileService.getUserProfile(session?.data?.accessToken || "");
           const success = (refreshed as any)?.Success ?? (refreshed as any)?.success;
           const payload = (refreshed as any)?.Data ?? (refreshed as any)?.data ?? {};
           const raw = Array.isArray(payload) ? payload[0] : payload;
@@ -212,15 +212,23 @@ export default function Profile(): React.JSX.Element {
     }
   };
 
+  const navItems = [];
+  
+  if (session?.data?.user?.roles.includes("User")) {
   // Navigation items
-  const navItems = [
-    { label: t.profile.tabs.profile, value: "user" },
-    { label: t.profile.tabs.trips, value: "trips" },
-    { label: t.profile.tabs.orders, value: "orders" },
-    { label: t.profile.tabs.reviews, value: "reviews" },
-    { label: t.profile.tabs.requests, value: "requests" },
-    { label: t.profile.tabs.offers, value: "offers" },
-  ];
+    navItems.push(
+      { label: t.profile.tabs.profile, value: "user" },
+      { label: t.profile.tabs.trips, value: "trips" },
+      { label: t.profile.tabs.orders, value: "orders" },
+      { label: t.profile.tabs.reviews, value: "reviews" },
+      { label: t.profile.tabs.requests, value: "requests" },
+    );
+  }
+  if (session?.data?.user?.roles.includes("Driver")) {
+    navItems.push(
+      { label: t.profile.tabs.offers, value: "offers" },
+    );
+  }
 
   // Form fields with dynamic data (only existing/available fields)
   const formFields = [
@@ -451,7 +459,7 @@ export default function Profile(): React.JSX.Element {
         }
 
         {
-          selectedTab === "offers" && (
+          selectedTab === "offers" && session?.data?.user?.roles.includes("Driver") && (
           <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
             <MyOffers id={session?.data?.user?.id ?? ""} />
           </div>)

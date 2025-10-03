@@ -5,23 +5,11 @@ import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signal
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 // Removed date-fns locale usage due to version constraints; using Intl instead
-import { ApiClient } from '@/app/api-client';
+import { apiGet } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
 import { useI18n } from '@/i18n/I18nProvider';
 
 const SIGNALR_URL = (process.env.NEXT_PUBLIC_SIGNALR_URL || '') + '/messagingHub';
-
-const fetchOrder = async (orderId: string): Promise<DeliveryOrder> => {
-    const res = await ApiClient.get<any>(`/trip/order/${orderId}`);
-    
-    return res.data;
-};
-
-const fetchUser = async (id: string): Promise<shortUserInfo> => {
-    const res = await ApiClient.get<any>(`/account/short/${id}`);
-    
-    return res.data;
-};
 
 const ChatOrderPage: React.FC = () => {
     const params = useSearchParams();
@@ -45,6 +33,18 @@ const ChatOrderPage: React.FC = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const fetchOrder = async (orderId: string): Promise<DeliveryOrder> => {
+        const res = await apiGet<any>(`/trip/order/${orderId}`, {}, session?.data?.accessToken);
+
+        return res.data;
+    };
+
+    const fetchUser = async (id: string): Promise<shortUserInfo> => {
+        const res = await apiGet<any>(`/account/short/${id}`, {}, session?.data?.accessToken);
+        
+        return res.data;
+    };
+    
     useEffect(() => {
         const userId = session?.data?.user.id;
         if (!orderId || !userId) return;

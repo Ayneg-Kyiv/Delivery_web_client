@@ -5,7 +5,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
-import { ApiClient } from '@/app/api-client';
+import { apiGet ,apiPost } from '@/app/api-client';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 // HOC to inject session into class components
@@ -107,7 +107,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
     async componentDidMount() {
         // Fetch user's vehicles
         try {
-            const vehiclesResponse = await ApiClient.get<any>('/account/user-vehicles');
+            const vehiclesResponse = await apiGet<any>('/account/user-vehicles', {}, this.props.session.data?.accessToken || '');
             if (vehiclesResponse.success) {
                 this.setState({ vehicles: vehiclesResponse.data, loadingVehicles: false });
             } else {
@@ -248,7 +248,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
         };
 
         try {
-            const response = await ApiClient.post('/trip/create', payload);
+            const response = await apiPost('/trip/create', payload, {}, this.props.session.data?.accessToken || '');
             if (response.success) {
                 // Redirect or show success message
                 window.location.href = '/delivery/trip/list';

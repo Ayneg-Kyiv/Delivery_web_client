@@ -3,7 +3,7 @@
 import React from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { ApiClient } from "@/app/api-client";
+import { apiGet, apiPut } from "@/app/api-client";
 import TextInputGroup from "@/components/ui/text-input-group";
 import Link from "next/link";
 import Image from "next/image";
@@ -72,7 +72,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
     }
 
     async componentDidMount(): Promise<void> {
-        const response = await ApiClient.get<any>(`/article/${this.props.articleId}`);
+        const response = await apiGet<any>(`/article/${this.props.articleId}`);
 
         this.setState({ article: response.data });
     }
@@ -91,9 +91,9 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                 formData.append('image', this.state.article.image);
             }
 
-            const response = await ApiClient.put<any>(`/article/update`, formData, {
+            const response = await apiPut<any>(`/article/update`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            }, this.props.session.data?.accessToken || '');
 
             for (const block of this.state.article.articleBlocks) {
                 const blockFormData = new FormData();
@@ -107,9 +107,9 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                     blockFormData.append('image', block.image);
                 }
 
-                const response = await ApiClient.put(`/article/block/update`, blockFormData, {
+                const response = await apiPut(`/article/block/update`, blockFormData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
-                });
+                }, this.props.session.data?.accessToken || '');
 
                 if (response.success) 
                     alert("Article and blocks updated successfully");
