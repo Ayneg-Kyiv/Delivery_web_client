@@ -212,17 +212,23 @@ export default function Profile(): React.JSX.Element {
     }
   };
 
+  const navItems = [];
+  
+  if (session?.data?.user?.roles.includes("User")) {
   // Navigation items
-  const navItems = [
-    { label: t.profile.tabs.profile, value: "user" },
-    { label: t.profile.tabs.trips, value: "trips" },
-    { label: t.profile.tabs.orders, value: "orders" },
-    { label: t.profile.tabs.reviews, value: "reviews" },
-    { label: t.profile.tabs.requests, value: "requests" },
-    { label: t.profile.tabs.offers, value: "offers" },
-  ];
-
-  { session?.data?.user?.roles.includes("Driver") || navItems.pop(); }
+    navItems.push(
+      { label: t.profile.tabs.profile, value: "user" },
+      { label: t.profile.tabs.trips, value: "trips" },
+      { label: t.profile.tabs.orders, value: "orders" },
+      { label: t.profile.tabs.reviews, value: "reviews" },
+      { label: t.profile.tabs.requests, value: "requests" },
+    );
+  }
+  if (session?.data?.user?.roles.includes("Driver")) {
+    navItems.push(
+      { label: t.profile.tabs.offers, value: "offers" },
+    );
+  }
 
   // Form fields with dynamic data (only existing/available fields)
   const formFields = [
