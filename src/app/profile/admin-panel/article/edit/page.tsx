@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { ApiClient } from "@/app/api-client";
@@ -17,7 +18,8 @@ const withSession = (Component: React.ComponentType<any>) => {
         const articleId = searchParams.get('articleId');
 
         if (session.status === 'loading') {
-            return <div>Loading...</div>;
+            const { messages } = useI18n();
+            return <div>{(messages as any)?.addTrip?.loading || 'Loading...'}</div>;
         }
 
         if (session.status === 'unauthenticated') {
@@ -30,7 +32,8 @@ const withSession = (Component: React.ComponentType<any>) => {
 
         // Only allow class components
         if (Component.prototype && Component.prototype.render) {
-            return <Component session={session} articleId={articleId} {...props} />;
+            const { messages } = useI18n();
+            return <Component session={session} articleId={articleId} t={messages} {...props} />;
         }
 
         throw new Error(
@@ -44,8 +47,8 @@ const withSession = (Component: React.ComponentType<any>) => {
     return WrappedComponent;
 };
 
-class EditArticlePage extends React.Component<EditArticlePageProps, EditArticlePageState> {
-    constructor(props: EditArticlePageProps) {
+class EditArticlePage extends React.Component<EditArticlePageProps & { t: any }, EditArticlePageState> {
+    constructor(props: EditArticlePageProps & { t: any }) {
         super(props);
         this.state = {
             article: {
@@ -161,8 +164,8 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
         return (
                 <div className="flex-1 bg-default flex py-10">
                     <div className="w-full flex flex-col items-center px-8">
-                        <Link href="/profile/admin-panel" className="self-start w-full md:w-[340px] p-4 bg-lighter rounded-lg mb-6 hover:underline text-center">{'<<'} Назад до панелі адміністратора</Link>
-                        <h1 className="text-4xl font-bold mb-6">Редагування статті</h1>
+                        <Link href="/profile/admin-panel" className="self-start w-full md:w-[340px] p-4 bg-lighter rounded-lg mb-6 hover:underline text-center">{this.props.t?.profile?.adminArticle?.back}</Link>
+                        <h1 className="text-4xl font-bold mb-6">{this.props.t?.profile?.adminArticle?.editTitle}</h1>
                         <form className="flex flex-col gap-4 w-full max-w-7xl bg-lighter p-4 rounded-lg" onSubmit={(e) => {
                             this.updateArticle(e);
                         }}>
@@ -170,8 +173,8 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                 <TextInputGroup
                                     value={this.state.article.title}
                                     onChange={(e) => this.setState({ article: { ...this.state.article, title: e.target.value } })}
-                                    placeholder="Введіть заголовок статті"
-                                    label={"Заголовок"}
+                                    placeholder=""
+                                    label={this.props.t?.profile?.adminArticle?.labels?.title}
                                     className="w-full"
                                     inputClassName={`floating-input ${this.state.article.titleError ? 'floating-input-error' : ''}`}
                                     labelClassName={`${this.state.article.title ? ' filled' : ''} ${this.state.article.titleError ? ' floating-label-error' : ''}`}
@@ -182,8 +185,8 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                     onChange={(e) => this.setState({ 
                                         article: { ...this.state.article, content: e.target.value }
                                     })}
-                                    placeholder="Введіть контент статті"
-                                    label="Контент"
+                                    placeholder=""
+                                    label={this.props.t?.profile?.adminArticle?.labels?.content}
                                     className="mb-4"
                                     error={!!this.state.article.contentError}
                                     minHeight="150px"
@@ -193,7 +196,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                     value={this.state.article.category || ''}
                                     onChange={(e) => this.setState({ article: { ...this.state.article, category: e.target.value } })}
                                     placeholder=""
-                                    label={"Категорія"}
+                                    label={this.props.t?.profile?.adminArticle?.labels?.category}
                                     className="w-full"
                                     inputClassName={`floating-input ${this.state.article.categoryError ? 'floating-input-error' : ''}`}
                                     labelClassName={`${this.state.article.category ? ' filled' : ''} ${this.state.article.categoryError ? ' floating-label-error' : ''}`}
@@ -222,7 +225,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                 {
                                     this.state.article.articleBlocks.map((block, index) => (
                                         <div key={block.id || index} className="flex flex-col border border-gray-300 rounded-lg p-4 mb-4 mt-10">
-                                            <h2 className="text-2xl font-bold mb-4">Блок {index + 1}</h2>
+                                            <h2 className="text-2xl font-bold mb-4">{(this.props.t?.profile?.adminArticle?.labels?.block || 'Block {index}').replace('{index}', String(index + 1))}</h2>
 
                                             { block.title && (
                                                 <TextInputGroup
@@ -233,7 +236,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                                         this.setState({ article: { ...this.state.article, articleBlocks: newBlocks } });
                                                     }}
                                                     placeholder=""
-                                                    label="Заголовок блоку"
+                                                    label={this.props.t?.profile?.adminArticle?.labels?.blockTitle}
                                                     className="mb-2"
                                                 />
                                             )}
@@ -248,7 +251,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                                         this.setState({ article: { ...this.state.article, articleBlocks: newBlocks } });
                                                     }}
                                                     placeholder=""
-                                                    label="Контент блоку"
+                                                    label={this.props.t?.profile?.adminArticle?.labels?.blockContent}
                                                     className="mb-2"
                                                     minHeight="100px"
                                                 />
@@ -292,7 +295,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
                                     ))
                                 }
 
-                                <input type="submit" value='Зберегти зміни'
+                                <input type="submit" value={this.props.t?.profile?.adminArticle?.labels?.saveChanges}
                                     className="w-full mt-10 h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                                 />
                             </div>

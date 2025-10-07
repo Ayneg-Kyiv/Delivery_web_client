@@ -51,7 +51,7 @@ const TripDetailPage: React.FC = () => {
             <div className="relative w-full h-[350px]">
                 <Image
                     src="/Rectangle47.png"
-                    alt="Delivery"
+                    alt={t.heroTitle}
                     fill
                     className="object-cover"
                 />
@@ -66,13 +66,13 @@ const TripDetailPage: React.FC = () => {
                     </div>
 					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
                         <div className="mt-2 text-white">
-                            {t.labels.departureShort}: {trip.startLocation.dateTime} 
+                            {t.labels.departureShort}: {new Intl.DateTimeFormat('uk', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(trip.startLocation.dateTime))}
                         </div>
 						<div className='hidden md:block'>
 							|
 						</div>
                         <div className="mt-2 text-white">
-                            {t.labels.deliveryShort}: {trip.endLocation.dateTime}
+                            {t.labels.deliveryShort}: {new Intl.DateTimeFormat('uk', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(trip.endLocation.dateTime))}
                         </div>
 					</div>
                 </div>
@@ -90,14 +90,14 @@ const TripDetailPage: React.FC = () => {
                     <div className="text-black text-xl font-bold">{trip.fullName}</div>
                     <div className="text-black">{trip.driver.email}</div>
                     <div className="text-yellow-400 font-bold mt-2">★ {trip.driver.rating.toFixed(1)}</div>
-                    <div className="text-black mt-2">Телефон: {trip.phoneNumber}</div>
+                    <div className="text-black mt-2">{t.labels.phone}: {trip.phoneNumber}</div>
 
                     <div className="w-full mt-6">
-                        <div className="text-lg font-bold mb-2 text-black">Відгуки про водія</div>
+                        <div className="text-lg font-bold mb-2 text-black">{t.labels.driverReviews}</div>
                         {trip.driver.reviews
                             .filter(review => review.rating > 0)
                             .length === 0 ? (
-                            <div className="text-gray-500">Відгуків поки немає</div>
+                            <div className="text-gray-500">{t.labels.noReviews}</div>
                         ) : (
                             <div className="flex flex-col gap-4 w-full">
                                 {trip.driver.reviews

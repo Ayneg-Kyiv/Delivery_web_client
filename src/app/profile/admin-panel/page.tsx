@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from "next-auth/react";
 import { ApiClient } from "@/app/api-client";
 import Image from "next/image";
@@ -12,7 +13,8 @@ const withSession = (Component: React.ComponentType<any>) => {
         const session = useSession();
 
         if( session.status === 'loading' ) {
-            return <div>Loading...</div>;
+            const { messages } = useI18n();
+            return <div>{(messages as any)?.addTrip?.loading || 'Loading...'}</div>;
         }
 
         if( session.status === 'unauthenticated' ) {
@@ -25,7 +27,8 @@ const withSession = (Component: React.ComponentType<any>) => {
 
         // Only allow class components
         if (Component.prototype && Component.prototype.render) {
-            return <Component session={session} {...props} />;
+            const { messages } = useI18n();
+            return <Component session={session} t={messages} {...props} />;
         }
 
         throw new Error(
@@ -40,9 +43,9 @@ const withSession = (Component: React.ComponentType<any>) => {
 };
 
 // Example usage with a class component
-class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
+class AdminPanelPage extends React.Component<AdminPanelProps & { t: any }, AdminPanelState> {
 
-    constructor(props: AdminPanelProps) {
+    constructor(props: AdminPanelProps & { t: any }) {
         super(props);
         this.state = {
             mode: 'dashboard',
@@ -195,23 +198,24 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
     }
 
     dashboardPanelRender () {
+    const t = this.props.t?.profile?.adminPanelPage;
         return (
             <div className="flex flex-col justify-center  rounded-lg text-4xl">
                 <div className="flex flex-col justify-between md:flex-row gap-6">
                     <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
-                        <div className="text-2xl">Статті</div>
+                        <div className="text-2xl">{t?.stats?.articles}</div>
                         <div className="pt-2 text-4xl">{this.state.articlePanel.totalArticles}</div>
                     </div>
                     <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
-                        <div className="text-2xl">Користувачі</div>
+                        <div className="text-2xl">{t?.stats?.users}</div>
                         <div className="pt-2 text-4xl">{this.state.userPanel.totalUsers}</div>
                     </div>
                     <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
-                        <div className="text-2xl">Водіїв</div>
+                        <div className="text-2xl">{t?.stats?.drivers}</div>
                         <div className="pt-2 text-4xl">{this.state.driverApplicationPanel.totalApplications}</div>
                     </div>
                     <div className="flex-1 flex flex-col rounded-lg border border-line justify-between items-start bg-darker p-4">
-                        <div className="text-2xl">Активні замовлення</div>
+                        <div className="text-2xl">{t?.stats?.activeOrders}</div>
                         <div className="pt-2 text-4xl">{this.state.userPanel.activeOrders}</div>
                     </div>
                 </div>
@@ -220,12 +224,13 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
     }
 
     driverApplicationsPanelRender () {
+        const t = this.props.t?.profile?.adminPanelPage;
         return (
             <div className="flex-1 bg-lighter flex py-10 rounded-lg">
                 <div className="flex-1 flex-col w-full flex py-10 px-8">
-                    <h2 className="text-3xl font-bold mb-8">Заявки водіїв</h2>
+                    <h2 className="text-3xl font-bold mb-8">{t?.driverApps?.title}</h2>
                     {this.state.driverApplicationPanel.applications.length === 0 ? (
-                        <div className="text-xl">Немає заявок</div>
+                        <div className="text-xl">{t?.driverApps?.empty}</div>
                     ) : (
                         this.state.driverApplicationPanel.applications.map((app, idx: number) => (
                             <div key={app.id || idx} className="mt-10 flex flex-col bg-darker rounded-xl p-8">
@@ -233,30 +238,30 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                     <div className="flex-1 flex flex-row  flex flex-col items-start justify-center">
                                         <div className="flex flex-col justify-start gap-4">
                                             <div className="flex flex-col gap-2">
-                                                <p className="text-lg">Адреса електронної пошти:</p>
+                                                <p className="text-lg">{t?.driverApps?.email}</p>
                                                 <p className="text-lg">{app.email}</p>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <p className="text-lg">Тип транспортного засобу:</p>
+                                                <p className="text-lg">{t?.driverApps?.vehicleType}</p>
                                                 <p className="text-lg">{app.vehicle?.type}</p>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <p className="text-lg">Бренд:</p>
+                                                <p className="text-lg">{t?.driverApps?.brand}</p>
                                                 <p className="text-lg">{app.vehicle?.brand}</p>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <p className="text-lg">Модель:</p>
+                                                <p className="text-lg">{t?.driverApps?.model}</p>
                                                 <p className="text-lg">{app.vehicle?.model}</p>
                                             </div>
                                             <div className="flex flex-col gap-2">
-                                                <p className="text-lg">Номерний знак:</p>
+                                                <p className="text-lg">{t?.driverApps?.plate}</p>
                                                 <p className="text-lg">{app.vehicle?.numberPlate}</p>
                                             </div>
                                         </div>
                                         <div className="flex flex-col pl-8">
                                             <div className="flex flex-row gap-2">
                                                 <div className="flex-1 flex flex-col items-center gap-2 mt-2">
-                                                    <span className="text-lg">Фото водійських прав:</span>
+                                                    <span className="text-lg">{t?.driverApps?.licensePhoto}</span>
                                                     {app.driverLicenseImagePath ? (
                                                         <Image
                                                             src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.driverLicenseImagePath}
@@ -266,11 +271,11 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                             className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
                                                         />
                                                     ) : (
-                                                        <span className="text-lg">N/A</span>
+                                                        <span className="text-lg">{t?.driverApps?.notAvailable}</span>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 flex flex-col items-center gap-2 mt-2">
-                                                    <span className="text-lg">Фото профілю водія:</span>
+                                                    <span className="text-lg">{t?.driverApps?.profilePhoto}</span>
                                                     {app.imagePath   ? (
                                                         <Image
                                                             src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.imagePath}
@@ -280,13 +285,13 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                             className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
                                                         />
                                                     ) : (
-                                                        <span className="text-lg">N/A</span>
+                                                        <span className="text-lg">{t?.driverApps?.notAvailable}</span>
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="flex flex-row gap-2 mt-6">
                                                 <div className="flex-1 flex flex-col items-center gap-2 mt-2">
-                                                    <span className="text-lg">Фото авто (спереду):</span>
+                                                    <span className="text-lg">{t?.driverApps?.frontPhoto}</span>
                                                     {app.vehicle?.imagePath ? (
                                                         <Image
                                                             src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.vehicle.imagePath}
@@ -296,11 +301,11 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                             className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-200 transition-transform"
                                                         />
                                                     ) : (
-                                                        <span className="text-lg">N/A</span>
+                                                        <span className="text-lg">{t?.driverApps?.notAvailable}</span>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 flex flex-col items-center gap-2 mt-2">
-                                                    <span className="text-lg">Фото авто (ззаду):</span>
+                                                    <span className="text-lg">{t?.driverApps?.backPhoto}</span>
                                                     {app.vehicle?.imagePathBack ? (
                                                         <Image
                                                             src={(process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + app.vehicle.imagePathBack}
@@ -310,7 +315,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                             className="rounded border h-[100px] w-[120px] border-line object-cover hoover:scale-105 transition-transform"
                                                         />
                                                     ) : (
-                                                        <span className="text-lg">N/A</span>
+                                                        <span className="text-lg">{t?.driverApps?.notAvailable}</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -330,7 +335,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                             });
                                         }}
                                     >
-                                        Підтвердити
+                                        {t?.driverApps?.approve}
                                     </button>
                                     <button
                                         className="flex-1 px-4 py-2 button-type-2 rounded-lg bg-red-600 text-white"
@@ -344,7 +349,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                             });
                                         }}
                                     >
-                                    Відхилити
+                                    {t?.driverApps?.reject}
                                     </button>
                                 </div>
                             </div>
@@ -434,6 +439,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
     }
 
     articlesPanelRender () {
+        const t = this.props.t?.profile?.adminPanelPage;
         return (
                     <div className="flex-1 bg-lighter flex py-10 rounded-lg">
                         <div className='flex-1 flex-col w-full flex py-10 px-8'>
@@ -443,7 +449,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                 <div className='relative flex-1 flex rounded-lg py-4 px-4 bg-default text-2xl justify-between items-center custom-select'>
 
                                     <div onClick={() => this.setState({ articlePanel: { ...this.state.articlePanel, isAuthorOpen: !this.state.articlePanel.isAuthorOpen } })} className='flex justify-between w-full cursor-pointer'>
-                                        <div>{this.state.articlePanel.selectedAuthor || 'Всі автори'}</div>
+                                        <div>{this.state.articlePanel.selectedAuthor || t?.articlesList?.allAuthors}</div>
                                         <div>{this.state.articlePanel.isAuthorOpen ? '▲' : '▼'}</div>
                                     </div>
 
@@ -455,7 +461,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                     className="px-4 py-3 hover:bg-[#3d2a5a] flex justify-between cursor-pointer transition-colors"
                                                     onClick={() => this.setState({ articlePanel: { ...this.state.articlePanel, selectedAuthor: option || '', isAuthorOpen: false } })}
                                                 >
-                                                    <div>{option || 'Всі автори'}</div>
+                                                    <div>{option || t?.articlesList?.allAuthors}</div>
                                                     {idx === 0 &&
                                                     <div>{'▲'}</div>}
                                                 </div>
@@ -467,7 +473,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                 {/* Category Filter */}
                                 <div className='relative flex-1 flex rounded-lg py-4 px-4 bg-default text-2xl justify-between items-center custom-select'>
                                     <div onClick={() => this.setState({ articlePanel: { ...this.state.articlePanel, isCategoryOpen: !this.state.articlePanel.isCategoryOpen } })} className='flex justify-between w-full cursor-pointer'>
-                                        <div>{this.state.articlePanel.selectedCategory || 'Всі категорії'}</div>
+                                        <div>{this.state.articlePanel.selectedCategory || t?.articlesList?.allCategories}</div>
                                         <div>{'▼'}</div>
                                     </div>
 
@@ -479,7 +485,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                                     className="px-4 py-3 hover:bg-[#3d2a5a] flex justify-between cursor-pointer transition-colors"
                                                     onClick={() => this.setState({ articlePanel: { ...this.state.articlePanel, selectedCategory: option || '', isCategoryOpen: false } })}
                                                 >
-                                                    <div>{option || 'Всі категорії'}</div>
+                                                    <div>{option || t?.articlesList?.allCategories}</div>
                                                     {idx === 0 &&
                                                     <div>{'▲'}</div>}
                                                 </div>
@@ -491,7 +497,7 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
 
                                 <Link href={'/profile/admin-panel/article/create'}  
                                     className='px-6 py-4 bg-default rounded-lg text-2xl w-full lg:w-[320px]'>
-                                        Додати статтю</Link>
+                                        {t?.articlesList?.addArticle}</Link>
 
                             {this.state.articlePanel.articles.map((item, index) => (
                                 <div key={index} className='mt-10'>
@@ -507,12 +513,12 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                                         <div className='flex-1 p-4 lg:pr-14 flex flex-col items-start justify-center'>
                                             <h3 className='text-5xl font-bold pb-8'>{item.title}</h3>
                                             <p className='text-xl'>{item.content}</p>
-                                            <p className='pt-4 text-l'>Опубліковано: {item.createdAt}</p>
+                                            <p className='pt-4 text-l'>{t?.articlesList?.publishedAt}{item.createdAt}</p>
                                             <div className="flex gap-4 mt-6 w-full">
                                                 <Link href={'/profile/admin-panel/article/edit?articleId=' + item.id}
-                                                    className='flex-1 w-full px-4 py-2 button-type-2 rounded-lg'>Редагувати</Link>
+                                                    className='flex-1 w-full px-4 py-2 button-type-2 rounded-lg'>{t?.articlesList?.edit}</Link>
                                                 <button onClick={async() => await this.deleteArticle(item.id)} 
-                                                    className='flex-1 px-4 py-2 button-type-2 rounded-lg'>Видалити</button>
+                                                    className='flex-1 px-4 py-2 button-type-2 rounded-lg'>{t?.articlesList?.delete}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -591,30 +597,31 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
     render() {
 
         // Your render logic here...
+        const t = this.props.t?.profile?.adminPanelPage;
         return (
                 <div className="flex-1 flex flex-col px-8 md:px:10 lg:px-[190px] py-10">
                     <div className=" flex flex-col lg:flex-row bg-darker rounded-lg border border-line items-between lg:items-center px-8 py-10 mb-10 font-bold">
                         <div className="w-[40%] flex flex-col gap-2 mb-6 lg:mb-0">
-                            <h1 className="text-xl md:text-3xl lg:text-4xl">Адміністративна панель</h1>
-                            <p className="text-lg md:text-xl lg:text-2xl">Керування платформою</p>
+                            <h1 className="text-xl md:text-3xl lg:text-4xl">{t?.header}</h1>
+                            <p className="text-lg md:text-xl lg:text-2xl">{t?.subheader}</p>
                         </div>
 
                         <div className="flex-1 flex-col md:flex-row flex justify-center md:items-end gap-6 flex-wrap">
                             <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'dashboard' ? 'bg-lighter' : 'button-type-3'}`}
                                 onClick={() => this.setState({ mode: 'dashboard' })}>
-                                Панель приладів
+                                {t?.tabs?.dashboard}
                             </button>
                             <button className={`flex-1 py-2 px-4  rounded-lg border border-line border-[1px] ${this.state.mode === 'users' ? 'bg-lighter' : 'button-type-3'}`} 
                                 onClick={() => this.setState({ mode: 'users' })}>
-                                Користувачі
+                                {t?.tabs?.users}
                             </button>
                             <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'articles' ? 'bg-lighter' : 'button-type-3'}`} 
                                 onClick={() => this.setState({ mode: 'articles' })}>
-                                Статті
+                                {t?.tabs?.articles}
                             </button>
                             <button className={`flex-1 py-2 px-4 rounded-lg border border-line border-[1px] ${this.state.mode === 'driver-applications' ? 'bg-lighter' : 'button-type-3'}`} 
                                 onClick={() => this.setState({ mode: 'driver-applications' })}>
-                                Заявки водіїв
+                                {t?.tabs?.driverApplications}
                             </button>
                         </div>
                     </div>

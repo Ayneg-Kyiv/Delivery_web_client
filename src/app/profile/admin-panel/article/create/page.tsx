@@ -1,6 +1,7 @@
 'use client';
 
 import React from "react";
+import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ApiClient } from "@/app/api-client";
@@ -13,9 +14,10 @@ const withSession = (Component: React.ComponentType<any>) => {
     const WrappedComponent = (props: any) => {
         const session = useSession();
         const router = useRouter();
+        const { messages } = useI18n();
 
         if (session.status === 'loading') {
-            return <div>Loading...</div>;
+            return <div>{(messages as any)?.addTrip?.loading || 'Loading...'}</div>;
         }
 
         if (session.status === 'unauthenticated') {
@@ -29,7 +31,7 @@ const withSession = (Component: React.ComponentType<any>) => {
         }
 
         if (Component.prototype && Component.prototype.render) {
-            return <Component session={session} {...props} />;
+            return <Component session={session} t={messages} {...props} />;
         }
 
         throw new Error(
@@ -80,8 +82,8 @@ type CreateArticlePageState = {
     submitting: boolean;
 };
 
-class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateArticlePageState> {
-    constructor(props: CreateArticlePageProps) {
+class CreateArticlePage extends React.Component<CreateArticlePageProps & { t: any }, CreateArticlePageState> {
+    constructor(props: CreateArticlePageProps & { t: any }) {
         super(props);
         this.state = {
             article: {
@@ -166,10 +168,11 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
         const article = { ...this.state.article };
 
         // Validate main article
-        article.titleError = article.title.trim() ? '' : 'Заголовок обовʼязковий';
-        article.contentError = article.content.trim() ? '' : 'Контент обовʼязковий';
+        const labels = this.props.t?.adminArticle?.labels;
+        article.titleError = article.title.trim() ? '' : labels?.titleRequired || '';
+        article.contentError = article.content.trim() ? '' : labels?.contentRequired || '';
         if (!article.author || !article.author.trim()) {
-            alert('Автор обовʼязковий');
+            alert(labels?.authorRequired || '');
             hasError = true;
         }
         if (article.titleError || article.contentError) {
@@ -185,8 +188,8 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
             const hasImage = !!block.image;
 
             if (!hasTitle && !hasContent && !hasImage) {
-                titleError = 'Блок повинен містити заголовок, контент або зображення';
-                contentError = 'Блок повинен містити заголовок, контент або зображення';
+                titleError = labels?.blockMustContain || '';
+                contentError = labels?.blockMustContain || '';
                 hasError = true;
             }
 
@@ -239,7 +242,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 });
             }
 
-            alert("Article and blocks created successfully");
+            alert(labels?.success || '');
             location.href = '/profile/admin-panel';
 
         } catch (error) {
@@ -253,15 +256,15 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
         return (
             <div className="flex-1 bg-default flex py-10">
                 <div className="w-full flex flex-col items-center px-8">
-                    <Link href="/profile/admin-panel" className="self-start w-full md:w-[340px] p-4 bg-lighter rounded-lg mb-6 hover:underline text-center">{'<<'} Назад до панелі адміністратора</Link>
-                    <h1 className="text-4xl font-bold mb-6">Створення статті</h1>
+                    <Link href="/profile/admin-panel" className="self-start w-full md:w-[340px] p-4 bg-lighter rounded-lg mb-6 hover:underline text-center">{this.props.t?.adminArticle?.back}</Link>
+                    <h1 className="text-4xl font-bold mb-6">{this.props.t?.adminArticle?.createTitle}</h1>
                     <form className="flex flex-col gap-4 w-full max-w-7xl bg-lighter p-4 rounded-lg" onSubmit={(e) => this.createArticle(e)}>
                         <div className="flex flex-col">
                             <TextInputGroup
                                 value={this.state.article.title}
                                 onChange={(e) => this.setState({ article: { ...this.state.article, title: e.target.value } })}
                                 placeholder=""
-                                label={"Заголовок"}
+                                label={this.props.t?.adminArticle?.labels?.title}
                                 className="w-full"
                                 inputClassName={`floating-input ${this.state.article.titleError ? 'floating-input-error' : ''}`}
                                 labelClassName={`${this.state.article.title ? ' filled' : ''} ${this.state.article.titleError ? ' floating-label-error' : ''}`}
@@ -273,7 +276,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                                     article: { ...this.state.article, content: e.target.value }
                                 })}
                                 placeholder=""
-                                label="Контент"
+                                label={this.props.t?.adminArticle?.labels?.content}
                                 className="mb-4"
                                 error={!!this.state.article.contentError}
                                 minHeight="150px"
@@ -283,7 +286,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                                 value={this.state.article.category || ''}
                                 onChange={(e) => this.setState({ article: { ...this.state.article, category: e.target.value } })}
                                 placeholder=""
-                                label={"Категорія"}
+                                label={this.props.t?.adminArticle?.labels?.category}
                                 className="w-full"
                                 inputClassName={`floating-input ${this.state.article.categoryError ? 'floating-input-error' : ''}`}
                                 labelClassName={`${this.state.article.category ? ' filled' : ''} ${this.state.article.categoryError ? ' floating-label-error' : ''}`}
@@ -310,7 +313,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
 
                             {this.state.article.articleBlocks.map((block, index) => (
                                 <div key={index} className="flex flex-col border border-gray-300 rounded-lg p-4 mb-4 mt-10">
-                                    <h2 className="text-2xl font-bold mb-4">Блок {index + 1}</h2>
+                                    <h2 className="text-2xl font-bold mb-4">{(this.props.t?.adminArticle?.labels?.block || 'Block {index}').replace('{index}', String(index + 1))}</h2>
                                     { block.title !== undefined && (
                                                 <TextInputGroup
                                                     value={block.title}
@@ -321,7 +324,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                                                     }}
                                                     required={false}
                                                     placeholder=""
-                                                    label="Заголовок блоку"
+                                                    label={this.props.t?.adminArticle?.labels?.blockTitle}
                                                     className="mb-2"
                                                 />
                                             )}
@@ -337,7 +340,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                                                 }}
                                                 placeholder=""
                                                 required={false}
-                                                label="Контент блоку"
+                                                label={this.props.t?.adminArticle?.labels?.blockContent}
                                                 className="mb-2"
                                                 minHeight="100px"
                                             />)
@@ -369,12 +372,12 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                                 className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] mt-8 mb-4"
                                 onClick={this.addBlock}
                             >
-                                Додати блок
+                                {this.props.t?.adminArticle?.labels?.addBlock}
                             </button>
 
                             <input
                                 type="submit"
-                                value={this.state.submitting ? 'Зберігаємо...' : 'Створити статтю'}
+                                value={this.state.submitting ? this.props.t?.adminArticle?.labels?.saving : this.props.t?.adminArticle?.labels?.create}
                                 disabled={this.state.submitting}
                                 className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                             />

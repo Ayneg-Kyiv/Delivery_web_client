@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { regions } from '@/data/regions';
-import { monts } from '@/data/monts';
+// Removed custom month names in favor of Intl.DateTimeFormat locale formatting
 import { useI18n } from '@/i18n/I18nProvider';
 
 // HOC to inject session into class components
@@ -15,7 +15,8 @@ const withSession = (Component: React.ComponentType<any>) => {
         const session = useSession();
 
         if (session.status === 'loading') {
-            return <div>Loading...</div>;
+            // Fallback simple loader (could be replaced with skeleton)
+            return <div className="p-8 text-center">…</div>;
         }
 
         if (session.status === 'unauthenticated') {
@@ -221,14 +222,11 @@ class RequestListPage extends React.Component<any, RequestListState> {
                             >
                                 {t.buttons.find}
                             </button>
-                            {
-                                this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') &&
-                                (
-                                    <Link href={'/delivery/request/add'} className="md:ml-6 bg-white button-type-1 py-4 w-full md:w-[252px] rounded-lg font-bold flex items-center justify-center">
-                                        {t.buttons.create}
-                                    </Link>
-                                )
-                            }
+                            {this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') && (
+                                <Link href={'/delivery/request/add'} className="md:ml-6 bg-white button-type-1 py-4 w-full md:w-[252px] rounded-lg font-bold flex items-center justify-center">
+                                    {t.buttons.create}
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -260,10 +258,10 @@ class RequestListPage extends React.Component<any, RequestListState> {
                                             </div>
                                             <div className="flex flex-col gap-4  mt-2">
                                                 <span>
-                                                    {t.labels.date}: {monts.find(m => m.value === new Date(request.startLocation.dateTime).getMonth() + 1)?.name} {(new Date(request.endLocation.dateTime).getDay() !== new Date(request.startLocation.dateTime).getDay()) ? ` ${new Date(request.endLocation.dateTime).getDate()}` : '' }
+                                                    {t.labels.date}: {new Intl.DateTimeFormat(t.locale || 'uk', { month: 'long', day: 'numeric' }).format(new Date(request.startLocation.dateTime))}
                                                 </span>
                                                 <span>
-                                                    {t.labels.time}: {new Date(request.startLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} - {new Date(request.endLocation.dateTime).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                                    {t.labels.time}: {new Intl.DateTimeFormat(t.locale || 'uk', { hour: '2-digit', minute: '2-digit' }).format(new Date(request.startLocation.dateTime))} - {new Intl.DateTimeFormat(t.locale || 'uk', { hour: '2-digit', minute: '2-digit' }).format(new Date(request.endLocation.dateTime))}
                                                 </span>
                                             </div>
                             
@@ -348,8 +346,8 @@ class RequestListPage extends React.Component<any, RequestListState> {
 }
 const RequestListWithSession = withSession(RequestListPage);
 const RequestListWrapper = (props: any) => {
-    const { messages } = useI18n();
-    const t = messages.requestList;
+    const { messages, language } = useI18n();
+    const t = { ...messages.requestList, locale: language };
     return <RequestListWithSession {...props} t={t} />;
 };
 

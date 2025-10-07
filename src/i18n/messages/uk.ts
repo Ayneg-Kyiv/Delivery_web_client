@@ -50,6 +50,20 @@ const messages = {
       setDestination: "Вказати кінець",
       hintOrigin: "Натисніть на карті, щоб вказати початкову точку",
       hintDestination: "Натисніть на карті, щоб вказати кінцеву точку"
+    ,
+    reviewOrder: {
+      title: "Залишити відгук водію",
+      titleGeneric: "Залишити відгук",
+      ratingLabel: "Оцінка:",
+      starAria: "Оцінка {star}",
+      textLabel: "Текст відгуку:",
+      placeholder: "Напишіть ваш відгук...",
+      submit: "Залишити відгук",
+      submitting: "Відправка...",
+      success: "Відгук успішно створено!",
+      errorCreate: "Помилка при створенні відгуку",
+      errorNetwork: "Помилка мережі"
+    }
     }
   },
   home: {
@@ -444,6 +458,68 @@ const messages = {
     editProfile: "Редагувати профіль",
   changePassword: "Змінити пароль",
     adminPanel: "Адмін панель",
+    adminArticle: {
+      back: "<< Назад до панелі адміністратора",
+      createTitle: "Створення статті",
+      editTitle: "Редагування статті",
+      labels: {
+        title: "Заголовок",
+        content: "Контент",
+        category: "Категорія",
+        block: "Блок {index}",
+        blockTitle: "Заголовок блоку",
+        blockContent: "Контент блоку",
+        addBlock: "Додати блок",
+        saving: "Зберігаємо...",
+        create: "Створити статтю",
+        saveChanges: "Зберегти зміни",
+        authorRequired: "Автор обовʼязковий",
+        titleRequired: "Заголовок обовʼязковий",
+        contentRequired: "Контент обовʼязковий",
+        blockMustContain: "Блок повинен містити заголовок, контент або зображення",
+        success: "Статтю та блоки успішно створено"
+      }
+    },
+    adminPanelPage: {
+      header: "Адміністративна панель",
+      subheader: "Керування платформою",
+      tabs: {
+        dashboard: "Панель приладів",
+        users: "Користувачі",
+        articles: "Статті",
+        driverApplications: "Заявки водіїв"
+      },
+      stats: {
+        articles: "Статті",
+        users: "Користувачі",
+        drivers: "Водіїв",
+        activeOrders: "Активні замовлення"
+      },
+      driverApps: {
+        title: "Заявки водіїв",
+        empty: "Немає заявок",
+        email: "Адреса електронної пошти:",
+        vehicleType: "Тип транспортного засобу:",
+        brand: "Бренд:",
+        model: "Модель:",
+        plate: "Номерний знак:",
+        licensePhoto: "Фото водійських прав:",
+        profilePhoto: "Фото профілю водія:",
+        frontPhoto: "Фото авто (спереду):",
+        backPhoto: "Фото авто (ззаду):",
+        approve: "Підтвердити",
+        reject: "Відхилити",
+        notAvailable: "N/A"
+      },
+      articlesList: {
+        addArticle: "Додати статтю",
+        publishedAt: "Опубліковано: ",
+        edit: "Редагувати",
+        delete: "Видалити",
+        allAuthors: "Всі автори",
+        allCategories: "Всі категорії"
+      }
+    },
     tabs: {
       profile: "Профіль",
       trips: "Мої поїздки",
@@ -1007,6 +1083,23 @@ const messages = {
     subtitle: "Ваш новий пароль збережено. Тепер ви можете увійти до свого облікового запису з новим паролем.",
     goToSignIn: "Перейти до сторінки входу"
   },
+  confirmEmail: {
+    confirming: "Підтверджуємо вашу електронну адресу...",
+    successTitle: "Ваш обліковий запис підтверджено",
+    successBody: "Ваш email успішно підтверджено. Тепер ви можете увійти до свого облікового запису.",
+    loginButton: "Увійти",
+    becomeDriver: "Стати водієм",
+    errorTitle: "Щось пішло не так",
+    errorBody: "Виникла помилка під час підтвердження вашої електронної адреси. Будь ласка, спробуйте ще раз.",
+    resendButton: "Надіслати підтвердження ще раз",
+    resentTitle: "Перевірте вашу пошту",
+    resentBody: "Ми надіслали вам нове посилання для підтвердження електронної адреси. Будь ласка, перевірте вашу пошту.",
+    resentSuccess: "Лист з підтвердженням повторно надіслано!",
+    resendFailed: "Не вдалося повторно надіслати лист підтвердження.",
+    confirmFailed: "Не вдалося підтвердити email.",
+    invalidLinkTitle: "Некоректне посилання підтвердження",
+    invalidLinkBody: "Посилання для підтвердження недійсне або відсутні потрібні параметри."
+  },
   forgotPasswordConfirmation: {
     title: "{email} Перевірте вашу пошту",
     subtitle: "Якщо обліковий запис з цією електронною адресою існує, ми надіслали вам лист з посиланням для скидання паролю.",
@@ -1156,6 +1249,7 @@ const messages = {
   }
   ,
   addTrip: {
+    loading: "Завантаження...",
     title: "Оформлення маршруту",
     map: {
       title: "Виберіть точки на карті",
@@ -1203,6 +1297,7 @@ const messages = {
   }
   ,
   addRequest: {
+    loading: "Завантаження...",
     title: "Створити запит на доставку",
     map: {
       title: "Виберіть точки на карті",

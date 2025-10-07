@@ -56,7 +56,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (!emailRegex.test(email) && email.length > 0) {
-            this.setState({ error: this.props.t?.forgotPassword?.invalidEmail ?? 'Please enter a valid email address.', success: undefined });
+            this.setState({ error: this.props.t?.forgotPassword?.invalidEmail, success: undefined });
             return;
         }
         
@@ -69,14 +69,14 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
                 this.props.router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
             } else {
             this.setState({
-                error: this.props.t?.forgotPassword?.genericError ?? `Something went wrong. Please try again.`,
+                error: this.props.t?.forgotPassword?.genericError,
                 success: undefined,
                 loading: false,
             });
             }
         } catch (err) {
             this.setState({
-                error: this.props.t?.forgotPassword?.genericError ?? `Something went wrong. Please try again.`,
+                error: this.props.t?.forgotPassword?.genericError,
                 success: undefined,
                 loading: false,
             });
@@ -90,14 +90,14 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
                 <form className='flex-1 flex flex-col items-center h-full justify-stretch' onSubmit={this.handleSubmit}>
 
                     <div className="flex-1 w-full max-w-[500px] flex flex-col items-center mb-[30px]">
-                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt ?? 'Logo'} width={215} height={60} className='mb-2'/>
+                        <Image src='/logo/Logo.png' alt={t?.nav?.logoAlt || 'Logo'} width={215} height={60} className='mb-2'/>
                         
                         <h1 className="font-title-2 text-[length:var(--title-2-font-size)] tracking-[var(--title-2-letter-spacing)] leading-[var(--title-2-line-height)] mb-4 text-center">
-                            {t?.forgotPassword?.title ?? 'Forgot your password?'}
+                            {t?.forgotPassword?.title}
                         </h1>
 
                         <p className='md:pt-2 font-subtitle-3 font-[number:var(--subtitle-3-font-weight)] text-[#e4e4e4] text-[length:var(--subtitle-3-font-size)] text-center tracking-[var(--subtitle-3-letter-spacing)] leading-[var(--subtitle-3-line-height)] [font-style:var(--subtitle-3-font-style)]'>
-                            {t?.forgotPassword?.subtitle ?? "Enter your email address and we'll send you a link to reset your password."}
+                            {t?.forgotPassword?.subtitle}
                         </p>
                     </div>
 
@@ -105,7 +105,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 
                         <div className="space-y-5 flex flex-col">
                             <TextInputGroup
-                                label={t?.forgotPassword?.emailLabel ?? 'E-mail'}
+                                label={t?.forgotPassword?.emailLabel || ''}
                                 value={this.state.email}
                                 onChange={this.handleEmailChange}
                                 type="email"
@@ -118,17 +118,17 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
                             <div className={`flex flex-row items-center ${this.state.error ? '' : 'hidden'}`}>
                                 <Image src='/ErrorVector1.png' alt="Lock Icon" width={6} height={6} className='h-[24px] w-[24px] mr-[20px]'/>
                                 <p className='text-[#ED2B2B]'>
-                                    {this.state.error ?? t?.forgotPassword?.emailNotFound ?? "We couldn't find an account with that email."}
+                                    {this.state.error ?? t?.forgotPassword?.emailNotFound}
                                 </p>
                             </div>
                         </div>
 
-                        <input type="submit" value={t?.forgotPassword?.submitButton ?? 'Send reset link'}
+                        <input type="submit" value={t?.forgotPassword?.submitButton}
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)]"
                         />
 
                         <div className="flex flex-col font-body-2 text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
-                            <Button onClick={() => this.props.router?.push('/signin')} text={t?.forgotPassword?.backToLogin ?? 'Back to sign in'}
+                            <Button onClick={() => this.props.router?.push('/signin')} text={t?.forgotPassword?.backToLogin}
                                 className="p-0 h-auto font-body-2 text-[#2892f6] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)] hover:underline"
                             />
                         </div>

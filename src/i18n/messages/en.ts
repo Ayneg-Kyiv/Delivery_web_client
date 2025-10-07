@@ -412,6 +412,68 @@ const messages = {
         editProfile: "Edit profile",
         changePassword: "Change password",
         adminPanel: "Admin panel",
+        adminArticle: {
+          back: "<< Back to admin panel",
+          createTitle: "Create article",
+          editTitle: "Edit article",
+          labels: {
+            title: "Title",
+            content: "Content",
+            category: "Category",
+            block: "Block {index}",
+            blockTitle: "Block title",
+            blockContent: "Block content",
+            addBlock: "Add block",
+            saving: "Saving...",
+            create: "Create article",
+            saveChanges: "Save changes",
+            authorRequired: "Author is required",
+            titleRequired: "Title is required",
+            contentRequired: "Content is required",
+            blockMustContain: "Block must contain a title, content or image",
+            success: "Article and blocks created successfully"
+          }
+        },
+        adminPanelPage: {
+          header: "Administrative panel",
+          subheader: "Platform management",
+          tabs: {
+            dashboard: "Dashboard",
+            users: "Users",
+            articles: "Articles",
+            driverApplications: "Driver applications"
+          },
+          stats: {
+            articles: "Articles",
+            users: "Users",
+            drivers: "Drivers",
+            activeOrders: "Active orders"
+          },
+          driverApps: {
+            title: "Driver applications",
+            empty: "No applications",
+            email: "Email address:",
+            vehicleType: "Vehicle type:",
+            brand: "Brand:",
+            model: "Model:",
+            plate: "Number plate:",
+            licensePhoto: "Driver license photo:",
+            profilePhoto: "Driver profile photo:",
+            frontPhoto: "Vehicle photo (front):",
+            backPhoto: "Vehicle photo (back):",
+            approve: "Approve",
+            reject: "Reject",
+            notAvailable: "N/A"
+          },
+          articlesList: {
+            addArticle: "Add article",
+            publishedAt: "Published: ",
+            edit: "Edit",
+            delete: "Delete",
+            allAuthors: "All authors",
+            allCategories: "All categories"
+          }
+        },
         tabs: {
           profile: "Profile",
           trips: "My trips",
@@ -980,6 +1042,23 @@ const messages = {
     subtitle: "Your new password has been saved. You can now sign in with your new password.",
     goToSignIn: "Go to sign in page"
   },
+  confirmEmail: {
+    confirming: "Confirming your email...",
+    successTitle: "Your account has been confirmed",
+    successBody: "Your email has been confirmed. You can now sign in to your account.",
+    loginButton: "Sign in",
+    becomeDriver: "Become a driver",
+    errorTitle: "Something went wrong",
+    errorBody: "An error occurred while confirming your email. Please try again.",
+    resendButton: "Resend confirmation email",
+    resentTitle: "Check your email",
+    resentBody: "We've sent you a new confirmation link. Please check your email.",
+    resentSuccess: "Confirmation email resent successfully!",
+    resendFailed: "Failed to resend confirmation email.",
+    confirmFailed: "Failed to confirm email.",
+    invalidLinkTitle: "Invalid confirmation link",
+    invalidLinkBody: "The confirmation link is invalid or missing required parameters."
+  },
   forgotPasswordConfirmation: {
     title: "{email} Check your email",
     subtitle: "If an account with this email exists, we have sent you a link to reset your password.",
@@ -1129,6 +1208,7 @@ const messages = {
   }
   ,
   addTrip: {
+    loading: "Loading...",
     title: "Create a route",
     map: {
       title: "Select points on the map",
@@ -1176,6 +1256,7 @@ const messages = {
   }
   ,
   addRequest: {
+    loading: "Loading...",
     title: "Create delivery request",
     map: {
       title: "Select points on the map",
@@ -1354,6 +1435,20 @@ const messages = {
       },
       currency: "UAH"
     }
+  }
+  ,
+  reviewOrder: {
+    title: "Leave a review for the driver",
+    titleGeneric: "Leave a review",
+    ratingLabel: "Rating:",
+    starAria: "Rating {star}",
+    textLabel: "Review text:",
+    placeholder: "Write your review...",
+    submit: "Submit review",
+    submitting: "Submitting...",
+    success: "Review created successfully!",
+    errorCreate: "Error creating review",
+    errorNetwork: "Network error"
   }
 };
 
