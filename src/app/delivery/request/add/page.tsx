@@ -82,6 +82,7 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 			receiverPhoneNumber: '',
 			comment: '',
 			submitting: false,
+			showManualAddress: false,
 		};
 	}
 
@@ -204,18 +205,48 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 				<div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff]  max-w-[540px]'>
 					<h1 className='text-2xl font-bold py-3 text-[#724C9D]'>{t?.title}</h1>
 					<form className="w-full max-w-lg mt-6" onSubmit={this.handleSubmit}>
-						{/* Map Selection */}
-                        <div className="mb-8">
-							<h2 className="text-xl font-semibold mb-4 text-black">{t?.map.title}</h2>
-                            <DeliveryMapToSelect
-                                startLocation={this.state.startLocation}
-                                endLocation={this.state.endLocation}
-                                onStartLocationSelect={this.handleStartLocationSelect}
-                                onEndLocationSelect={this.handleEndLocationSelect}
-                                className="w-full h-[350px] mb-4"
-                            />
-							<div className="text-sm text-gray-500">{t?.map.hint}</div>
-                        </div>
+							{/* Map / Manual Selection */}
+							<div className="mb-8">
+								<h2 className="text-xl font-semibold mb-4 text-black flex items-center justify-between">
+									<span>{t?.map.title}</span>
+									<button type="button" onClick={() => this.setState({ showManualAddress: !this.state.showManualAddress })} className="text-sm text-[#724C9D] underline hover:opacity-80">
+										{this.state.showManualAddress ? t?.addressManual?.toggleOff : t?.addressManual?.toggleOn}
+									</button>
+								</h2>
+								{this.state.showManualAddress ? (
+									<div className="space-y-6">
+										{/* Start Address Manual */}
+										<div>
+											<h3 className="font-semibold mb-2 text-black">{t?.addressManual?.startTitle}</h3>
+											<TextInputGroup label={t?.addressManual?.country || ''} value={this.state.startLocation.country} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.country ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.state || ''} value={this.state.startLocation.state} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, state: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.state ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.city || ''} value={this.state.startLocation.city} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.city ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.address || ''} value={this.state.startLocation.address} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.address ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.houseNumber || ''} value={this.state.startLocation.houseNumber} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, houseNumber: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.houseNumber ? 'filled' : ''} />
+										</div>
+										{/* End Address Manual */}
+										<div>
+											<h3 className="font-semibold mb-2 text-black">{t?.addressManual?.endTitle}</h3>
+											<TextInputGroup label={t?.addressManual?.country || ''} value={this.state.endLocation.country} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.country ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.state || ''} value={this.state.endLocation.state} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, state: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.state ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.city || ''} value={this.state.endLocation.city} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.city ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.address || ''} value={this.state.endLocation.address} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.address ? 'filled' : ''} />
+											<TextInputGroup label={t?.addressManual?.houseNumber || ''} value={this.state.endLocation.houseNumber} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, houseNumber: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.houseNumber ? 'filled' : ''} />
+										</div>
+									</div>
+								) : (
+									<>
+										<DeliveryMapToSelect
+											startLocation={this.state.startLocation}
+											endLocation={this.state.endLocation}
+											onStartLocationSelect={this.handleStartLocationSelect}
+											onEndLocationSelect={this.handleEndLocationSelect}
+											className="w-full h-[350px] mb-4"
+										/>
+										<div className="text-sm text-gray-500">{t?.map.hint}</div>
+									</>
+								)}
+							</div>
 						{/* Start Location */}
 						<div className="mb-6">
 							<h2 className="text-xl font-semibold mb-4 text-black">{t?.pickup.sectionTitle}</h2>

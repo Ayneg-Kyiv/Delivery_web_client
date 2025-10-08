@@ -1262,6 +1262,17 @@ const messages = {
       title: "Select points on the map",
       hint: "Click \"Set start\" or \"Set end\", then choose a point on the map."
     },
+    addressManual: {
+      toggleOn: "Enter addresses manually",
+      toggleOff: "Select on map instead",
+      startTitle: "Pickup address",
+      endTitle: "Delivery address",
+      country: "Country",
+      state: "State / Region",
+      city: "City",
+      address: "Street",
+      houseNumber: "House number"
+    },
     pickup: {
       sectionTitle: "Pickup date and time",
       dateLabel: "Date",
