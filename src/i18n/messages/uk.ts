@@ -893,6 +893,7 @@ const messages = {
       find: "Знайти запит",
       create: "Створити запит",
       details: "Деталі",
+      select: "Обрати",
     },
     labels: {
       departure: "відправка",
@@ -906,6 +907,8 @@ const messages = {
       comment: "Коментар",
       date: "Дата",
       time: "Час",
+      reviews: "відгуків",
+      superDriver: "Суперводій",
     },
     currency: "грн",
     priceNotSpecified: "Ціна не вказана",
@@ -1254,6 +1257,17 @@ const messages = {
     map: {
       title: "Виберіть точки на карті",
       hint: "Натисніть \"Вказати початок\" або \"Вказати кінець\", потім виберіть точку на карті."
+    },
+    addressManual: {
+      toggleOn: "Ввести адреси вручну",
+      toggleOff: "Обрати на карті",
+      startTitle: "Початкова адреса",
+      endTitle: "Кінцева адреса",
+      country: "Країна",
+      state: "Область / Регіон",
+      city: "Місто",
+      address: "Вулиця",
+      houseNumber: "Номер будинку"
     },
     start: {
       dateLabel: "Дата виїзду",

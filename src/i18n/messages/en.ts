@@ -851,6 +851,7 @@ const messages = {
       find: "Find request",
       create: "Create request",
       details: "Details",
+      select: "Select",
     },
     labels: {
       departure: "departure",
@@ -864,6 +865,8 @@ const messages = {
       comment: "Comment",
       date: "Date",
       time: "Time",
+      reviews: "reviews",
+      superDriver: "Super driver",
     },
     currency: "UAH",
     priceNotSpecified: "Price not specified",
@@ -1213,6 +1216,17 @@ const messages = {
     map: {
       title: "Select points on the map",
       hint: "Click \"Set start\" or \"Set end\", then choose a point on the map."
+    },
+    addressManual: {
+      toggleOn: "Enter addresses manually",
+      toggleOff: "Select on map instead",
+      startTitle: "Start address",
+      endTitle: "End address",
+      country: "Country",
+      state: "State / Region",
+      city: "City",
+      address: "Street",
+      houseNumber: "House number"
     },
     start: {
       dateLabel: "Departure date",

@@ -231,76 +231,88 @@ class RequestListPage extends React.Component<any, RequestListState> {
                     </div>
                 </div>
             </div>
-                <div className='w-fullflex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
+                <div className='w-full flex flex-col gap-8 px-4 md:px-10 lg:px-20 py-10'>
                     {/* Requests List */}
-                    <div className="w-fullflex flex-col gap-6">
+                    <div className="w-full flex flex-col gap-4">
                         {loading ? (
                             <div className="text-white text-center py-20">{t.loading}</div>
                         ) : requests.length === 0 ? (
                             <div className="text-white text-center py-20">{t.empty}</div>
                         ) : (
-                            requests.map(request => (
-                                <div key={request.id} className="bg-white text-black w-full rounded-xl flex flex-col md:flex-row  items-center mb-10 p-4 shadow-lg">
-                                    <div className="w-full lg:max-w-[300px] flex flex-col items-center justify-center md:mr-6 pb-10 md:pb-0">
+                            requests.map(request => {
+                                const locale = t.locale || 'uk';
+                                const startDate = new Date(request.startLocation.dateTime);
+                                const endDate = new Date(request.endLocation.dateTime);
+                                const dateLabel = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(startDate);
+                                const timeFrom = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(startDate);
+                                const timeTo = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(endDate);
+                                const rating = request.sender?.rating;
+                                const isSuper = rating && rating >= 4.8;
+                                const reviewsCount: any = (request as any).sender?.reviewsCount; // optional
+                                return (
+                                <div key={request.id} className="border border-[#724C9D] rounded-2xl bg-white text-black flex flex-col md:flex-row flex-wrap md:flex-nowrap items-stretch p-3 md:p-4 gap-4 shadow-sm hover:shadow-md transition-shadow">
+                                    {/* Thumbnail */}
+                                    <div className="flex-shrink-0 order-1">
                                         <Image
                                             src={regions.find(r=> r.name === request.startLocation.state)?.image || '/regions/Kyivska.jpg'}
-                                            alt={request.sender?.name || request.senderName}
-                                            width={220}
-                                            height={400}
-                                            className="w-full  rounded-lg object-cover"
+                                            alt={`${request.startLocation.city} - ${request.endLocation.city}`}
+                                            width={120}
+                                            height={120}
+                                            className="w-[120px] h-[120px] object-cover rounded-lg"
                                         />
                                     </div>
-
-                                    <div className="w-full pb-10 md:pb-0 flex-1 flex flex-col md:flex-row gap-2 md:px-6">
-                                        <div className='flex-1 flex flex-col'>
-                                            <div className="flex gap-2 self-center items-center  text-lg font-bold">
-                                                {request.startLocation.city} - {request.endLocation.city}
-                                            </div>
-                                            <div className="flex flex-col gap-4  mt-2">
-                                                <span>
-                                                    {t.labels.date}: {new Intl.DateTimeFormat(t.locale || 'uk', { month: 'long', day: 'numeric' }).format(new Date(request.startLocation.dateTime))}
-                                                </span>
-                                                <span>
-                                                    {t.labels.time}: {new Intl.DateTimeFormat(t.locale || 'uk', { hour: '2-digit', minute: '2-digit' }).format(new Date(request.startLocation.dateTime))} - {new Intl.DateTimeFormat(t.locale || 'uk', { hour: '2-digit', minute: '2-digit' }).format(new Date(request.endLocation.dateTime))}
-                                                </span>
-                                            </div>
-                            
-                                            <div className="flex flex-col md:flex-row gap-2 items-start  mt-4">
-                                                <span>{t.labels.cargo}: {request.objectName}</span>
-                                                <span>{t.labels.type}: {request.cargoSlotType}</span>
-                                                <span>{t.labels.weight}: {request.objectWeight} {t.labels.kg}</span>
-                                            </div>
+                                    {/* Route & Time */}
+                                    <div className="flex flex-col justify-center flex-[1_1_180px] order-2 md:order-2 min-w-[160px]">
+                                        <div className="font-semibold text-base md:text-lg mb-2 truncate">
+                                            {request.startLocation.city}–{request.endLocation.city}
                                         </div>
-
-                                        <div className='flex flex-col items-center self-center md:self-start px-4'>
-                                            <div className='flex flex-col lg:flex-row  items-center gap-2 md:gap-1'>
-                                                <Image
-                                                    src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
-                                                    alt={request.sender?.name || request.senderName}
-                                                    width={40}
-                                                    height={40}
-                                                    className="rounded-full object-cover"
-                                                    />
-                                                <span className=" text-x mt-2">{request.sender?.name || request.senderName}</span>
-                                            </div>
-                                            {request.sender?.rating && (
-                                                <span className="text-yellow-400">★ {request.sender.rating.toFixed(1)}</span>
-                                            )} 
+                                        <div className="flex items-center text-sm gap-2">
+                                            {/* calendar icon */}
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#724C9D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                            <span className="truncate">{dateLabel}</span>
+                                        </div>
+                                        <div className="flex items-center text-sm gap-2 mt-1">
+                                            {/* clock icon */}
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#724C9D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            <span>{timeFrom}–{timeTo}</span>
                                         </div>
                                     </div>
-                                    <div className="w-full md:w-[30%] lg:w-[25%] flex flex-col items-end gap-2">
-                                        <div className="w-full bg-[#7c3aed] px-4 py-2 rounded-lg font-bold text-xl">
-                                            {request.estimatedPrice ? `${request.estimatedPrice} ${t.currency}` : t.priceNotSpecified}
+                                    {/* Sender */}
+                                    <div className="flex flex-col justify-center flex-[1_1_160px] order-4 md:order-3 min-w-[150px]">
+                                        <div className="flex items-center gap-3">
+                                            <Image
+                                                src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
+                                                alt={request.sender?.name || request.senderName}
+                                                width={48}
+                                                height={48}
+                                                className="rounded-full object-cover w-12 h-12"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="font-medium text-sm md:text-base leading-tight">{request.sender?.name || request.senderName}</span>
+                                                {isSuper && <span className="text-[11px] text-[#724C9D] font-semibold">{t.labels.superDriver}</span>}
+                                            </div>
                                         </div>
-                                        <div className="text-s">{t.priceDisclaimer}</div>
+                                        <div className="flex flex-wrap items-center gap-1 mt-2 text-xs text-gray-600">
+                                            <span className="text-[#F5B400] font-medium">{rating ? rating.toFixed(1) : '0'}</span>
+                                            <span className="text-[#F5B400] tracking-tight">★★★★★</span>
+                                            {reviewsCount != null && <span className="text-gray-500">{reviewsCount} {t.labels.reviews}</span>}
+                                        </div>
+                                    </div>
+                                    {/* Price & Action (wraps on small screens) */}
+                                    <div className="flex flex-col items-end justify-start flex-[1_1_140px] order-3 md:order-4 min-w-[140px]">
+                                        <div className="flex items-center gap-1 font-semibold text-base md:text-lg flex-wrap">
+                                            <span className="whitespace-nowrap">{request.estimatedPrice ? `${request.estimatedPrice} ${t.currency}` : t.priceNotSpecified}</span>
+                                            <span title={t.priceDisclaimer} className="text-[#724C9D] cursor-help select-none">ⓘ</span>
+                                        </div>
+                                        <div className="text-[10px] text-gray-500 leading-tight mt-1 mb-2 max-w-[200px] text-right md:text-right break-words">{t.priceDisclaimer}</div>
                                         {this.props.session.status === 'authenticated' && this.props.session.data.user.roles.includes('User') && (
-                                            <Link href={`/delivery/request/${request.id}`} className='w-full'>
-                                                <button className="w-full button-type-2 px-6 py-2 rounded-lg font-bold mt-2">{t.buttons.details}</button>
+                                            <Link href={`/delivery/request/${request.id}`} className='w-full flex justify-end mt-auto'>
+                                                <button className="w-full md:w-[200px] px-6 py-2 rounded-lg font-semibold bg-[#724C9D] text-white hover:bg-[#5d3b80] transition-colors text-sm">{t.buttons.select || t.buttons.details}</button>
                                             </Link>
                                         )}
                                     </div>
                                 </div>
-                            ))
+                            );})
                         )}
                         {/* Pagination */}
                         {totalPages > 1 && (

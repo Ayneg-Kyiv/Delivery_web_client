@@ -102,6 +102,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
             vehicleId: '',
             vehicles: [],
             loadingVehicles: true,
+            showManualAddress: false,
         };
     }
 
@@ -280,15 +281,43 @@ class AddTripPage extends React.Component<any, AddTripState> {
                             <h2 className="text-xl font-semibold mb-4 text-black"></h2>
 
                             <div className="mb-8">
-                                <h2 className="text-xl font-semibold mb-4 text-black">{t?.map.title}</h2>
-                                <DeliveryMapToSelect
-                                    startLocation={this.state.startLocation}
-                                    endLocation={this.state.endLocation}
-                                    onStartLocationSelect={this.handleStartLocationSelect}
-                                    onEndLocationSelect={this.handleEndLocationSelect}
-                                    className="w-full h-[350px] mb-4"
-                                />
-                                <div className="text-sm text-gray-500">{t?.map.hint}</div>
+                                <h2 className="text-xl font-semibold mb-4 text-black flex items-center justify-between">
+                                    <span>{t?.map.title}</span>
+                                    <button type="button" onClick={() => this.setState({ showManualAddress: !this.state.showManualAddress })} className="text-sm text-[#724C9D] underline hover:opacity-80">
+                                        {this.state.showManualAddress ? t?.addressManual?.toggleOff : t?.addressManual?.toggleOn}
+                                    </button>
+                                </h2>
+                                {this.state.showManualAddress ? (
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h3 className="font-semibold mb-2 text-black">{t?.addressManual?.startTitle}</h3>
+                                            <TextInputGroup label={t?.addressManual?.country || ''} value={this.state.startLocation.country} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.country ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.state || ''} value={this.state.startLocation.state} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, state: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.state ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.city || ''} value={this.state.startLocation.city} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.city ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.address || ''} value={this.state.startLocation.address} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.address ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.houseNumber || ''} value={this.state.startLocation.houseNumber} onChange={e => this.setState({ startLocation: { ...this.state.startLocation, houseNumber: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.startLocation.houseNumber ? 'filled' : ''} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold mb-2 text-black">{t?.addressManual?.endTitle}</h3>
+                                            <TextInputGroup label={t?.addressManual?.country || ''} value={this.state.endLocation.country} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, country: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.country ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.state || ''} value={this.state.endLocation.state} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, state: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.state ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.city || ''} value={this.state.endLocation.city} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, city: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.city ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.address || ''} value={this.state.endLocation.address} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, address: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.address ? 'filled' : ''} />
+                                            <TextInputGroup label={t?.addressManual?.houseNumber || ''} value={this.state.endLocation.houseNumber} onChange={e => this.setState({ endLocation: { ...this.state.endLocation, houseNumber: e.target.value } })} inputClassName="floating-input-black" labelClassName={this.state.endLocation.houseNumber ? 'filled' : ''} />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <DeliveryMapToSelect
+                                            startLocation={this.state.startLocation}
+                                            endLocation={this.state.endLocation}
+                                            onStartLocationSelect={this.handleStartLocationSelect}
+                                            onEndLocationSelect={this.handleEndLocationSelect}
+                                            className="w-full h-[350px] mb-4"
+                                        />
+                                        <div className="text-sm text-gray-500">{t?.map.hint}</div>
+                                    </>
+                                )}
                             </div>
                             
                             <div className='h-[2px] bg-lighter rounded-sm my-4 mb-6'></div>
