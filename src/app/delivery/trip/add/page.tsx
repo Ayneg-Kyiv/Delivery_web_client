@@ -266,7 +266,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
     render() {
         const t = (this.props as any).t?.addTrip;
         return (
-            <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
+            <div className="flex flex-col w-full justify-center items-center min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
                 <div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff] max-w-[540px]'>
                     <h1 className='text-2xl font-bold py-3 text-[#724C9D]'>
                         {t?.title || 'Оформлення маршруту'}

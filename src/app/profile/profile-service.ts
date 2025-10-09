@@ -23,12 +23,12 @@ export class ProfileService {
     try {
       // Transform the data to match the API format (lowercase keys)
       const apiData = {
-        email: userData.Email,
-        firstName: userData.FirstName,
-        middleName: userData.MiddleName,
-        lastName: userData.LastName,
-        dateOfBirth: userData.DateOfBirth,
-        aboutMe: userData.AboutMe
+        email: userData.email,
+        firstName: userData.firstName,
+        middleName: userData.middleName,
+        lastName: userData.lastName,
+        dateOfBirth: userData.dateOfBirth,
+        aboutMe: userData.aboutMe
       };
 
   // NOTE: Do NOT prefix with /api here; base URL (NEXT_PUBLIC_API_URL) already includes /api.

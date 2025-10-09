@@ -1,5 +1,6 @@
 'use server';
 
+import { encrypt } from '@/utils/aes';
 import axios, { AxiosRequestConfig } from 'axios';
 import https from 'https';
 import { cookies } from 'next/headers';
@@ -62,13 +63,13 @@ async function getCsrfTokenSync() {
   return csrf;
 }
 
-export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string) {
+export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string, secure: boolean = false) {
 
   const csrfToken = await getCsrfTokenSync();
   console.log('CSRF Token:', csrfToken);
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    'Content-Type': (secure ? 'application/octet-stream' : 'application/json'),
     'Accept': 'application/json',
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
@@ -80,10 +81,7 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
     ),
   };
 
-
-  console.log('Token:', token);
   if (token) headers['Authorization'] = `Bearer ${token}`;
-
 
   if (csrfToken) headers['X-XSRF-TOKEN'] = csrfToken;
 
@@ -98,6 +96,11 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
   }
   const finalUrl = rawBase + path;
 
+  if(secure) {
+    var encryptedPayload = encrypt(JSON.stringify(config.data || {}));
+    config.data = encryptedPayload;
+  }
+  
   try {
     const response = await axios({
       url: finalUrl,
