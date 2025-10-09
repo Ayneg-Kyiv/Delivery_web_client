@@ -1,5 +1,6 @@
 'use server';
 
+import { encrypt } from '@/utils/aes';
 import axios, { AxiosRequestConfig } from 'axios';
 import https from 'https';
 import { cookies } from 'next/headers';
@@ -62,13 +63,13 @@ async function getCsrfTokenSync() {
   return csrf;
 }
 
-export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string) {
+export async function apiRequest<T = any>(url: string, config: AxiosRequestConfig = {}, token?: string, secure: boolean = false) {
 
   const csrfToken = await getCsrfTokenSync();
   console.log('CSRF Token:', csrfToken);
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    'Content-Type': (secure ? 'application/octet-stream' : 'application/json'),
     'Accept': 'application/json',
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
@@ -80,10 +81,7 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
     ),
   };
 
-
-  console.log('Token:', token);
   if (token) headers['Authorization'] = `Bearer ${token}`;
-
 
   if (csrfToken) headers['X-XSRF-TOKEN'] = csrfToken;
 
@@ -98,6 +96,11 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
   }
   const finalUrl = rawBase + path;
 
+  if (secure) {
+    const encryptedPayload = encrypt(JSON.stringify(config.data || {}));
+    config.data = encryptedPayload;
+  }
+  
   try {
     const response = await axios({
       url: finalUrl,
@@ -121,18 +124,18 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
 }
 
 // Convenience methods
-export async function apiGet<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'get' }, token);
+export async function apiGet<T = any>(url: string, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'get' }, token, secure);
 }
 
-export async function apiPost<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'post', data }, token);
+export async function apiPost<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'post', data }, token, secure);
 }
 
-export async function apiPut<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'put', data }, token);
+export async function apiPut<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'put', data }, token, secure);
 }
 
-export async function apiDelete<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'delete' }, token);
+export async function apiDelete<T = any>(url: string, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'delete' }, token, secure);
 }

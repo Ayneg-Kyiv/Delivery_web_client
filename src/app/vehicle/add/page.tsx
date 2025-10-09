@@ -38,6 +38,7 @@ const withSession = (Component: React.ComponentType<any>) => {
     WrappedWithSession.displayName = `withSession(${Component.displayName || Component.name || 'Component'})`;
     return WrappedWithSession;
 };
+
 class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
     constructor(props: AddVehicleProps) {
         super(props);

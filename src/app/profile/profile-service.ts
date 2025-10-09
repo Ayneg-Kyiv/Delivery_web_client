@@ -23,17 +23,17 @@ export class ProfileService {
     try {
       // Transform the data to match the API format (lowercase keys)
       const apiData = {
-        email: userData.Email,
-        firstName: userData.FirstName,
-        middleName: userData.MiddleName,
-        lastName: userData.LastName,
-        dateOfBirth: userData.DateOfBirth,
-        aboutMe: userData.AboutMe
+        email: userData.email,
+        firstName: userData.firstName,
+        middleName: userData.middleName,
+        lastName: userData.lastName,
+        dateOfBirth: userData.dateOfBirth,
+        aboutMe: userData.aboutMe
       };
 
   // NOTE: Do NOT prefix with /api here; base URL (NEXT_PUBLIC_API_URL) already includes /api.
   // ApiClient will also de-duplicate if both are present, but we keep paths clean.
-  const response = await apiPut<ApiResponse>('/Account/change-user-data', apiData, {} , token);
+  const response = await apiPut<ApiResponse>('/Account/change-user-data', apiData, {} , token, true);
       return response;
     } catch (error: any) {
       console.error('Error changing user data:', error);
@@ -107,7 +107,7 @@ export class ProfileService {
       const payload = { email, currentPassword, newPassword };
   const response = await apiPut<any>('/Account/change-password', payload, {
         headers: { 'Content-Type': 'application/json', 'Accept': '*/*' },
-      }, token);
+      }, token, true);
       return response;
     } catch (error: any) {
       console.error('Error changing password:', error);

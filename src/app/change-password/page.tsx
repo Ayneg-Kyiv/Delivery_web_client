@@ -40,7 +40,7 @@ export default function ChangePasswordPage(): React.JSX.Element {
     if (v) { setError(v); return; }
     setSubmitting(true);
     try {
-      const res = await ProfileService.changePassword(email, passwords.current, passwords.new, session?.accessToken || undefined);
+      const res = await ProfileService.changePassword(email, passwords.current, passwords.new, session?.accessToken || undefined,);
       const ok = (res?.Success ?? res?.success ?? false) as boolean;
       const msg = (res?.Message ?? res?.message ?? t.changePassword.successDefault) as string;
       if (ok) {
