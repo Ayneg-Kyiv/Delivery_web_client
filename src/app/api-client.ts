@@ -96,8 +96,8 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
   }
   const finalUrl = rawBase + path;
 
-  if(secure) {
-    var encryptedPayload = encrypt(JSON.stringify(config.data || {}));
+  if (secure) {
+    const encryptedPayload = encrypt(JSON.stringify(config.data || {}));
     config.data = encryptedPayload;
   }
   
