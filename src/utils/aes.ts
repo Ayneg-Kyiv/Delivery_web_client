@@ -1,7 +1,15 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
 
-const key = Buffer.from('Your32CharLongEncryptionKey!123456', 'utf-8'); // 32 bytes for AES-256
-const iv = Buffer.from('16CharInitVector!', 'utf-8'); // 16 bytes for AES
+if (!process.env.AES_ENCRYPTION_KEY) {
+  throw new Error('AES_ENCRYPTION_KEY environment variable is not set');
+}
+
+if (!process.env.AES_INIT_VECTOR) {
+  throw new Error('AES_INIT_VECTOR environment variable is not set');
+}
+
+const key = Buffer.from(process.env.AES_ENCRYPTION_KEY, 'utf-8'); // 32 bytes for AES-256
+const iv = Buffer.from(process.env.AES_INIT_VECTOR, 'utf-8'); // 16 bytes for AES
 
 export function encrypt(plainText: string): Buffer {
   const cipher = createCipheriv('aes-256-cbc', key, iv);

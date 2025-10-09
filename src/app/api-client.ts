@@ -124,18 +124,18 @@ export async function apiRequest<T = any>(url: string, config: AxiosRequestConfi
 }
 
 // Convenience methods
-export async function apiGet<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'get' }, token);
+export async function apiGet<T = any>(url: string, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'get' }, token, secure);
 }
 
-export async function apiPost<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'post', data }, token);
+export async function apiPost<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'post', data }, token, secure);
 }
 
-export async function apiPut<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'put', data }, token);
+export async function apiPut<T = any>(url: string, data?: any, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'put', data }, token, secure);
 }
 
-export async function apiDelete<T = any>(url: string, config?: AxiosRequestConfig, token?: string) {
-  return apiRequest<T>(url, { ...config, method: 'delete' }, token);
+export async function apiDelete<T = any>(url: string, config?: AxiosRequestConfig, token?: string, secure: boolean = false) {
+  return apiRequest<T>(url, { ...config, method: 'delete' }, token, secure);
 }
