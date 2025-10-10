@@ -37,7 +37,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
+        <div className="flex flex-col w-full">
             <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myOffers.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
@@ -46,9 +46,9 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                     <div className="text-white text-center py-20">{t.profile.myOffers.noOffers}</div>
                 ) : (
                     offers.map(offer => (
-                        <div key={offer.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-start p-2 md:p-6 shadow-lg gap-6">
+                        <div key={offer.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col md:flex-row items-start p-2 md:p-6 shadow-lg gap-6">
                             {/* Delivery Request Section */}
-                            <div className="flex flex-col  md:w-2/3 w-full bg-[#1a093a] rounded-lg p-4 border border-[#7c3aed]">
+                            <div className="flex flex-col  md:w-2/3 w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-4">
                                 <h3 className="text-lg font-bold text-[#7c3aed] mb-2">{t.profile.myOffers.deliveryRequest}</h3>
                                 <div className="flex items-center gap-4 mb-2">
                                     <Image
@@ -89,7 +89,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                                 )}
                             </div>
                             {/* Offer Section */}
-                            <div className="flex flex-col md:w-1/3 w-full bg-[#7c3aed] rounded-lg p-4 border border-[#1a093a] items-end">
+                            <div className="flex flex-col md:w-1/3 w-full bg-[#7c3aed] rounded-lg p-4 border border-white/10 items-end">
                                 <h3 className="text-lg font-bold text-white mb-2">{t.profile.myOffers.yourOffer}</h3>
                                 <div className="text-white font-bold mb-2">
                                     {t.profile.myOffers.status}: {offer.isDeclined ? t.profile.myOffers.statusValues.declined : offer.isAccepted ? t.profile.myOffers.statusValues.accepted : t.profile.myOffers.statusValues.awaitingConfirmation}
@@ -124,7 +124,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                 {totalPages > 1 && (
                     <div className="flex justify-center items-center mt-10 gap-2 text-lg">
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(1)}
                             disabled={currentPage === 1}
                         >
@@ -148,7 +148,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
                             </button>
                         )}
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(totalPages)}
                             disabled={currentPage === totalPages}
                         >

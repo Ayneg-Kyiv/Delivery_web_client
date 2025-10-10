@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { ProfileService } from "./profile-service";
 import Image from "next/image";
@@ -248,11 +248,18 @@ export default function Profile(): React.JSX.Element {
   }
 
   return (
-    <main className="flex flex-col bg-[#130c1f] justify-center items-center w-full px-4 md:px-20 lg:px-40">
+    <main className="relative flex flex-col bg-[#130c1f] justify-center items-center w-full px-4 md:px-20 lg:px-40">
+        {/* Ambient blurred gradient background */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-[#724C9D] opacity-30 blur-3xl" />
+          <div className="absolute top-24 -right-28 h-[28rem] w-[28rem] rounded-full bg-fuchsia-500 opacity-20 blur-[120px]" />
+          <div className="absolute bottom-[-6rem] right-1/4 h-72 w-72 rounded-full bg-indigo-500 opacity-25 blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 h-64 w-64 rounded-full bg-emerald-400 opacity-[0.12] blur-[90px]" />
+        </div>
  
         {/* Profile header card */}
-        <div className="w-full max-w-[1080px] mt-[35px] px-4 bg-[#0f0e10] border-0 border-b-8 border-b-[#2c1b48] rounded-none rounded-[8px_8px_0px_0px]">
-          <div className="flex flex-col md:flex-row justify-between md:p-10 lg:p-[100px] px-10 md:px-0">
+        <div className="w-full max-w-[1080px] mt-[35px] px-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.45)]">
+          <div className="flex flex-col md:flex-row justify-between p-6 md:p-10 lg:p-16">
             {/* Profile avatar and name */}
             <div className=" flex flex-col items-center justify-center pt-10">
               <Avatar className="w-[150px] h-[150px] bg-[#d9d9d9]">
@@ -361,62 +368,61 @@ export default function Profile(): React.JSX.Element {
           </div>
         </div>
 
-        {/* Navigation tabs */}
-        <Tabs defaultValue="tab1" className="w-full max-w-[1080px] flex h-[78px]">
-          <TabsList className="overflow-y-hidden overflow-x-scroll  flex flex-row justify-start items-start custom-scrollbar scroll-smooth w-full h-[83px] bg-[#2c1b48] rounded-[0px_0px_8px_8px] p-2.5 pt-0 justify-start gap-4">
-            <Button className="w-[60px] h-[60px] bg-[#7f51b3] rounded-lg p-0 flex items-center justify-center">
-              <Settings className="w-[34px] h-[34px]" />
-            </Button>
-
-            {navItems.map((item, index) => (
-              <div onClick={() => setSelectedTab(item.value)} key={index}>
-                <TabsTrigger
-                  key={item.label}
-                  value={item.value}
-                  className="w-[234px] h-[60px] font-['Bahnschrift-SemiBold',Helvetica] button-type-3 font-semibold text-white text-2xl data-[state=active]:bg-transparent data-[state=active]:text-white"
+        {/* Navigation tabs laid out evenly in two rows (3 columns) */}
+        <div className="w-full max-w-[1080px]">
+          <Tabs defaultValue="tab1" className="w-full">
+            <TabsList className="grid grid-cols-3 items-stretch w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-[0px_0px_12px_12px] p-2.5 gap-4">
+              {navItems.map((item, index) => (
+                <div onClick={() => setSelectedTab(item.value)} key={index}>
+                  <TabsTrigger
+                    key={item.label}
+                    value={item.value}
+                    className="w-full h-[60px] font-['Bahnschrift-SemiBold',Helvetica] button-type-3 font-semibold text-white text-2xl rounded-lg data-[state=active]:bg-white/10 data-[state=active]:backdrop-blur-md data-[state=active]:text-white"
                   >
-                  {item.label}
-                </TabsTrigger>
-              </div>
-            ))}
-          </TabsList>
-        </Tabs>
+                    {item.label}
+                  </TabsTrigger>
+                </div>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
 
         {/* Profile form section */}
         {
           selectedTab === "user" && (
-            <Card className="w-full max-w-[1080px] mt-8 mb-8 bg-[#0f0e10] border-0 rounded-none ">
-              <CardContent className="w-full flex flex-col justify-center items-center pt-[39px]">
-                <Separator className="w-full max-w-[965px] h-px mb-[20px]" />
+            <Card className="w-full max-w-[1080px] mt-8 mb-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)]">
+              <CardContent className="w-full flex flex-col pt-8 pb-10 px-6 md:px-10">
+                <Separator className="w-full h-px mb-6 opacity-20" />
 
-                <div className="flex flex-col w-full max-w-[682px] mt-[20px]">
-                  {formFields.map((field, index) => (
-                    <div key={field.key} className="w-full mb-[56px]">
-                      <div className="w-full flex justify-between">
-                        <label className="w-full font-['Bahnschrift-Regular',Helvetica] font-normal text-white text-lg">
+                <div className="grid grid-cols-1 gap-y-8 w-full max-w-[700px] mx-auto">
+                  {formFields.map((field) => {
+                    const isTextArea = field.key === 'aboutMe' || (field as any).type === 'textarea';
+                    const missing = field.value === t.profile.missing;
+                    return (
+                      <div key={field.key} className="flex flex-col">
+                        <label className="mb-2 text-sm font-medium tracking-wide text-white/80">
                           {field.label}
                         </label>
-                      </div>
-
-                      <div className="w-full flex mt-1">
-                        {field.key === 'aboutMe' || (field as any).type === 'textarea' ? (
+                        {isTextArea ? (
                           <Textarea
-                            className="w-full max-w-[576px] min-h-[100px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            className={`w-full min-h-[110px] resize-none rounded-md border border-white/15 bg-white/5 focus:bg-white/10 transition-colors text-sm text-white/90 ${missing ? 'italic text-white/40' : ''}`}
                             value={(field.value as string) || ''}
                             readOnly
                           />
                         ) : (
                           <Input
-                            className="w-full max-w-[376px] h-[41px] rounded-md border-2 border-[#c5c2c2] bg-transparent text-[#c5c2c2] font-m3-title-small"
+                            className={`w-full h-11 rounded-md border border-white/15 bg-white/5 focus:bg-white/10 transition-colors text-sm text-white/90 ${missing ? 'italic text-white/40' : ''}`}
                             value={(field.value as string) || ''}
                             type="text"
                             readOnly
                           />
                         )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
+
+                {/* Removed duplicate Edit Profile button to keep a single CTA in header */}
               </CardContent>
             </Card>
           )
@@ -424,35 +430,35 @@ export default function Profile(): React.JSX.Element {
 
         {
           selectedTab === "trips" && (
-          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-6 mb-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)] p-4 md:p-6">
             <MyTrips />
           </div>)
         }
 
         {
           selectedTab === "orders" && (
-          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-6 mb-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)] p-4 md:p-6">
             <MyOrders id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "reviews" && (
-          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-6 mb-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)] p-4 md:p-6">
             <MyReviews id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "requests" && (
-          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-6 mb-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)] p-4 md:p-6">
             <MyRequests id={session?.data?.user?.id ?? ""} />
           </div>)
         }
 
         {
           selectedTab === "offers" && (
-          <div className="w-full max-w-[1080px] mx-auto mt-[20px] mb-[50px]">
+          <div className="w-full max-w-[1080px] mx-auto mt-6 mb-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_6px_24px_-6px_rgba(0,0,0,0.5)] p-4 md:p-6">
             <MyOffers id={session?.data?.user?.id ?? ""} />
           </div>)
         }

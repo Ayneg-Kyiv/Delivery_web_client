@@ -41,7 +41,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
     }
 
     return (
-    <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
+    <div className="flex flex-col w-full">
             <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myRequests.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
@@ -50,7 +50,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                     <div className="text-white text-center py-20">{t.profile.myRequests.noRequests}</div>
                 ) : (
                     requests.map(request => (
-                        <div key={request.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
+                        <div key={request.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
                             <div className=" flex flex-col items-center justify-center md:mr-6 mb-2">
                                 <Image
                                     src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
@@ -122,7 +122,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                     <div className="text-white font-bold">{t.profile.myRequests.driverOffers}</div>
                                     {request.offers && request.offers.length ? (
                                         request.offers.map(offer => (
-                                            <div key={offer.id} className={`w-full bg-[#1a093a] rounded-lg p-2 md:p-4 mt-2 flex flex-col md:flex-row md:items-center gap-4 ${offer.id === request.deliveryOfferID ? 'border-2 border-green-400' : ''}`}>
+                                            <div key={offer.id} className={`w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-2 md:p-4 mt-2 flex flex-col md:flex-row md:items-center gap-4 ${offer.id === request.deliveryOfferID ? 'border-2 border-green-400' : ''}`}>
                                                 <div className="flex flex-col items-center gap-2">
                                                     <Image
                                                         src={offer.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + offer.driver.imagePath : '/dummy.png'}
@@ -202,7 +202,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                 {totalPages > 1 && (
                     <div className="flex justify-center items-center mt-10 gap-2 text-lg">
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(1)}
                             disabled={currentPage === 1}
                         >
@@ -226,7 +226,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                             </button>
                         )}
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(totalPages)}
                             disabled={currentPage === totalPages}
                         >

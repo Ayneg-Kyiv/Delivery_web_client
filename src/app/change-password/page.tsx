@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { ProfileService } from "../profile/profile-service";
 import { useI18n } from "@/i18n/I18nProvider";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function ChangePasswordPage(): React.JSX.Element {
   const { data: session } = useSession();
@@ -56,78 +58,107 @@ export default function ChangePasswordPage(): React.JSX.Element {
   };
 
   return (
-    <div className="bg-[#130c1f] grid justify-items-center w-screen">
-      <div className="bg-[#130c1f] w-full max-w-[1920px]">
-        <div className="relative w-[1157px] min-h-[696px] mx-auto mt-[190px]">
-          <div className="absolute w-full h-[600px] top-24 left-0 bg-[#0f0e10] border-b-8 border-b-[#2c1b48]" />
+    <main className="relative flex min-h-[70vh] flex-col bg-[#130c1f] items-center justify-center w-full px-4 py-16">
+      {/* Ambient blurred gradient background (same style language as profile) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-[#724C9D] opacity-30 blur-3xl" />
+        <div className="absolute top-24 -right-28 h-[28rem] w-[28rem] rounded-full bg-fuchsia-500 opacity-20 blur-[120px]" />
+        <div className="absolute bottom-[-6rem] right-1/4 h-72 w-72 rounded-full bg-indigo-500 opacity-25 blur-2xl" />
+        <div className="absolute -bottom-10 -left-10 h-64 w-64 rounded-full bg-emerald-400 opacity-[0.12] blur-[90px]" />
+      </div>
 
-          <header className="absolute w-full h-[100px] top-0 left-0 bg-[#2c1b48] rounded-[8px_8px_0px_0px]">
-            <h1 className="absolute top-5 left-1/2 -translate-x-1/2 font-['Bahnschrift-Regular',Helvetica] text-white text-3xl">
-              {t.changePassword.header}
-            </h1>
-          </header>
+      {/* Glass card */}
+      <section className="w-full max-w-[700px] bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.45)]">
+        <div className="px-6 py-6 md:px-10 md:py-10">
+          <h1 className="text-white text-2xl md:text-3xl font-semibold text-center mb-8">{t.changePassword.header}</h1>
 
-          <form onSubmit={onSubmit} className="absolute w-[1002px] top-[185px] left-20">
-            <div className="mb-6">
-              <label htmlFor="current-password" className="block text-white text-lg mb-2">{t.changePassword.currentLabel}</label>
+          <form onSubmit={onSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="current-password" className="block text-white/90 text-sm mb-2">{t.changePassword.currentLabel}</label>
               <div className="relative">
-                <input
+                <Input
                   id="current-password"
                   type={show.current ? "text" : "password"}
                   value={passwords.current}
                   onChange={(e) => handlePasswordChange("current", e.target.value)}
                   placeholder={t.changePassword.placeholder.password}
-                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                  className="w-full h-12 bg-transparent text-white placeholder-white/40 border-white/20 focus:ring-fuchsia-500/40"
                 />
-                <button type="button" onClick={() => toggle("current")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.current ? t.changePassword.toggles.hide : t.changePassword.toggles.show}</button>
+                <button
+                  type="button"
+                  onClick={() => toggle("current")}
+                  className="absolute top-2.5 right-3 text-white/70 hover:text-white text-sm"
+                >
+                  {show.current ? t.changePassword.toggles.hide : t.changePassword.toggles.show}
+                </button>
               </div>
             </div>
 
-            <div className="mb-6">
-              <label htmlFor="new-password" className="block text-white text-lg mb-2">{t.changePassword.newLabel}</label>
+            <div>
+              <label htmlFor="new-password" className="block text-white/90 text-sm mb-2">{t.changePassword.newLabel}</label>
               <div className="relative">
-                <input
+                <Input
                   id="new-password"
                   type={show.new ? "text" : "password"}
                   value={passwords.new}
                   onChange={(e) => handlePasswordChange("new", e.target.value)}
                   placeholder={t.changePassword.placeholder.newPassword}
-                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                  className="w-full h-12 bg-transparent text-white placeholder-white/40 border-white/20 focus:ring-fuchsia-500/40"
                 />
-                <button type="button" onClick={() => toggle("new")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.new ? t.changePassword.toggles.hide : t.changePassword.toggles.show}</button>
+                <button
+                  type="button"
+                  onClick={() => toggle("new")}
+                  className="absolute top-2.5 right-3 text-white/70 hover:text-white text-sm"
+                >
+                  {show.new ? t.changePassword.toggles.hide : t.changePassword.toggles.show}
+                </button>
               </div>
             </div>
 
-            <div className="mb-6">
-              <label htmlFor="confirm-password" className="block text-white text-lg mb-2">{t.changePassword.confirmLabel}</label>
+            <div>
+              <label htmlFor="confirm-password" className="block text-white/90 text-sm mb-2">{t.changePassword.confirmLabel}</label>
               <div className="relative">
-                <input
+                <Input
                   id="confirm-password"
                   type={show.confirm ? "text" : "password"}
                   value={passwords.confirm}
                   onChange={(e) => handlePasswordChange("confirm", e.target.value)}
                   placeholder={t.changePassword.placeholder.confirmNewPassword}
-                  className="w-full h-[60px] px-4 rounded-md border-2 border-[#c5c2c2] bg-transparent text-white"
+                  className="w-full h-12 bg-transparent text-white placeholder-white/40 border-white/20 focus:ring-fuchsia-500/40"
                 />
-                <button type="button" onClick={() => toggle("confirm")} className="absolute top-3.5 right-4 text-[#c5c2c2]">{show.confirm ? t.changePassword.toggles.hide : t.changePassword.toggles.show}</button>
+                <button
+                  type="button"
+                  onClick={() => toggle("confirm")}
+                  className="absolute top-2.5 right-3 text-white/70 hover:text-white text-sm"
+                >
+                  {show.confirm ? t.changePassword.toggles.hide : t.changePassword.toggles.show}
+                </button>
               </div>
             </div>
 
-            {error && <div className="text-red-400 mb-3" role="alert">{error}</div>}
-            {message && <div className="text-green-400 mb-3" role="status">{message}</div>}
+            {error && (
+              <div className="bg-red-500/10 border border-red-400/30 text-red-200 px-3 py-2 rounded-lg" role="alert" aria-live="assertive">
+                {error}
+              </div>
+            )}
+            {message && (
+              <div className="bg-emerald-500/10 border border-emerald-400/30 text-emerald-200 px-3 py-2 rounded-lg" role="status" aria-live="polite">
+                {message}
+              </div>
+            )}
 
-            <div className="mt-6 flex justify-center">
-              <button
+            <div className="pt-2 flex justify-center">
+              <Button
                 type="submit"
                 disabled={submitting}
-                className="w-[242px] h-12 bg-[#94569f] rounded-lg hover:bg-[#a366ad] disabled:opacity-60"
+                className="w-full md:w-[240px] h-11 bg-[#7c3aed] hover:bg-[#6b2fd7] text-white font-semibold rounded-lg disabled:opacity-60"
               >
-                <span className="text-white text-2xl">{submitting ? t.changePassword.submit.saving : t.changePassword.submit.save}</span>
-              </button>
+                {submitting ? t.changePassword.submit.saving : t.changePassword.submit.save}
+              </Button>
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

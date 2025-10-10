@@ -57,7 +57,7 @@ const MyTrips: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
+        <div className="flex flex-col w-full">
             <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myTrips.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
@@ -66,7 +66,7 @@ const MyTrips: React.FC = () => {
                     <div className="text-white text-center py-20">{t.profile.myTrips.noTrips}</div>
                 ) : (
                     trips.map(trip => (
-                        <div key={trip.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
+                        <div key={trip.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
                             <Image
                                 src={trip.driver.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
                                 alt={trip.fullName}
@@ -96,7 +96,7 @@ const MyTrips: React.FC = () => {
                                         <div className="text-white text-sm">{t.profile.myTrips.noOrders}</div>
                                     ) : (
                                         trip.deliveryOrders.map(order => (
-                                            <div key={order.id} className="bg-[#7c3aed]/30 rounded-lg p-3 mb-2 flex flex-col md:flex-row md:items-center md:justify-between">
+                                            <div key={order.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 mb-2 flex flex-col md:flex-row md:items-center md:justify-between">
                                                 <div>
                                                     <div className="text-white text-sm font-bold">{t.profile.myTrips.sender}: {order.senderName}</div>
                                                     <div className="text-white text-sm">{t.profile.myTrips.phone}: {order.senderPhoneNumber}</div>
@@ -181,7 +181,7 @@ const MyTrips: React.FC = () => {
                 {totalPages > 1 && (
                     <div className="flex justify-center items-center mt-10 gap-2 text-lg">
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(1)}
                             disabled={currentPage === 1}
                         >
@@ -205,7 +205,7 @@ const MyTrips: React.FC = () => {
                             </button>
                         )}
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(totalPages)}
                             disabled={currentPage === totalPages}
                         >

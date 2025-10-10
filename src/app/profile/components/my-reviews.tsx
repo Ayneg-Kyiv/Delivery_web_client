@@ -35,7 +35,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
     }
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-darker rounded-lg">
+        <div className="flex flex-col w-full">
             <h2 className="text-3xl font-bold text-white mt-8 mb-6 px-6">{t.profile.myReviews.title}</h2>
             <div className="flex-1 flex flex-col gap-6 px-6 pb-10">
                 {loading ? (
@@ -44,7 +44,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
                     <div className="text-white text-center py-20">{t.profile.myReviews.noReviews}</div>
                 ) : (
                     reviews.map(review => (
-                        <div key={review.id} className="bg-[#2d1857] rounded-xl flex flex-row items-center p-6 shadow-lg">
+                        <div key={review.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl flex flex-row items-center p-6 shadow-lg">
                             <Image
                                 src={review.reviewer?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + review.reviewer.imagePath : '/dummy.png'}
                                 alt={review.reviewer?.userName || 'Reviewer'}
@@ -72,7 +72,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
                 {totalPages > 1 && (
                     <div className="flex justify-center items-center mt-10 gap-2 text-lg">
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(1)}
                             disabled={currentPage === 1}
                         >
@@ -96,7 +96,7 @@ const MyReviews: React.FC<MyReviewsProps> = ({ id }) => {
                             </button>
                         )}
                         <button
-                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-[#2d1857] disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-[#7c3aed] text-white rounded-lg disabled:bg-white/10 disabled:cursor-not-allowed"
                             onClick={() => setCurrentPage(totalPages)}
                             disabled={currentPage === totalPages}
                         >
