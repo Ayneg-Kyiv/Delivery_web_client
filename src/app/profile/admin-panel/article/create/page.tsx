@@ -106,6 +106,11 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps & { t: an
     handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        if (file.size > 1024 * 1024) {
+            alert('Image exceeds 1MB. Please choose a smaller file.');
+            (e.target as HTMLInputElement).value = '';
+            return;
+        }
 
         this.setState({ article: { ...this.state.article, image: file } });
 
@@ -129,6 +134,11 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps & { t: an
     handleBlockImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        if (file.size > 1024 * 1024) {
+            alert('Image exceeds 1MB. Please choose a smaller file.');
+            (e.target as HTMLInputElement).value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = ev => {
             const result = ev.target?.result;

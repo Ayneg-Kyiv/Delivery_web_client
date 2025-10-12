@@ -31,6 +31,12 @@ const ChangeImageModal: React.FC<ChangeImageProps> = ({
 
         const file = e.target.files?.[0];
         if (!file) return;
+        // Enforce 1MB max
+        if (file.size > 1024 * 1024) {
+            alert('Зображення перевищує 1 МБ. Будь ласка, оберіть менший файл.');
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            return;
+        }
         setImageFile(file);
 
         const reader = new FileReader();
@@ -46,6 +52,10 @@ const ChangeImageModal: React.FC<ChangeImageProps> = ({
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         const file = e.dataTransfer.files?.[0];
         if (!file) return;
+        if (file.size > 1024 * 1024) {
+            alert('Зображення перевищує 1 МБ. Будь ласка, оберіть менший файл.');
+            return;
+        }
         setImageFile(file);
 
         const reader = new FileReader();
