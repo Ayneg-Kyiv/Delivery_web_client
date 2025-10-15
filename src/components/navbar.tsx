@@ -48,7 +48,7 @@ export default function Navbar() {
         </div>
 
         <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <LanguageSwitcher />
+          <div className="hidden md:block"><LanguageSwitcher /></div>
 
           <div className='flex items-center'>
             <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>
@@ -88,7 +88,7 @@ export default function Navbar() {
         </div>
 
           <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <LanguageSwitcher />
+          <div className="hidden md:block"><LanguageSwitcher /></div>
 
           <div className='flex items-center '>
             <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>

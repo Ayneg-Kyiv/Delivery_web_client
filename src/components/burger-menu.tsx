@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { AuthService } from "@/app/auth-service";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/i18n/I18nProvider";
+import dynamic from 'next/dynamic';
 
 type BurgerMenuProps = {
   onClose?: () => void;
@@ -16,6 +17,7 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
   const { data: session } = useSession();
   const router = useRouter();
   const { messages: t } = useI18n();
+  const LanguageSwitcher = dynamic(() => import('@/components/language-switcher'), { ssr: false });
 
   // Lock body scroll while open
   useEffect(() => {
@@ -51,8 +53,8 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
       aria-modal
       onClick={handleBackdropClick}
     >
-      <div className="absolute right-0 top-0 h-full w-[90vw] max-w-[420px] bg-[#130c1f] text-white shadow-2xl border-l border-white/10">
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+      <div className="absolute right-0 top-0 h-full w-[90vw] max-w-[420px] bg-[#130c1f] text-white shadow-2xl border-l border-white/10 flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
           <span className="text-xl font-semibold">{t.nav.menuTitle}</span>
           <button
             onClick={onClose}
@@ -63,8 +65,8 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           </button>
         </div>
 
-        <nav className="p-4 space-y-1 md:space-y-2 ">
-          { session?.user && (
+        <nav className="p-4 space-y-1 md:space-y-2 flex-1 overflow-y-auto pb-24">
+      { session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
                 {t.nav.profile}
@@ -122,10 +124,19 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
             </>
           )}
 
+          {/* Language Switcher for mobile menu */}
+          <div className="mt-6 pt-4 border-t border-white/10">
+            <div className="text-xs text-white/70 mb-2">Мова / Language</div>
+            <LanguageSwitcher />
+          </div>
+
           { session?.user && (
-              <button className="block px-3 py-2 rounded-md hover:bg-white/10 w-full text-left absolute bottom-4" onClick={() => { handleSignOut(); onClose?.(); }}>
-                {t.nav.logout}
-              </button>
+            <button
+              className="block px-3 py-2 rounded-md hover:bg-white/10 w-full text-left mt-6"
+              onClick={() => { handleSignOut(); onClose?.(); }}
+            >
+              {t.nav.logout}
+            </button>
           )}
         </nav>
       </div>
