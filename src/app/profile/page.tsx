@@ -134,14 +134,6 @@ export default function Profile(): React.JSX.Element {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !userData?.email) return;
-
-    // Enforce 1MB max image size
-    const MAX_BYTES = 1024 * 1024; // 1MB
-    if (file.size > MAX_BYTES) {
-      alert('Selected image exceeds 1MB. Please choose a smaller file.');
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
-    }
     
     setUploading(true);
     // Show instant preview

@@ -126,11 +126,6 @@ class EditArticlePage extends React.Component<EditArticlePageProps & { t: any },
     handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > 1024 * 1024) {
-            alert('Image exceeds 1MB. Please choose a smaller file.');
-            (e.target as HTMLInputElement).value = '';
-            return;
-        }
         
         // Update the file in state
         this.setState({ article: { ...this.state.article, image: file } });
