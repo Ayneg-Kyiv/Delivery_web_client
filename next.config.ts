@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['localhost',  'testonazureb0de.blob.core.windows.net'],
   },
+  experimental:{
+    serverActions:{
+      bodySizeLimit: '50mb'
+    }
+  }
 };
 
 export default nextConfig;

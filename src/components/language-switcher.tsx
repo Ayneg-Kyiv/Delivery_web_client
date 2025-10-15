@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
-import { setCookie } from 'cookies-next';
+import { setCookie } from '@/utils/cookies';
 import { useRouter } from 'next/navigation';
 
 const LanguageSwitcher: React.FC = () => {
@@ -11,7 +11,7 @@ const LanguageSwitcher: React.FC = () => {
 
   const setLang = (lang: 'uk' | 'en') => {
     if (lang === language) return;
-    setCookie('locale', lang, { path: '/' });
+    setCookie('locale', lang);
     setLocale(lang);
     router.refresh();
   };

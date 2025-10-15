@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { ApiClient } from '@/app/api-client';
+import { apiGet, apiPost } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useSession } from 'next-auth/react';
 
 const batchSize = 10;
 
@@ -19,6 +20,7 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
+    const { data: session } = useSession();
 
     useEffect(() => {
         fetchOffers(currentPage);
@@ -30,7 +32,8 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
         const params = new URLSearchParams();
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
-        const res = await ApiClient.get<any>(`/request/driver?${params.toString()}`);
+        console.log(session?.user.id);
+        const res = await apiGet<any>(`/request/driver?${session?.user.id}`, {}, session?.accessToken || '');
         setOffers(res.data.data || []);
         setTotalPages(res.data.pagination?.totalPages || 1);
         setLoading(false);

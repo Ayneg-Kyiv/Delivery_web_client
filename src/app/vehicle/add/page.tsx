@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSession } from "next-auth/react";
-import { ApiClient } from "@/app/api-client";
+import { apiGet, apiPost } from "@/app/api-client";
 import Image from "next/image";
 import ContentBox from "@/components/ui/content-box";
 import TextInputGroup from "@/components/ui/text-input-group";
@@ -38,6 +38,7 @@ const withSession = (Component: React.ComponentType<any>) => {
     WrappedWithSession.displayName = `withSession(${Component.displayName || Component.name || 'Component'})`;
     return WrappedWithSession;
 };
+
 class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
     constructor(props: AddVehicleProps) {
         super(props);
@@ -83,17 +84,19 @@ class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
 
         try {
             const formData = new FormData();
+
             formData.append('type', this.state.selectedType);
             formData.append('brand', this.state.brand);
             formData.append('model', this.state.model);
             formData.append('color', this.state.color);
             formData.append('numberPlate', this.state.licensePlate);
+            
             if (imageFront) formData.append('imageFront', imageFront);
             if (imageBack) formData.append('imageBack', imageBack);
 
-            const response = await ApiClient.post<any>('/account/add-vehicle', formData, {
+            const response = await apiPost<any>('/account/add-vehicle', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            }, this.props.session.data?.accessToken || '');
 
             // console.log('API Response:', response);
 

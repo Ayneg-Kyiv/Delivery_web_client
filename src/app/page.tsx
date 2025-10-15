@@ -7,7 +7,7 @@ import CardContent from "@/components/ui/card-content";
 import React, { Component, ChangeEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ApiClient } from "./api-client";
+import { apiGet } from "./api-client";
 import { MapsService } from "@/components/other/google-maps-component";
 import DeliveryMap from "@/components/other/delivery-map";
 import { formatDateTime } from "@/components/other/date-time-former";
@@ -205,9 +205,9 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
   ] as Array<{number:string; image:string}>;
 
   fetchLastNews = async () => {
-    const response = await ApiClient.get<any>('/article/list?pageSize=2');
-    const data = response.data?.data || [];
-    this.setState({ newsItems: data });
+    const data = await apiGet<any>('/article/list?pageSize=2');
+    console.log('Fetched news items:', data); 
+    this.setState({ newsItems: data.data.data });
   };
 
   galleryImages = [

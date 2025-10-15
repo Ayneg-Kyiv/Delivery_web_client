@@ -5,7 +5,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
-import { ApiClient } from '@/app/api-client';
+import { apiGet, apiPost } from '@/app/api-client';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
@@ -21,6 +21,8 @@ const SLOT_TYPES: Record<string, { MaxWeight: string; MaxVolume: string }> = {
 const withSession = (Component: React.ComponentType<any>) => {
 	const WrappedComponent = (props: any) => {
 		const session = useSession();
+		
+		const { messages } = useI18n();
 		if (session.status === 'loading') {
 			return <div>{(Component as any).messages?.addRequest?.loading || 'Loading...'}</div>;
 		}
@@ -28,7 +30,7 @@ const withSession = (Component: React.ComponentType<any>) => {
 			location.href = '/signin';
 		}
 		if (Component.prototype && Component.prototype.render) {
-			return <Component session={session} {...props} />;
+			return <Component session={session} messages={messages} {...props} />;
 		}
 		throw new Error("You passed a function component, `withSession` is not needed.");
 	};
@@ -161,7 +163,8 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		};
 
 		try {
-			const response = await ApiClient.post('/request', payload);
+			console.log('accessToken', this.props.session?.data?.accessToken);
+			const response = await apiPost('/request', payload, {}, this.props.session?.data?.accessToken);
 			if (response.success) {
 				window.location.href = '/delivery/request/list';
 			} else {
@@ -321,4 +324,4 @@ const AddRequestWrapper = (props: any) => {
 		return <AddRequestWithSession {...props} t={messages} />;
 };
 
-export default AddRequestWrapper;
+export default withSession(AddRequestPage);
