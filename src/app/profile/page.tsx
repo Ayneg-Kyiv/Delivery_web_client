@@ -312,7 +312,7 @@ export default function Profile(): React.JSX.Element {
                 type="button"
                 onClick={handlePickFile}
                 disabled={uploading}
-                className="mt-2 text-[#7f51b3] hover:text-[#6a4399] underline disabled:opacity-60"
+                className="my-6 md:mt-2 text-[#7f51b3] hover:text-[#6a4399] underline disabled:opacity-60"
               >
                 {uploading ? t.profile.uploading : t.profile.changePhoto}
               </button>
@@ -380,7 +380,7 @@ export default function Profile(): React.JSX.Element {
         {/* Navigation tabs laid out evenly in two rows (3 columns) */}
         <div className="w-full max-w-[1080px]">
           <Tabs defaultValue="tab1" className="w-full mt-6">
-            <TabsList className="grid grid-cols-3 items-stretch w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-[12px_12px_12px_12px] p-2.5 gap-4">
+            <TabsList className="flex flex-col md:grid md:grid-cols-3 items-stretch w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-[12px_12px_12px_12px] p-2.5 gap-4">
               {navItems.map((item, index) => (
                 <div onClick={() => setSelectedTab(item.value)} key={index}>
                   <TabsTrigger
