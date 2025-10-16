@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TravelPathMap from '@/components/other/travel-path-map';
 import { useI18n } from '@/i18n/I18nProvider';
+import { formatDateTime } from '@/components/other/date-time-former';
 
 const TripDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -66,13 +67,13 @@ const TripDetailPage: React.FC = () => {
                     </div>
 					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
                         <div className="mt-2 text-white">
-                            {t.labels.departureShort}: {trip.startLocation.dateTime} 
+                            {t.labels.departureShort}: {formatDateTime(trip.startLocation.dateTime)}
                         </div>
 						<div className='hidden md:block'>
 							|
 						</div>
                         <div className="mt-2 text-white">
-                            {t.labels.deliveryShort}: {trip.endLocation.dateTime}
+                            {t.labels.deliveryShort}: {formatDateTime(trip.endLocation.dateTime)}
                         </div>
 					</div>
                 </div>
@@ -127,10 +128,10 @@ const TripDetailPage: React.FC = () => {
                                 <span className="font-bold">{t.labels.to}:</span> {trip.endLocation.address} {trip.endLocation.houseNumber}, {trip.endLocation.state}, {trip.endLocation.city}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">{t.labels.departureDate}:</span> {trip.startLocation.dateTime}
+                                <span className="font-bold">{t.labels.departureDate}:</span> {formatDateTime(trip.startLocation.dateTime)}
                             </div>
                             <div className="mb-2">
-                                <span className="font-bold">{t.labels.arrivalDate}:</span> {trip.endLocation.dateTime}
+                                <span className="font-bold">{t.labels.arrivalDate}:</span> {formatDateTime(trip.endLocation.dateTime)}
                             </div>
                             <div className="mb-2">
                                 <span className="font-bold">{t.labels.transportType}:</span> {trip.vehicle.type}

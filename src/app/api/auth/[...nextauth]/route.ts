@@ -428,7 +428,7 @@ const handler = NextAuth({
       session.user = token.user;
       session.error = token.error;
 
-      if(session.error === "No session on this device") {
+      if (session.error) {
         sessionStorage.clear();
 
         (await cookies()).delete('refreshToken');

@@ -56,4 +56,5 @@ interface AddTripState{
     vehicleId: string;
     vehicles: Vehicle[];
     loadingVehicles: boolean;
+    showManualAddress: boolean;
 };

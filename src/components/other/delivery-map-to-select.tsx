@@ -2,19 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { MapsService } from './google-maps-component';
 import { useI18n } from '@/i18n/I18nProvider';
 
-// Import LocationState type
-interface LocationState {
-  country: string;
-  state: string;
-  city: string;
-  address: string;
-  houseNumber: string;
-  date: string;
-  time: string;
-  dateTime: string;
-  latitude: number | null;
-  longitude: number | null;
-}
 
 interface DeliveryMapProps {
   startLocation?: LocationState;

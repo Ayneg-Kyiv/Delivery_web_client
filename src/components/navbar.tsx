@@ -34,7 +34,6 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
   // Language handled by LanguageSwitcher component
 
   const authNavigation = (
@@ -47,29 +46,31 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <LanguageSwitcher />
+  <div className='h-full flex items-center gap-5 pr-8 md:pr-10 lg:pr-[190px]'>
+          <div className="hidden md:block"><LanguageSwitcher /></div>
 
-          <div className='flex items-center'>
-            <Link href='/help' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>
+          <div className='flex items-center gap-5'>
+            <Link href='/help' className='px-4 h-9 w-[120px] rounded-xl inline-flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer whitespace-nowrap text-center'>
+              {t.nav.help}
+            </Link>
             { 
               session?.user && (
                 <>
-                  <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <p className='truncate max-w-[220px]'>{session.user.email}</p>
+                  <Link href='/profile' className='w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt={t.nav.profileAlt} width={16} height={16} />
                   </Link>
                 </>
             )}
           </div>
 
-          {/* Burger button for mobile */}
-            <button
-              className="ml-[20px] text-3xl focus:outline-none"
-              onClick={handleMenuToggle}
-              aria-label={t.nav.toggleMenu}>
-              &#9776;
-            </button>
+          {/* Burger button */}
+          <button
+            className="text-3xl focus:outline-none"
+            onClick={handleMenuToggle}
+            aria-label={t.nav.toggleMenu}>
+            &#9776;
+          </button>
           </div>
 
       </div>
@@ -87,17 +88,19 @@ export default function Navbar() {
           </Link>
         </div>
 
-          <div className='h-full flex items-center justify-between pr-8 md:pr-10 lg:pr-[190px]'>
-          <LanguageSwitcher />
+          <div className='h-full flex items-center gap-5 pr-8 md:pr-10 lg:pr-[190px]'>
+          <div className="hidden md:block"><LanguageSwitcher /></div>
 
-          <div className='flex items-center '>
-            <Link href='/help' className='ml-[10px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.help}</Link>
+          <div className='flex items-center gap-5'>
+            <Link href='/help' className='px-4 h-9 w-[120px] rounded-xl inline-flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer whitespace-nowrap text-center'>
+              {t.nav.help}
+            </Link>
 
             { 
               session?.user && (
                 <>
-                  <p className='ml-[20px]'>{session.user.email}</p>
-                  <Link href='/profile' className='ml-[20px] w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
+                  <p className='truncate max-w-[220px]'>{session.user.email}</p>
+                  <Link href='/profile' className='w-9 h-9 rounded-[20px] flex items-center justify-center cursor-pointer bg-darker'>
                     <Image src='/profile-icon.png' alt='Profile' width={16} height={16} />
                   </Link>
                 </>
@@ -105,14 +108,18 @@ export default function Navbar() {
             {
               !session?.user && (
                 <>
-                  <Link href='/signup' className='ml-[20px] px-4 h-9 rounded-xl flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer'>{t.nav.register}</Link>
-                  <Link href='/signin' className='ml-[20px] px-8 h-9 rounded-xl flex items-center justify-center  button-type-3'>{t.nav.login}</Link>
+                  <Link href='/signup' className='px-4 h-9 w-[160px] rounded-xl inline-flex items-center justify-center border border-solid border-white hover:bg-white hover:text-[#2c1b48] transition-colors duration-200 cursor-pointer whitespace-nowrap text-center'>
+                    {t.nav.register}
+                  </Link>
+                  <Link href='/signin' className='px-8 h-9 w-[120px] rounded-xl inline-flex items-center justify-center button-type-3 whitespace-nowrap text-center'>
+                    {t.nav.login}
+                  </Link>
                 </>
             )}
           </div>
 
           <button
-            className="ml-[20px] text-3xl focus:outline-none"
+            className="text-3xl focus:outline-none"
             onClick={handleMenuToggle}
             aria-label={t.nav.toggleMenu}>
             &#9776;
