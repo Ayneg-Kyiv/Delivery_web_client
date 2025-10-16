@@ -21,9 +21,8 @@ const TripDetailPage: React.FC = () => {
     useEffect(() => {
         const fetchTrip = async () => {
             setLoading(true);
-            const res = await apiGet<any>(`/trip/${id}`, {}, session.data?.accessToken || '');
 
-            console.log(res.data);
+            const res = await apiGet<any>(`/trip/${id}`, {}, session.data?.accessToken || '');
 
             setTrip(res.data);
             setLoading(false);

@@ -681,6 +681,8 @@ const messages = {
     cookies: "Кукі",
     policy: "Політика",
     security: "Безпека",
+    benefits: "Переваги",
+    mission: "Наша місія",
   },
   newsPage: {
     main: "Головна",
@@ -701,6 +703,8 @@ const messages = {
   },
   helpPage: {
     title: "Допомога та Чапи",
+    forDrivers: "Для водіїв",
+    forCustomers: "Для відправників",
     searchPlaceholder: "Пошук...",
     nothingFound: "Нічого не знайдено.",
     joinMovement: {

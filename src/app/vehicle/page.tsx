@@ -73,8 +73,6 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
 
     async componentDidMount(): Promise<void> {
         try {
-            console.log(this.props.session);
-
             const response = await apiGet<any>('/account/driver-required-data', {}, this.props.session.data?.accessToken || '');
 
             if (response.success) {
@@ -96,7 +94,6 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
             }
 
             const vehiclesResponse = await apiGet<any>('/account/user-vehicles', {}, this.props.session.data?.accessToken || '');
-            console.log(vehiclesResponse);
 
             if (vehiclesResponse.success) {
                 this.setState({ vehicles: vehiclesResponse.data });
@@ -152,8 +149,6 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                     },
                 }, this.props.session.data?.accessToken || ''
              );
-
-            console.log(response);
             
             if (response.success) {
                 this.setState( {stage: 2} ); 
@@ -167,7 +162,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
 
     handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+        window.location.href = '/';
     };
 
     renderForStageZero() {

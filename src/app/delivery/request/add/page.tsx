@@ -126,7 +126,9 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
 		];
 		if (requiredFields.some(field => !field)) {
 			const t = (this.props as any).t?.addRequest;
+
 			alert(t?.errors.requiredFields || 'Будь ласка, заповніть всі обов\'язкові поля');
+			
 			this.setState({ submitting: false });
 			return;
 		}
@@ -190,7 +192,6 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
             }
         }));
 
-        console.log(location);
     };
 
     handleEndLocationSelect = (location: LocationState) => {
@@ -201,7 +202,6 @@ class AddRequestPage extends React.Component<any, AddRequestState> {
                 ...location,
             }
         }));
-        console.log(location);
     };
 
 	render() {

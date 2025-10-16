@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { regions } from '@/data/regions';
-import { monts } from '@/data/monts';
 import { useI18n } from '@/i18n/I18nProvider';
 
 // HOC to inject session into class components
@@ -101,7 +100,6 @@ class RequestListPage extends React.Component<any, RequestListState> {
 
         const res = await apiGet<any>(`/request?${params.toString()}`, {}, this.props.session?.accessToken);
 
-
         this.setState({
             requests: res.data.data || [],
             totalPages: res.data.pagination?.totalPages || 1,
@@ -110,8 +108,6 @@ class RequestListPage extends React.Component<any, RequestListState> {
     }
 
     async fetchLocations() {
-        console.log('fetching locations', this.props.session);
-
         const res = await apiGet<any>(`/trip/locations/unique`, {}, this.props.session?.data?.accessToken);
 
         this.setState({

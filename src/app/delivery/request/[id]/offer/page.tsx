@@ -117,8 +117,6 @@ const OfferDeliveryPage: React.FC = () => {
 		};
 		try {
 			const res = await apiPost('/request/offer', payload, {}, session?.data?.accessToken);
-            
-            console.log(res);
 
 			if (res.success) {
 				router.push(`/delivery/request/list`);

@@ -346,7 +346,7 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
         </section>
 
         {/* Mission section (rewritten) */}
-        <section className="w-full px-8 md:px-20 xl:px-40 py-20 relative overflow-hidden">
+        <section id="mission" className="w-full px-8 md:px-20 xl:px-40 py-20 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none opacity-30" style={{backgroundImage:"radial-gradient(circle at 10% 20%, #3d2a5a 0, transparent 55%), radial-gradient(circle at 90% 80%, #3d2a5a 0, transparent 55%)"}} />
           <div className="relative text-center">
             <h3 className="[font-family:'Bahnschrift-Regular',Helvetica] fg-secondary text-[34px] mb-5 tracking-wide uppercase">
@@ -417,7 +417,7 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
         </section>
 
         {/* Earn with us section */}
-        <section className="w-full px-8 md:px-20 xl:px-40 py-24">
+        <section id="benefits" className="w-full px-8 md:px-20 xl:px-40 py-24">
           <h2 className="[font-family:'Bahnschrift-Regular',Helvetica] text-[40px] md:text-7xl lg:text-7xl mb-4">
             {t.home.earn.title}
           </h2>

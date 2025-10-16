@@ -29,12 +29,14 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
 
     async function fetchRequests(page: number) {
         setLoading(true);
+        
         const params = new URLSearchParams();
+
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
         const res = await apiGet<any>(`/request/sender?${params.toString()}`, {}, session?.accessToken || '');
-        console.log('Fetch requests response:', res);
+
         const reqs: DeliveryRequest[] = res.data.data || [];
         setRequests(reqs);
         setTotalPages(res.data.pagination?.totalPages || 1);

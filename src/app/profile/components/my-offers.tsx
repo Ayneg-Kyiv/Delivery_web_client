@@ -30,10 +30,12 @@ const MyOffers: React.FC<MyReviewsProps> = ({ id }) => {
     async function fetchOffers(page: number) {
         setLoading(true);
         const params = new URLSearchParams();
+        
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
-        console.log(session?.user.id);
+
         const res = await apiGet<any>(`/request/driver?${session?.user.id}`, {}, session?.accessToken || '');
+        
         setOffers(res.data.data || []);
         setTotalPages(res.data.pagination?.totalPages || 1);
         setLoading(false);

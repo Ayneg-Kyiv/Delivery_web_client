@@ -634,7 +634,9 @@ const messages = {
     copyright: "© 2025 Cargix.",
     cookies: "Cookies",
     policy: "Policy",
-    security: "Security"
+    security: "Security",
+    benefits: "Benefits",
+    mission: "Our mission",
   },
   newsPage: {
     main: "Home",
@@ -655,6 +657,8 @@ const messages = {
   },
   helpPage: {
     title: "Help and FAQs",
+    forDrivers: "For drivers",
+    forCustomers: "For senders",
     searchPlaceholder: "Search...",
     nothingFound: "Nothing found.",
     joinMovement: {

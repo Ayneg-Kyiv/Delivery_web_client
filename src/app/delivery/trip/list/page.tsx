@@ -113,7 +113,6 @@ class TripListPage extends React.Component<any, TripListState> {
 
         const res = await apiGet<any>(`/trip/list?${params.toString()}`, {}, this.props.session?.data?.accessToken || '');
 
-        console.log(res.data);
         this.setState({
             trips: res.data.data || [],
             totalPages: res.data.pagination?.totalPages || 1,
@@ -244,10 +243,11 @@ class TripListPage extends React.Component<any, TripListState> {
             </div>
 
                 <div className='flex flex-col md:flex-row gap-8 px-4 md:px-10 lg:px-20 py-10 w-full'>
-                        <div className="flex flex-col p-4 rounded-lg md:w-1/4 bg-[#ffffff]">
+                        <div className="flex flex-col p-4 rounded-lg md:w-1/4 bg-[#ffffff] ">
                         {/* Filters Sidebar */}
                             <h2 className="text-black text-xl font-bold mb-4">{t.sidebar.filtersTitle}</h2>
-                            <div className="mb-4">
+                            
+                            <div className="mb-4 ">
                                 <label className="text-black">{t.sidebar.price}</label>
                                 <div className="flex flex-col gap-2 mt-2">
                                     <input
@@ -276,6 +276,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                     />
                                 </div>
                             </div>
+
                             <div className="mb-4">
                                 <label className="text-black">{t.sidebar.driverRating}</label>
                                 <input
@@ -294,8 +295,10 @@ class TripListPage extends React.Component<any, TripListState> {
                                         }}
                                 />
                             </div>
+
                             {/* Add more filters as needed */}
                         </div>
+
                         {/* Trips List */}
                         <div className="flex-1 flex flex-col gap-4">
                             {loading ? (
@@ -315,17 +318,17 @@ class TripListPage extends React.Component<any, TripListState> {
                                     return (
                                         <div
                                             key={trip.id}
-                                            className="border border-[#724C9D] rounded-2xl bg-white text-black flex flex-col md:flex-row items-stretch shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                                            className="border border-[#724C9D] rounded-2xl bg-white text-black flex flex-col lg:flex-row items-stretch shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                                         >
                                             {/* Column 1: Image + route/date/time */}
-                                            <div className="flex md:w-[320px] p-4 gap-4">
-                                                <div className="flex-shrink-0">
+                                            <div className="flex md:min-w-[300px] p-4 gap-4">
+                                                <div className="flex-shrink-0 items-center justify-center">
                                                     <Image
                                                         src={regions.find(r=> r.name === trip.startLocation.state)?.image || '/regions/Kyivska.jpg'}
                                                         alt={`${trip.startLocation.city} - ${trip.endLocation.city}`}
                                                         width={96}
                                                         height={96}
-                                                        className="w-24 h-24 object-cover rounded-lg"
+                                                        className="w-28 h-28 object-cover rounded-lg"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col justify-center min-w-0">
@@ -345,7 +348,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                             {/* Vertical separator (hidden on small screens) */}
                                             <div className="hidden md:block w-px bg-[#724C9D] my-2" />
                                             {/* Column 2: Driver & rating */}
-                                            <div className="flex flex-col justify-center flex-1 p-4 md:min-w-[280px] border-t md:border-t-0 md:border-l border-[#724C9D]/40 md:border-transparent md:pl-6">
+                                            <div className="flex flex-col justify-center flex-1 p-4 md:min-w-[180px] border-t md:border-t-0 md:border-l border-[#724C9D]/40 md:border-transparent md:pl-6">
                                                 <div className="flex items-center gap-3">
                                                     <Image
                                                         src={trip.driver?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + trip.driver.imagePath : '/dummy.png'}
@@ -366,7 +369,7 @@ class TripListPage extends React.Component<any, TripListState> {
                                             {/* Vertical separator */}
                                             <div className="hidden md:block w-px bg-[#724C9D] my-2" />
                                             {/* Column 3: Price & action */}
-                                            <div className="flex flex-col justify-center p-4 md:w-[240px] gap-2 md:items-end">
+                                            <div className="flex flex-col justify-center p-4 md:min-w-[100px] gap-2 md:items-end">
                                                 <div className="flex items-center gap-1 font-semibold text-base md:text-lg">
                                                     <span className="whitespace-nowrap">{minPrice}{t.currency}</span>
                                                     <span title={t.priceDisclaimer} className="text-[#724C9D] cursor-help select-none">ⓘ</span>

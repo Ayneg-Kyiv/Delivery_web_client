@@ -146,7 +146,9 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 
 export default function ForgotPasswordPageWrapper(props: ForgotPasswordPageProps) {
     const router = useRouter();
+
     const { messages: t } = useI18n();
     const { data: session } = useSession();
+    
     return <ForgotPasswordPage {...props} router={router} t={t} session={session} />;
 }

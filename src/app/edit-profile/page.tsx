@@ -146,8 +146,10 @@ export default function EditProfile(): React.JSX.Element {
       const response = await ProfileService.changeUserData(formData, session?.accessToken || "");
 
       // Accept only Success key (API returns Success: true)
-      if (response.Success === true) {
+      if (response.Success ) {
+
         setErrors({});
+        
         setSuccessMessage(t.successMessage);
         return;
       }

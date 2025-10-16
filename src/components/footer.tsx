@@ -40,8 +40,8 @@ const Footer: React.FC = () => {
 
             <div className="flex flex-col text-lg fg-secondary">
               <Link href="/news" className="">{t.footer.latestNews}</Link>
-              <Link href="/policy" className="mt-2">{t.footer.privacyPolicy}</Link>
-              <Link href="/terms" className="mt-2">{t.footer.termsOfUse}</Link>
+              <Link href="/#mission" className="mt-2">{t.footer.mission}</Link>
+              <Link href="/#benefits" className="mt-2">{t.footer.benefits}</Link>
             </div>
           </div>
 
