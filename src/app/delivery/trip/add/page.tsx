@@ -5,7 +5,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
-import { apiGet ,apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 
 // HOC to inject session into class components
@@ -32,7 +32,7 @@ const withSession = (Component: React.ComponentType<any>) => {
 
         // Only allow class components
         if (Component.prototype && Component.prototype.render) {
-            return <Component session={session} messages={messages} {...props} />;
+            return <Component session={session} {...props} />;
         }
 
         throw new Error(
@@ -109,7 +109,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
     async componentDidMount() {
         // Fetch user's vehicles
         try {
-            const vehiclesResponse = await apiGet<any>('/account/user-vehicles', {}, this.props.session.data?.accessToken || '');
+            const vehiclesResponse = await ApiClient.get<any>('/account/user-vehicles');
             if (vehiclesResponse.success) {
                 this.setState({ vehicles: vehiclesResponse.data, loadingVehicles: false });
             } else {
@@ -250,7 +250,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
         };
 
         try {
-            const response = await apiPost('/trip/create', payload, {}, this.props.session?.data?.accessToken || '');
+            const response = await ApiClient.post('/trip/create', payload);
             if (response.success) {
                 // Redirect or show success message
                 window.location.href = '/delivery/trip/list';
@@ -267,7 +267,7 @@ class AddTripPage extends React.Component<any, AddTripState> {
     render() {
         const t = (this.props as any).t?.addTrip;
         return (
-            <div className="flex flex-col w-full justify-center items-center min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
+            <div className="flex flex-col w-full min-h-screen bg-[#1a093a] px-8 md:px-20 lg:px-80 min-w-[300px]">
                 <div className='text-black flex flex-col items-center rounded-lg my-10 p-10 bg-[#ffffff] max-w-[540px]'>
                     <h1 className='text-2xl font-bold py-3 text-[#724C9D]'>
                         {t?.title}
@@ -518,5 +518,10 @@ class AddTripPage extends React.Component<any, AddTripState> {
         );
     }
 }
+const AddTripWithSession = withSession(AddTripPage);
+const AddTripWrapper = (props: any) => {
+    const { messages } = useI18n();
+    return <AddTripWithSession {...props} t={messages} />;
+};
 
-export default withSession(AddTripPage);
+export default AddTripWrapper;

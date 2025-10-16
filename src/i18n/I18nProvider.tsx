@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import en from './messages/en';
 import uk from './messages/uk';
-import { setCookie } from '@/utils/cookies';
+import { setCookie } from 'cookies-next';
 
 type Locale = 'en' | 'uk';
 type Messages = typeof en | typeof uk;
@@ -33,7 +33,7 @@ export default function I18nProvider({
 
   const setAndStoreLocale = (newLocale: Locale) => {
     setLocale(newLocale);
-    setCookie('locale', newLocale);
+    setCookie('locale', newLocale, { path: '/' });
     if (typeof document !== 'undefined') {
         document.documentElement.lang = newLocale;
     }

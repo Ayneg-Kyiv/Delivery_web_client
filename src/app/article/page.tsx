@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Component } from 'react';
-import { apiGet } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import { useSearchParams } from 'next/dist/client/components/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,7 +17,7 @@ class ArticlePage extends Component<ArticlePageProps & { t: any, localeTag: stri
 
     async componentDidMount() {
         try {
-            const response = await apiGet<any>(`/article/${this.props.id}`);
+            const response = await ApiClient.get<any>(`/article/${this.props.id}`);
             this.setState({ article: response.data, loading: false });
         } catch (error: any) {
             this.setState({ error: error?.message || 'Failed to fetch article', loading: false });

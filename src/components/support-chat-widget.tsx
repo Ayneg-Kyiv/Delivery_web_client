@@ -1,5 +1,5 @@
 "use client";
-import { apiPost } from "@/app/api-client";
+import { ApiClient } from "@/app/api-client";
 import { useState } from "react";
 import { useI18n } from "@/i18n/I18nProvider";
 
@@ -23,7 +23,7 @@ const SupportChatWidget = () => {
     setLoading(true);
     setError("");
     try {
-      const data = await apiPost<{ reply: string }>("/supportchat", { userMessage: input });
+      const data = await ApiClient.post<{ reply: string }>("/supportchat", { userMessage: input });
       setMessages((msgs) => [...msgs, { from: "bot", text: data.reply || t.supportChat.noReply }]);
     } catch (err: unknown) {
       let msg = "";

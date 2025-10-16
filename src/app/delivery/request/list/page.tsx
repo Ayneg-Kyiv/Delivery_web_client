@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { apiGet } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -100,7 +100,9 @@ class RequestListPage extends React.Component<any, RequestListState> {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
-        const res = await apiGet<any>(`/request?${params.toString()}`, {}, this.props.session?.accessToken);
+        const res = await ApiClient.get<any>(`/request?${params.toString()}`);
+
+        console.log(res);
 
 
         this.setState({
@@ -111,9 +113,7 @@ class RequestListPage extends React.Component<any, RequestListState> {
     }
 
     async fetchLocations() {
-        console.log('fetching locations', this.props.session);
-
-        const res = await apiGet<any>(`/trip/locations/unique`, {}, this.props.session?.data?.accessToken);
+        const res = await ApiClient.get<any>(`/trip/locations/unique`);
 
         this.setState({
             cities: res.data || [],

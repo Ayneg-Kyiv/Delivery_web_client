@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPut } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatDateTime } from '@/components/other/date-time-former';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useSession } from 'next-auth/react';
 
 const batchSize = 10;
 
@@ -20,7 +19,6 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-    const { data: session } = useSession();
 
     useEffect(() => {
         fetchOrders(currentPage);
@@ -33,8 +31,8 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
 
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
-
-        const res = await apiGet<any>(`/trip/orders/by-sender`, {}, session?.accessToken || '');
+        
+        const res = await ApiClient.get<any>(`/trip/orders/by-sender`);
 
         console.log('Orders response:', res);
 
@@ -104,7 +102,7 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                             className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold"
                                             onClick={async () => {
                                                 setLoading(true);
-                                                await apiPut(`/trip/order/pickup/${order.id}`, {}, {}, session?.accessToken || '');
+                                                await ApiClient.put(`/trip/order/pickup/${order.id}`);
                                                 await fetchOrders(currentPage);
                                             }}
                                         >
@@ -116,7 +114,7 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
                                             className="bg-green-500 text-white px-4 py-2 rounded-lg font-bold"
                                             onClick={async () => {
                                                 setLoading(true);
-                                                await apiPut(`/trip/order/deliver/${order.id}`, {}, {}, session?.accessToken || '');
+                                                await ApiClient.put(`/trip/order/deliver/${order.id}`);
                                                 await fetchOrders(currentPage);
                                             }}
                                         >

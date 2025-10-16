@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -111,7 +111,9 @@ class TripListPage extends React.Component<any, TripListState> {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
 
-        const res = await apiGet<any>(`/trip/list?${params.toString()}`, {}, this.props.session?.data?.accessToken || '');
+        console.log(`/trip/list?${params.toString()}`);
+
+        const res = await ApiClient.get<any>(`/trip/list?${params.toString()}`);
 
         console.log(res.data);
         this.setState({
@@ -122,7 +124,7 @@ class TripListPage extends React.Component<any, TripListState> {
     }
 
     async fetchLocations(){
-        const res = await apiGet<any>(`/trip/locations/unique`);
+        const res = await ApiClient.get<any>(`/trip/locations/unique`);
 
         console.log(res.data);
         this.setState({

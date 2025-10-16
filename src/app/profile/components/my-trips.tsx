@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPut } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useSession } from 'next-auth/react';
 
 const batchSize = 10;
 
@@ -15,7 +14,6 @@ const MyTrips: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-    const { data: session } = useSession();
 
     useEffect(() => {
         fetchTrips(currentPage);
@@ -27,7 +25,7 @@ const MyTrips: React.FC = () => {
         params.append('pageNumber', page.toString());
         params.append('pageSize', batchSize.toString());
         // Only fetch trips for current user as driver
-        const res = await apiGet<any>(`/trip/list/with-orders`, {}, session?.accessToken || '');
+        const res = await ApiClient.get<any>(`/trip/list/with-orders`);
 
         console.log('Trips response:', res);
 
@@ -39,7 +37,7 @@ const MyTrips: React.FC = () => {
     async function handleOrderAction(orderId: string, action: 'accept' | 'declined') {
         setLoading(true);
         try {
-            await apiPut<any>(`/trip/order/${action}/${orderId}`, {}, {}, session?.accessToken || '');
+            await ApiClient.put(`/trip/order/${action}/${orderId}`);
             fetchTrips(currentPage);
         } catch (err) {
             // handle error
@@ -50,7 +48,7 @@ const MyTrips: React.FC = () => {
     async function handleTripAction(tripId: string, action: 'start' | 'complete') {
         setLoading(true);
         try {
-            await apiPut(`/trip/${action}/${tripId}`, {}, {}, session?.accessToken || '');
+            await ApiClient.put(`/trip/${action}/${tripId}`);
             fetchTrips(currentPage);
         } catch (err) {
             // handle error

@@ -3,7 +3,7 @@
 import React from 'react';
 import { AuthService } from '../auth-service';
 import { useRouter } from 'next/navigation';
-import { apiGet, apiPost } from '../api-client';
+import { ApiClient } from '../api-client';
 import Image from 'next/image';
 import ContentBox from '@/components/ui/content-box';
 import Button from '@/components/ui/button';
@@ -11,7 +11,6 @@ import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useSession } from 'next-auth/react';
 
 class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
     constructor(props: SignupPageProps) {
@@ -44,7 +43,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
 
     async componentDidMount() {
         try{
-            await apiGet<null>('/csrf');
+            await ApiClient.get<null>('/csrf');
         }catch (error) {
             // console.error('Error fetching CSRF token:', error);
         }
@@ -123,8 +122,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
             this.state.firstName,
             this.state.lastName,
             this.state.phoneNumber,
-            this.state.birthDate,
-            this.props.session.data?.accessToken || ''
+            this.state.birthDate
         );
 
         if (response?.success) 
@@ -142,7 +140,7 @@ class SignupPage extends React.Component<SignupPageProps, SignupPageState> {
         const email = this.state;
 
         try{
-            const response = await apiGet(`/auth/check-is-email-exists/${this.state.email}`, {}, this.props.session.data?.accessToken || '');
+            const response = await ApiClient.get(`/auth/check-is-email-exists/${this.state.email}`);
 
             if( response.success ){
                 this.props.router?.push('/user-exists');
@@ -407,7 +405,6 @@ renderContentForStage4 = () =>{
 
 export default function SignupPageWrapper(props: SignupPageProps) {
     const router = useRouter();
-    const session = useSession();
     const { messages: t } = useI18n();
-    return <SignupPage {...props} router={router} session={session} t={t} />;
+    return <SignupPage {...props} router={router} t={t} />;
 }

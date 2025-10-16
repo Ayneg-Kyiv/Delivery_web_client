@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Component } from 'react';
-import { apiGet } from '../api-client';
+import { ApiClient } from '../api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -28,13 +28,13 @@ class News extends Component<NewsProps & { t: any; language: string }, NewsState
 
     async componentDidMount(): Promise<void> {
         try {
-            const searchParams = await apiGet<any>('Article/search-params');
+            const searchParams = await ApiClient.get<any>('Article/search-params');
             this.setState({ 
                 authors: [null, ...searchParams.data.authors], 
                 categories: [null, ...searchParams.data.categories] 
             });
 
-            const response = await apiGet<any>(`/article/list/?pageNumber=${this.state.currentPage}&pageSize=${this.state.batchSize}`);
+            const response = await ApiClient.get<any>(`/article/list/?pageNumber=${this.state.currentPage}&pageSize=${this.state.batchSize}`);
             const articles = response.data.data;
             this.setState({ articles, totalPages: response.data.pagination.totalPages, loading: false, error: '' });
         } catch (e: any) {
@@ -51,7 +51,7 @@ class News extends Component<NewsProps & { t: any; language: string }, NewsState
     async getNewBatch(pageNumber: number, batchSize: number): Promise<void> {
         try {
             this.setState({ loading: true, error: '' });
-            const response = await apiGet<any>(`/article/list/?author=${this.state.selectedAuthor}&category=${this.state.selectedCategory}&pageNumber=${pageNumber}&pageSize=${batchSize}`);
+            const response = await ApiClient.get<any>(`/article/list/?author=${this.state.selectedAuthor}&category=${this.state.selectedCategory}&pageNumber=${pageNumber}&pageSize=${batchSize}`);
             const articles = response.data.data;
             this.setState({ articles, totalPages: response.data.pagination.totalPages, loading: false });
         } catch (e: any) {

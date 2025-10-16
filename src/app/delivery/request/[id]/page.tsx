@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -29,7 +29,7 @@ const DeliveryRequestDetailPage: React.FC = () => {
 	useEffect(() => {
 		const fetchRequest = async () => {
 			setLoading(true);
-			const res = await apiGet<any>(`/request/${id}`, {}, session?.data?.accessToken);
+			const res = await ApiClient.get<any>(`/request/${id}`);
 			setRequest(res.data);
 			setLoading(false);
 		};

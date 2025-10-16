@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -20,7 +20,7 @@ const TripDetailPage: React.FC = () => {
     useEffect(() => {
         const fetchTrip = async () => {
             setLoading(true);
-            const res = await apiGet<any>(`/trip/${id}`, {}, session.data?.accessToken || '');
+            const res = await ApiClient.get<any>(`/trip/${id}`);
 
             console.log(res.data);
 

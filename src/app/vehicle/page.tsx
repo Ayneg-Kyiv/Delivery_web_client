@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSession } from "next-auth/react";
-import { apiGet, apiPost } from "@/app/api-client";
+import { ApiClient } from "@/app/api-client";
 import Image from "next/image";
 import ContentBox from "@/components/ui/content-box";
 import TextInputGroup from "@/components/ui/text-input-group";
@@ -75,7 +75,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
         try {
             console.log(this.props.session);
 
-            const response = await apiGet<any>('/account/driver-required-data', {}, this.props.session.data?.accessToken || '');
+            const response = await ApiClient.get<any>('/account/driver-required-data');
 
             if (response.success) {
                 this.setState({
@@ -95,7 +95,7 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
                 this.setState({ stage: 2 });
             }
 
-            const vehiclesResponse = await apiGet<any>('/account/user-vehicles', {}, this.props.session.data?.accessToken || '');
+            const vehiclesResponse = await ApiClient.get<any>('/account/user-vehicles');
             console.log(vehiclesResponse);
 
             if (vehiclesResponse.success) {
@@ -145,12 +145,12 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
             if (this.state.driverProfileImage)
                 dataDto.append('profileImage', this.state.driverProfileImage);
 
-            const response = await apiPost<any>('/account/set-driver-required-data', dataDto,
+            const response = await ApiClient.post<any>('/account/set-driver-required-data', dataDto,
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
-                }, this.props.session.data?.accessToken || ''
+                }
              );
 
             console.log(response);

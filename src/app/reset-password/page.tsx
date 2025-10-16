@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { apiGet, apiPost } from '../api-client';
+import { ApiClient } from '../api-client';
 import { AuthService } from '../auth-service';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ContentBox from '@/components/ui/content-box';
@@ -27,7 +27,7 @@ class ResetPasswordPage extends React.Component<ResetPasswordPageProps & { token
 
     async componentDidMount() {
         try {
-            await apiGet<null>('/csrf');
+            await ApiClient.get<null>('/csrf');
         } catch (error) {
             // console.error('Error fetching CSRF token:', error);
         }

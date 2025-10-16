@@ -5,11 +5,27 @@ import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signal
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import { useSession } from 'next-auth/react';
 import { useI18n } from '@/i18n/I18nProvider';
 
 const SIGNALR_URL = process.env.NEXT_PUBLIC_SIGNALR_URL + '/messagingHub' || '';
+
+const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {
+    const res = await ApiClient.get<any>(`/request/offer/${offerId}`);
+    
+    // console.log('Fetched offer:', res.data);
+    
+    return res.data;
+};
+
+const fetchUser = async (id: string): Promise<shortUserInfo> => {
+    const res = await ApiClient.get<any>(`/account/short/${id}`);
+    
+    // console.log('Fetched user:', res.data);
+    
+    return res.data;
+};
 
 const ChatPage: React.FC = () => {
     const params = useSearchParams();
@@ -33,22 +49,6 @@ const ChatPage: React.FC = () => {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
-    const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {
-        const res = await apiGet<any>(`/request/offer/${offerId}`, {}, session?.data?.accessToken);
-        
-        // console.log('Fetched offer:', res.data);
-        
-        return res.data;
-    };
-
-    const fetchUser = async (id: string): Promise<shortUserInfo> => {
-        const res = await apiGet<any>(`/account/short/${id}`, {}, session?.data?.accessToken);
-        
-        // console.log('Fetched user:', res.data);
-        
-        return res.data;
-    };
 
     // Fetch offer and user
     useEffect(() => {

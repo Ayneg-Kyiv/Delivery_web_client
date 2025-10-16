@@ -14,12 +14,12 @@ type ApplicationUser = {
 
 // Types for user data change functionality
 export interface ChangeUserDataDTO {
-  email: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  dateOfBirth?: string; // ISO date string
-  aboutMe?: string;
+  Email: string;
+  FirstName?: string;
+  MiddleName?: string;
+  LastName?: string;
+  DateOfBirth?: string; // ISO date string
+  AboutMe?: string;
 }
 
 export interface ApiResponse<T = any> {

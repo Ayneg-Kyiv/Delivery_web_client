@@ -7,7 +7,6 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-
 export default function ChangePasswordPage(): React.JSX.Element {
   const { data: session } = useSession();
   const email = (session?.user as any)?.email || "";
@@ -42,7 +41,7 @@ export default function ChangePasswordPage(): React.JSX.Element {
     if (v) { setError(v); return; }
     setSubmitting(true);
     try {
-      const res = await ProfileService.changePassword(email, passwords.current, passwords.new, session?.accessToken || undefined,);
+      const res = await ProfileService.changePassword(email, passwords.current, passwords.new);
       const ok = (res?.Success ?? res?.success ?? false) as boolean;
       const msg = (res?.Message ?? res?.message ?? t.changePassword.successDefault) as string;
       if (ok) {

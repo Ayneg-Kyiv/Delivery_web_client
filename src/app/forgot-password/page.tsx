@@ -1,14 +1,13 @@
 "use client";
 
 import React from 'react';
-import { apiGet, apiPost } from '../api-client';
+import { ApiClient } from '../api-client';
 import { useRouter } from 'next/navigation';
 import ContentBox from '@/components/ui/content-box';
 import Image from 'next/image';
 import TextInputGroup from '@/components/ui/text-input-group';
 import Button from '@/components/ui/button';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useSession } from 'next-auth/react';
 
 class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, ForgotPasswordPageState> {
     constructor(props: ForgotPasswordPageProps) {
@@ -24,7 +23,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 
     async componentDidMount() {
         try {
-            await apiGet<null>('/csrf');
+            await ApiClient.get<null>('/csrf');
         } catch (error) {
             // console.error('Error fetching CSRF token:', error);
             this.setState({
@@ -64,7 +63,7 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
         this.setState({ loading: true, error: undefined, success: undefined });
         
         try {
-            const response = await apiPost('/account/forgot-password', { email }, {}, this.props.session?.accessToken);
+            const response = await ApiClient.post('/account/forgot-password', { email });
 
             if (response?.success) {
                 this.props.router.push(`/forgot-password-confirmation?email=${encodeURIComponent(email)}`);
@@ -147,6 +146,5 @@ class ForgotPasswordPage extends React.Component<ForgotPasswordPageProps, Forgot
 export default function ForgotPasswordPageWrapper(props: ForgotPasswordPageProps) {
     const router = useRouter();
     const { messages: t } = useI18n();
-    const { data: session } = useSession();
-    return <ForgotPasswordPage {...props} router={router} t={t} session={session} />;
+    return <ForgotPasswordPage {...props} router={router} t={t} />;
 }

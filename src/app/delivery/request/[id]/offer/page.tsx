@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
@@ -31,7 +31,7 @@ const OfferDeliveryPage: React.FC = () => {
 	useEffect(() => {
 		const fetchRequest = async () => {
 			setLoading(true);
-			const res = await apiGet<any>(`/request/${deliveryRequestId}`, {}, session?.data?.accessToken);
+			const res = await ApiClient.get<any>(`/request/${deliveryRequestId}`);
 
             // console.log(res.data);
 
@@ -116,7 +116,7 @@ const OfferDeliveryPage: React.FC = () => {
 			estimatedDeliveryTime: estimatedDelivery,
 		};
 		try {
-			const res = await apiPost('/request/offer', payload, {}, session?.data?.accessToken);
+			const res = await ApiClient.post('/request/offer', payload);
             
             console.log(res);
 

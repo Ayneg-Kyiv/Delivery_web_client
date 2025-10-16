@@ -10,18 +10,17 @@ import { useSession } from "next-auth/react";
 import { ProfileService } from "../profile/profile-service";
 import { ChangeUserDataDTO } from "../profile/profile.d";
 import { useI18n } from "@/i18n/I18nProvider";
-import { apiGet } from "../api-client";
 
 export default function EditProfile(): React.JSX.Element {
   const { messages } = useI18n();
   const t = messages.editProfile;
   const [formData, setFormData] = useState<ChangeUserDataDTO>({
-    email: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    dateOfBirth: "",
-    aboutMe: ""
+    Email: "",
+    FirstName: "",
+    MiddleName: "",
+    LastName: "",
+    DateOfBirth: "",
+    AboutMe: ""
   });
   
   const [loading, setLoading] = useState(true);
@@ -32,12 +31,12 @@ export default function EditProfile(): React.JSX.Element {
   // Load current user data
   const { data: session } = useSession();
   useEffect(() => {
-    
     const loadUserData = async () => {
       setLoading(true);
       try {
-
         const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
+        
+  // console.log('Шлях запиту до API:', url);
         
         const token = session?.accessToken;
         
@@ -58,12 +57,12 @@ export default function EditProfile(): React.JSX.Element {
           const user = data.data[0];
           
           setFormData({
-            email: user.email || "",
-            firstName: user.firstName || "",
-            middleName: user.middleName || "",
-            lastName: user.lastName || "",
-            dateOfBirth: user.dateOfBirth || "",
-            aboutMe: user.aboutMe || ""
+            Email: user.email || "",
+            FirstName: user.firstName || "",
+            MiddleName: user.middleName || "",
+            LastName: user.lastName || "",
+            DateOfBirth: user.dateOfBirth || "",
+            AboutMe: user.aboutMe || ""
           });
         }
       } catch (error) {
@@ -99,29 +98,29 @@ export default function EditProfile(): React.JSX.Element {
     const newErrors: Record<string, string> = {};
     
     // Email validation
-    if (!formData.email) {
+    if (!formData.Email) {
       newErrors.Email = t.emailRequired;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email)) {
       newErrors.Email = t.emailInvalid;
     }
     
     // First name validation
-    if (formData.firstName && formData.firstName.length < 3) {
+    if (formData.FirstName && formData.FirstName.length < 3) {
       newErrors.FirstName = t.firstNameMinLength;
     }
     
     // Middle name validation
-    if (formData.middleName && formData.middleName.length < 3) {
+    if (formData.MiddleName && formData.MiddleName.length < 3) {
       newErrors.MiddleName = t.middleNameMinLength;
     }
     
     // Last name validation
-    if (formData.lastName && formData.lastName.length < 3) {
+    if (formData.LastName && formData.LastName.length < 3) {
       newErrors.LastName = t.lastNameMinLength;
     }
     
     // About me validation
-    if (formData.aboutMe && formData.aboutMe.length < 3) {
+    if (formData.AboutMe && formData.AboutMe.length < 3) {
       newErrors.AboutMe = t.aboutMeMinLength;
     }
     
@@ -142,8 +141,8 @@ export default function EditProfile(): React.JSX.Element {
     }
 
     try {
-      console.log(session?.accessToken);
-      const response = await ProfileService.changeUserData(formData, session?.accessToken || "");
+      const response = await ProfileService.changeUserData(formData);
+      console.log('Відповідь API на зміну даних:', response);
 
       // Accept only Success key (API returns Success: true)
       if (response.Success === true) {
@@ -221,13 +220,13 @@ export default function EditProfile(): React.JSX.Element {
               </label>
               <Input
                 type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                value={formData.Email}
+                onChange={(e) => handleInputChange('Email', e.target.value)}
                 className="w-full h-12 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
                 placeholder={t.emailPlaceholder}
               />
               {errors.Email && (
-                <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+                <p className="text-red-400 text-sm mt-1">{errors.Email}</p>
               )}
             </div>
 
@@ -241,13 +240,13 @@ export default function EditProfile(): React.JSX.Element {
                 </label>
                 <Input
                   type="text"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  value={formData.FirstName}
+                  onChange={(e) => handleInputChange('FirstName', e.target.value)}
                   className="w-full h-12 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
                   placeholder={t.firstNamePlaceholder}
                 />
-                {errors.firstName && (
-                  <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>
+                {errors.FirstName && (
+                  <p className="text-red-400 text-sm mt-1">{errors.FirstName}</p>
                 )}
               </div>
 
@@ -257,13 +256,13 @@ export default function EditProfile(): React.JSX.Element {
                 </label>
                 <Input
                   type="text"
-                  value={formData.middleName}
-                  onChange={(e) => handleInputChange('middleName', e.target.value)}
+                  value={formData.MiddleName}
+                  onChange={(e) => handleInputChange('MiddleName', e.target.value)}
                   className="w-full h-12 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
                   placeholder={t.middleNamePlaceholder}
                 />
-                {errors.middleName && (
-                  <p className="text-red-400 text-sm mt-1">{errors.middleName}</p>
+                {errors.MiddleName && (
+                  <p className="text-red-400 text-sm mt-1">{errors.MiddleName}</p>
                 )}
               </div>
 
@@ -273,13 +272,13 @@ export default function EditProfile(): React.JSX.Element {
                 </label>
                 <Input
                   type="text"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  value={formData.LastName}
+                  onChange={(e) => handleInputChange('LastName', e.target.value)}
                   className="w-full h-12 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
                   placeholder={t.lastNamePlaceholder}
                 />
-                {errors.lastName && (
-                  <p className="text-red-400 text-sm mt-1">{errors.lastName}</p>
+                {errors.LastName && (
+                  <p className="text-red-400 text-sm mt-1">{errors.LastName}</p>
                 )}
               </div>
             </div>
@@ -293,12 +292,12 @@ export default function EditProfile(): React.JSX.Element {
               </label>
               <Input
                 type="date"
-                value={formData.dateOfBirth}
-                onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                value={formData.DateOfBirth}
+                onChange={(e) => handleInputChange('DateOfBirth', e.target.value)}
                 className="w-full h-12 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
               />
-              {errors.dateOfBirth && (
-                <p className="text-red-400 text-sm mt-1">{errors.dateOfBirth}</p>
+              {errors.DateOfBirth && (
+                <p className="text-red-400 text-sm mt-1">{errors.DateOfBirth}</p>
               )}
             </div>
 
@@ -308,13 +307,13 @@ export default function EditProfile(): React.JSX.Element {
                 {t.aboutMeLabel}
               </label>
               <Textarea
-                value={formData.aboutMe}
-                onChange={(e) => handleInputChange('aboutMe', e.target.value)}
+                value={formData.AboutMe}
+                onChange={(e) => handleInputChange('AboutMe', e.target.value)}
                 className="w-full h-32 bg-transparent text-white placeholder-white/40 border border-white/20 rounded-md focus:ring-fuchsia-500/40"
                 placeholder={t.aboutMePlaceholder}
               />
-              {errors.aboutMe && (
-                <p className="text-red-400 text-sm mt-1">{errors.aboutMe}</p>
+              {errors.AboutMe && (
+                <p className="text-red-400 text-sm mt-1">{errors.AboutMe}</p>
               )}
             </div>
 

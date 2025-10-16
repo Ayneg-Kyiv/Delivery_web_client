@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import { useI18n } from '@/i18n/I18nProvider';
 
 const ReviewRequestPage: React.FC = () => {
@@ -34,7 +34,7 @@ const ReviewRequestPage: React.FC = () => {
         };
 
         try {
-            const res = await apiPost('/api/review/create', dto, {}, session.data?.accessToken || '');
+            const res = await ApiClient.post('/api/review/create', dto);
 
             if (!res.success) {
                 setError(res.message || tr.errorCreate);

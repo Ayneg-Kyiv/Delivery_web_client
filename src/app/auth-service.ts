@@ -1,5 +1,5 @@
 import { signIn, signOut } from 'next-auth/react';
-import { apiPost } from './api-client';
+import { ApiClient } from './api-client';
 
 export const AuthService = {
   async login(email: string, password: string, rememberMe: boolean) {
@@ -11,9 +11,9 @@ export const AuthService = {
     });
   },
 
-  async register(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthDate: string, token?: string) {
+  async register(email: string, password: string, firstName: string, lastName: string, phoneNumber: string, birthDate: string) {
     try {
-      const data = await apiPost('/auth/signup', { email, password, firstName, lastName, phoneNumber, birthDate }, {}, token);
+      const data = await ApiClient.post('/auth/signup', { email, password, firstName, lastName, phoneNumber, birthDate });
       
       return data;
     } catch (error) {  
@@ -22,13 +22,20 @@ export const AuthService = {
   },
 
   async logout() {
+  try {
+    await ApiClient.post('/auth/signout');
+
+    } catch (error) {
+      // Optionally handle/log error, but proceed to signOut anyway
+      throw error;
+    }
     return await signOut({ redirect: false });
   },
 
-  async resetPassword(email: string, token: string, newPassword: string, accessToken?: string) {
+  async resetPassword(email: string, token: string, newPassword: string) {
     try {
-      const response = await apiPost('/account/reset-password', { email, token, newPassword }, {}, accessToken);
-
+      const response = await ApiClient.post('/account/reset-password', { email, token, newPassword });
+    
       return response;
     } catch (error) {
       throw error;

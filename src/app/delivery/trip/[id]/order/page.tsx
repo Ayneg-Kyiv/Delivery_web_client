@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '@/app/api-client';
+import { ApiClient } from '@/app/api-client';
 import { useParams, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TextInputGroup from '@/components/ui/text-input-group';
@@ -63,7 +63,7 @@ const OrderDeliveryPage: React.FC = () => {
     useEffect(() => {
         const fetchTrip = async () => {
             setLoading(true);
-            const res = await apiGet<any>(`/trip/${tripId}`, {}, session.data?.accessToken || '');
+            const res = await ApiClient.get<any>(`/trip/${tripId}`);
             setTrip(res.data);
             setLoading(false);
         };
@@ -168,7 +168,7 @@ const OrderDeliveryPage: React.FC = () => {
         }
 
         try {
-            const res = await apiPost('/trip/order/create', payload, {}, session.data?.accessToken || '');
+            const res = await ApiClient.post('/trip/order/create', payload);
             if (res.success) {
                 router.push('/delivery/trip/list');
             } else {
