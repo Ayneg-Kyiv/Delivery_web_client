@@ -74,4 +74,5 @@ interface AddRequestState {
 
     // Form submission state
 	submitting: boolean;
+    showManualAddress: boolean;
 };

@@ -8,6 +8,7 @@ import TextInputGroup from '@/components/ui/text-input-group';
 import DateInputGroup from '@/components/ui/date-input-group';
 import DeliveryMapToSelect from '@/components/other/delivery-map-to-select';
 import { useI18n } from '@/i18n/I18nProvider';
+import AddressAutocompleteInput from '@/components/ui/AddressAutocompleteInput';
 
 const OrderDeliveryPage: React.FC = () => {
     const { id: tripId } = useParams<{ id: string }>();
@@ -24,6 +25,7 @@ const OrderDeliveryPage: React.FC = () => {
     const [useTripEndLocation, setUseTripEndLocation] = useState(true);
 
     const [startLocation, setStartLocation] = useState<CreateLocationDto>({
+        fullAddress: '',
         country: '',
         state: '',
         city: '',
@@ -36,6 +38,7 @@ const OrderDeliveryPage: React.FC = () => {
         longitude: undefined,
     });
     const [endLocation, setEndLocation] = useState<CreateLocationDto>({
+        fullAddress: '',
         country: '',
         state: '',
         city: '',
@@ -195,6 +198,7 @@ const OrderDeliveryPage: React.FC = () => {
     };
 
     const mapToLocationState = (loc: CreateLocationDto): LocationState => ({
+        fullAddress: loc.fullAddress || '',
         country: loc.country || '',
         state: loc.state || '',
         city: loc.city || '',
@@ -266,6 +270,21 @@ const OrderDeliveryPage: React.FC = () => {
                         </div>
                         {!useTripStartLocation && (
                             <>
+                                <div className='pb-8'>
+                                    <AddressAutocompleteInput
+                                        value={startLocation.fullAddress}
+                                        onChange={(fullAddress, locationObj) => {
+                                            setStartLocation(prev => ({
+                                                ...prev,
+                                                fullAddress,
+                                                ...locationObj,
+                                            }));
+                                        }}
+                                        placeholder={t.start.section || 'Address'}
+                                        className="floating-input-black"
+                                    />
+                                </div>
+                                
                                 <TextInputGroup
                                     label={t.start.country}
                                     value={startLocation.country}
@@ -290,6 +309,15 @@ const OrderDeliveryPage: React.FC = () => {
                                     labelClassName={startLocation.address ? 'filled' : ''}
                                     type="text"
                                 />
+                                <TextInputGroup
+                                    label={t.start.houseNumber}
+                                    value={startLocation.houseNumber || ''}
+                                    onChange={e => setStartLocation({ ...startLocation, houseNumber: e.target.value })}
+                                    inputClassName="floating-input-black"
+                                    labelClassName={startLocation.houseNumber ? 'filled' : ''}
+                                    type="text"
+                                />
+
                                 <label className="font-semibold text-black">{t.start.date}</label>
                                 <DateInputGroup
                                     label=""
@@ -325,6 +353,21 @@ const OrderDeliveryPage: React.FC = () => {
                         </div>
                         {!useTripEndLocation && (
                             <>
+                                <div className='pb-8'>
+                                    <AddressAutocompleteInput
+                                        value={endLocation.fullAddress}
+                                        onChange={(fullAddress, locationObj) => {
+                                            setEndLocation(prev => ({
+                                                ...prev,
+                                                fullAddress,
+                                                ...locationObj,
+                                            }));
+                                        }}
+                                        placeholder={t.end.section || 'Address'}
+                                        className="floating-input-black"
+                                    />
+                                </div>
+
                                 <TextInputGroup
                                     label={t.end.country}
                                     value={endLocation.country}
@@ -349,6 +392,15 @@ const OrderDeliveryPage: React.FC = () => {
                                     labelClassName={endLocation.address ? 'filled' : ''}
                                     type="text"
                                 />
+                                <TextInputGroup
+                                    label={t.start.houseNumber}
+                                    value={endLocation.houseNumber || ''}
+                                    onChange={e => setEndLocation({ ...endLocation, houseNumber: e.target.value })}
+                                    inputClassName="floating-input-black"
+                                    labelClassName={endLocation.houseNumber ? 'filled' : ''}
+                                    type="text"
+                                />
+
                                 <label className="font-semibold text-black">{t.end.date}</label>
                                 <DateInputGroup
                                     label=""

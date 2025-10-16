@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import TravelPathMap from '@/components/other/travel-path-map';
 import { useI18n } from '@/i18n/I18nProvider';
+import { formatDateTime } from '@/components/other/date-time-former';
 
 type Sender = {
 	id: string;
@@ -72,13 +73,13 @@ const DeliveryRequestDetailPage: React.FC = () => {
 					</div>
 					<div className='flex flex-col md:flex-row gap-4 justify-center items-center mt-4 text-lg font-medium'>
 						<div className="mt-2 text-white">
-							{t.labels.departureShort}: {request.startLocation.dateTime} 
+							{t.labels.departureShort}: {formatDateTime(request.startLocation.dateTime)} 
 						</div>
 						<div className='hidden md:block'>
 							|
 						</div>
 						<div className="mt-2 text-white">
-							{t.labels.deliveryShort}: {request.endLocation.dateTime}
+							{t.labels.deliveryShort}: {formatDateTime(request.endLocation.dateTime)}
 						</div>
 					</div>
 				</div>
@@ -129,10 +130,10 @@ const DeliveryRequestDetailPage: React.FC = () => {
 								<span className="font-bold">{t.labels.to}:</span> {request.endLocation.address} {request.endLocation.houseNumber}, {request.endLocation.state}, {request.endLocation.city}
 							</div>
 							<div className="mb-2">
-								<span className="font-bold">{t.labels.departureDate}:</span> {request.startLocation.dateTime}
+								<span className="font-bold">{t.labels.departureDate}:</span> {formatDateTime(request.startLocation.dateTime)}
 							</div>
 							<div className="mb-2">
-								<span className="font-bold">{t.labels.deliveryDate}:</span> {request.endLocation.dateTime}
+								<span className="font-bold">{t.labels.deliveryDate}:</span> {formatDateTime(request.endLocation.dateTime)}
 							</div>
 							<div className="mb-2">
 								<span className="font-bold">{t.labels.comment}:</span> {request.comment || '—'}

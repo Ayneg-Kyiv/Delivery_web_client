@@ -8,6 +8,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 
 export default function UserExistsPage() {
     const { messages: t } = useI18n();
+    
     return (
         <ContentBox height='760px' lheight='700px'>
             <div className='flex-1 p-20 flex flex-col items-center justify-stretch'>
