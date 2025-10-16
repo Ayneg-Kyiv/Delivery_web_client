@@ -17,8 +17,7 @@ class ForgotPasswordConfirmationPage extends Component<ForgotPasswordConfirmatio
         this.props.router.push('/signin');
     };
 
-    handleResendPassword = () => {
-        
+    handleResendPassword = () => {   
     }
 
     render() {

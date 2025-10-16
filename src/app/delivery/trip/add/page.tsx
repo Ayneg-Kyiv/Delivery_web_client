@@ -43,7 +43,9 @@ const withSession = (Component: React.ComponentType<any>) => {
             ].join("\n")
         );
     };
+
     WrappedComponent.displayName = `withSession(${Component.displayName || Component.name || 'Component'})`;
+    
     return WrappedComponent;
 };
 
@@ -177,8 +179,6 @@ class AddTripPage extends React.Component<any, AddTripState> {
                 ...location,
             }
         }));
-
-        console.log(location);
     };
 
     handleEndLocationSelect = (location: LocationState) => {
@@ -189,7 +189,6 @@ class AddTripPage extends React.Component<any, AddTripState> {
                 ...location,
             }
         }));
-        console.log(location);
     };
 
     handleSubmit = async (e: React.FormEvent) => {

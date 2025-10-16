@@ -130,8 +130,6 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
 
             const driverAppsResponse = await apiGet<any>(`/admin/driver-applications/?pageNumber=1&pageSize=10`, {}, this.props.session.data?.accessToken);
 
-            console.log(driverAppsResponse);
-
             const totalApplications = driverAppsResponse.data.pagination.totalCount;
             const applications = driverAppsResponse.data.data;
             const currentPage = driverAppsResponse.data.pagination.pageNumber;
@@ -150,8 +148,6 @@ class AdminPanelPage extends React.Component<AdminPanelProps, AdminPanelState> {
                     driverApplicationPanel: { ...driverPanel }
                 });
             }
-
-            console.log(this.state.driverApplicationPanel);
 
     }
 

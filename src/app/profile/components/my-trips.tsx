@@ -29,8 +29,6 @@ const MyTrips: React.FC = () => {
         // Only fetch trips for current user as driver
         const res = await apiGet<any>(`/trip/list/with-orders`, {}, session?.accessToken || '');
 
-        console.log('Trips response:', res);
-
         setTrips(res.data.data || []);
         setTotalPages(res.data.pagination?.totalPages || 1);
         setLoading(false);

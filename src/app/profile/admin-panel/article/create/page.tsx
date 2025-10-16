@@ -221,7 +221,6 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
                 headers: { 'Content-Type': 'multipart/form-data' }
             }, this.props.session.data?.accessToken || '');
 
-            console.log("Article created:", response.data);
             const articleId = response.data;
 
             for (const block of article.articleBlocks) {
@@ -248,7 +247,7 @@ class CreateArticlePage extends React.Component<CreateArticlePageProps, CreateAr
             location.href = '/profile/admin-panel';
 
         } catch (error) {
-            console.error("Error creating article:", error);
+            alert("Error creating article");
         } finally {
             this.setState({ submitting: false });
         }

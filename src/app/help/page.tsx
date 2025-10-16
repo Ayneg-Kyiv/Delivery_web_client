@@ -143,6 +143,19 @@ export class HelpPage extends Component<HelpPageProps, HelpPageState> {
                     </div>
                 </div>
 
+                <div className='flex flex-col md:flex-row   py-10 gap-10'>
+                    <div className="rounded-lg bg-[url('/Rectangle484.png')] min-h-[240px] w-full min-w-[200px] bg-cover bg-center items-start flex justify-start">
+                        <Link href='/help/sender' className='flex flex-col justify-between p-4 w-full h-full'>
+                            <p className="text-3xl">{t.forCustomers}</p>
+                        </Link>
+                    </div>
+                    <div className="rounded-lg bg-[url('/Rectangle485.png')] min-h-[240px] w-full min-w-[200px] bg-cover bg-center items-start flex justify-start">
+                        <Link href='/help/driver' className='flex flex-col justify-between p-4 w-full h-full'>
+                            <p className="text-3xl">{t.forDrivers}</p>
+                        </Link>
+                    </div>
+                </div>
+
                 <div className='flex flex-col md:flex-row bg-darker md:mt-20 rounded-lg text-center text-gray-300 px-10 py-10 gap-10'>
                     <div className='flex-1 flex flex-col justify-center items-center py-10'>
                         <h2 className="text-3xl font-bold mb-4 text-white">{t.joinMovement.title}</h2>

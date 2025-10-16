@@ -37,15 +37,11 @@ const ChatPage: React.FC = () => {
     const fetchOffer = async (offerId: string): Promise<DeliveryOffer> => {
         const res = await apiGet<any>(`/request/offer/${offerId}`, {}, session?.data?.accessToken);
         
-        // console.log('Fetched offer:', res.data);
-        
         return res.data;
     };
 
     const fetchUser = async (id: string): Promise<shortUserInfo> => {
         const res = await apiGet<any>(`/account/short/${id}`, {}, session?.data?.accessToken);
-        
-        // console.log('Fetched user:', res.data);
         
         return res.data;
     };
@@ -113,8 +109,6 @@ const ChatPage: React.FC = () => {
             deliveryOfferId: offer.id,
             text: input.trim(),
         };
-
-        console.log('Sending message:', message);
 
         await connection.invoke('SendMessageToOffer', message);
         setInput('');

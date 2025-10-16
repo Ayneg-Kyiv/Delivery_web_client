@@ -116,7 +116,7 @@ class EditArticlePage extends React.Component<EditArticlePageProps, EditArticleP
             }
 
         } catch (error) {
-            console.error("Error updating article:", error);
+            alert("Failed to update article. Please try again.");
         }
     }
     

@@ -36,8 +36,6 @@ const MyOrders: React.FC<MyOrdersProps> = ({ id }) => {
 
         const res = await apiGet<any>(`/trip/orders/by-sender`, {}, session?.accessToken || '');
 
-        console.log('Orders response:', res);
-
         setOrders(res.data.data || []);
         setTotalPages(res.data.pagination?.totalPages || 1);
         setLoading(false);
