@@ -54,7 +54,7 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
       onClick={handleBackdropClick}
     >
       <div className="absolute right-0 top-0 h-full w-[90vw] max-w-[420px] bg-[#130c1f] text-white shadow-2xl border-l border-white/10 flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
+        <div className=" flex  items-center justify-between p-4 border-b border-white/10 shrink-0">
           <span className="text-xl font-semibold">{t.nav.menuTitle}</span>
           <button
             onClick={onClose}
@@ -65,7 +65,7 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
           </button>
         </div>
 
-        <nav className="p-4 space-y-1 md:space-y-2 flex-1 overflow-y-auto pb-24">
+        <nav className="p-4 space-y-1 md:space-y-2 flex-1 overflow-y-auto flex flex-col">
       { session?.user && (
             <>
               <Link className="block px-3 py-2 rounded-md hover:bg-white/10" href="/profile" onClick={onClose}>
@@ -124,20 +124,23 @@ export default function BurgerMenu({ onClose }: BurgerMenuProps): React.JSX.Elem
             </>
           )}
 
-          {/* Language Switcher for mobile menu */}
-          <div className="mt-6 pt-4 border-t border-white/10 md:hidden">
-            <div className="text-xs text-white/70 mb-2">Мова / Language</div>
-            <LanguageSwitcher />
-          </div>
+          <div className="flex-1 flex flex-col justify-end">
 
-          { session?.user && (
-            <button
+            { session?.user && (
+              <button
               className="block px-3 py-2 rounded-md hover:bg-white/10 w-full text-left mt-6"
               onClick={() => { handleSignOut(); onClose?.(); }}
-            >
-              {t.nav.logout}
-            </button>
-          )}
+              >
+                {t.nav.logout}
+              </button>
+            )}
+
+            {/* Language Switcher for mobile menu */}
+            <div className="mt-6 pt-4 border-t border-white/10 md:hidden">
+              <div className="text-xs text-white/70 mb-2">Мова / Language</div>
+              <LanguageSwitcher />
+            </div>
+          </div>
         </nav>
       </div>
     </div>
