@@ -1,7 +1,7 @@
 
 interface LocationState {
     // Address components
-    fullAddress: string ;
+    fullAddress: string;
 
     country: string;
     state: string;
@@ -22,7 +22,7 @@ interface LocationState {
 
 interface CreateLocationDto {
     // Address components
-    fullAddress: string = '';
+    fullAddress: string;
 
     country: string;
     state: string | null;
