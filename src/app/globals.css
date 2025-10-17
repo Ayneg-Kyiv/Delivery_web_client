@@ -25,23 +25,32 @@
 }
 
 :root {
-  --background: #ffffff;
+    /* background colors scheme */
+    --background: #130C1F;
+    --background-lighter: #2C1B48;
+    --background-darker: #0E1010;
 
-  --foreground: #111111;
-  --foreground-secondary: #292929;
+    /* text colors scheme */
+    --foreground: #ffffff;
+    --foreground-secondary: #E5E5E5;
 
-  --foreground-disabled: #555555;
+    /* type 1 button */
+    --button-type-1-background: #94569F;
+    --button-type-1-background-hover: #DB6BEF;
+    --button-type-1-background-active: #A359B0;
+    --button-type-1-background-disabled: #73487B;
 
-  /* icon colors same at both color schemes */
-  --icon-light-blue: #0057B8;
-  --icon-dark-blue: #01438D;
+    /* type 2 button */
+    --button-type-2-background: #724C9D;
+    --button-type-2-background-hover: #9655DF;
+    --button-type-2-background-active: #7F51B3;
+    --button-type-2-background-disabled: #664788;
 
-  --icon-light-yellow: #FFD700;
-  --icon-dark-yellow: #A88E02;
-
-  --icon-foreground-active: #FFFFFF;
-  --icon-foreground-disabled: #C5C3C3;
-  /*  */
+    /* type 3 button */
+    --button-type-3-background: #111111;
+    --button-type-3-background-hover: #94569F;
+    --button-type-3-background-active: #050505;
+    --button-type-3-background-disabled: #292929;
 
   /* font sizes and families */
   --font-inter: 'Inter';
