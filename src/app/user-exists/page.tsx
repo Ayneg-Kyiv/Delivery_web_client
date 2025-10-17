@@ -31,7 +31,7 @@ export default function UserExistsPage() {
                             {t.signin.loginButton}
                         </Link>
                         <Link
-                            href='/reset-password'
+                            href='/forgot-password'
                             className="w-full h-[60px] button-type-2 font-body-1 text-[#fffefe] text-[length:var(--body-1-font-size)] tracking-[var(--body-1-letter-spacing)] leading-[var(--body-1-line-height)] rounded-lg flex items-center justify-center"
                         >
                             {t.userExists.resetPassword}

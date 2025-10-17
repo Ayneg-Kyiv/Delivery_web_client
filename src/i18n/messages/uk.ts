@@ -1203,6 +1203,7 @@ const messages = {
     notFound: "Запит не знайдено",
     heroTitle: "Деталі запиту на доставку",
     labels: {
+      objectName: "Назва об'єкта",
       departureShort: "Відправка",
       deliveryShort: "Доставка",
       route: "Маршрут",
@@ -1507,7 +1508,21 @@ const messages = {
       },
       currency: "грн"
     }
-  }
+  },
+  
+    reviewOrder: {
+      title: "Залишити відгук водію",
+      titleGeneric: "Залишити відгук",
+      ratingLabel: "Оцінка:",
+      starAria: "Оцінка {star}",
+      textLabel: "Текст відгуку:",
+      placeholder: "Напишіть ваш відгук...",
+      submit: "Залишити відгук",
+      submitting: "Відправка...",
+      success: "Відгук успішно створено!",
+      errorCreate: "Помилка при створенні відгуку",
+      errorNetwork: "Помилка мережі"
+    }
 };
 
 export default messages;

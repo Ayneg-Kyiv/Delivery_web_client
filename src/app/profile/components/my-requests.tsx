@@ -55,7 +55,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                 ) : (
                     requests.map(request => (
                         <div key={request.id} className="bg-[#2d1857] rounded-xl flex flex-col md:flex-row items-center p-6 shadow-lg">
-                            <div className=" flex flex-col items-center justify-center md:mr-6 mb-2">
+                            <div className="w-full flex flex-col items-center justify-center md:mr-6 mb-2">
                                 <Image
                                     src={request.sender?.imagePath ? (process.env.NEXT_PUBLIC_FILES_URL || '') + '/' + request.sender.imagePath : '/dummy.png'}
                                     alt={request.sender?.name || request.senderName}
@@ -65,8 +65,8 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                 />
                                 <span className="text-white text-xs mt-2">{request.sender?.name || request.senderName}</span>   
                             </div>
-                            <div className="flex-1 flex flex-col ">
-                                <div className="flex flex-col md:flex-row gap-2 items-center text-white text-lg font-bold mb-2">
+                            <div className="flex-1 flex flex-col p-2">
+                                <div className="flex flex-col md:flex-row gap-2 items-center text-white text-sm md:text-lg font-bold mb-2 ">
                                     <span>
                                         {t.profile.myRequests.departure}: {request.startLocation.city} {request.startLocation.address} {request.startLocation.houseNumber}
                                     </span>
@@ -75,7 +75,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         {t.profile.myRequests.arrival}: {request.endLocation.city} {request.endLocation.address} {request.endLocation.houseNumber}
                                     </span>
                                 </div>
-                                <div className="flex flex-col gap-4 text-white mt-2">
+                                <div className="flex flex-col gap-4 text-white text-sm md:text-lg py-2  mt-2">
                                     <span>
                                         {t.profile.myRequests.departure}: {formatDateTime(request.startLocation.dateTime)}
                                     </span>
@@ -83,7 +83,7 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                         {t.profile.myRequests.arrival}: {formatDateTime(request.endLocation.dateTime)}
                                     </span>
                                 </div>
-                                <div className="flex gap-2 items-center text-white mt-2">
+                                <div className="flex gap-2 items-center text-white text-sm md:text-lg py-2 mt-2">
                                     <span>{t.profile.myRequests.cargo}: {request.objectName}</span>
                                     <div className='flex gap-2 flex-row'>
                                         <span>{t.profile.myRequests.type}: {request.cargoSlotType}</span>
@@ -91,39 +91,43 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                     </div>
                                 </div>
                                 {request.objectDescription && (
-                                    <div className="text-white mt-2">{t.profile.myRequests.description}: {request.objectDescription}</div>
+                                    <div className="text-white text-sm md:text-lg py-2 mt-2">{t.profile.myRequests.description}: {request.objectDescription}</div>
                                 )}
                                 {request.comment && (
-                                    <div className="text-white mt-2">{t.profile.myRequests.comment}: {request.comment}</div>
+                                    <div className="text-white text-sm md:text-lg py-2 mt-2">{t.profile.myRequests.comment}: {request.comment}</div>
                                 )}
                                 {/* Status and action buttons */}
-                                <div className="flex items-center gap-4 mt-4 mb-2">
-                                    <span className="text-white font-bold">{t.profile.myRequests.status}: {request.isDelivered ? t.profile.myRequests.statusValues.delivered : request.isPickedUp ? t.profile.myRequests.statusValues.pickedUp : t.profile.myRequests.statusValues.awaiting}</span>
-                                    <button
-                                        className="bg-blue-500 text-white px-3 py-1 rounded-lg font-bold disabled:bg-gray-600"
-                                        disabled={request.isPickedUp || !request.isAccepted}
-                                        onClick={async () => {
-                                            setLoading(true);
-                                            await apiPut(`/request/pickup/${request.id}`, {}, {}, session?.accessToken || '');
-                                            await fetchRequests(currentPage);
-                                        }}
-                                    >
-                                        {t.profile.myRequests.pickedUp}
-                                    </button>
-                                    <button
-                                        className="bg-green-600 text-white px-3 py-1 rounded-lg font-bold disabled:bg-gray-600"
-                                        disabled={!request.isPickedUp || request.isDelivered}
-                                        onClick={async () => {
-                                            setLoading(true);
-                                            await apiPut(`/request/deliver/${request.id}`, {}, {}, session?.accessToken || '');
-                                            await fetchRequests(currentPage);
-                                        }}
-                                    >
-                                        {t.profile.myRequests.delivered}
-                                    </button>
+                                <div className="w-full flex items-center gap-4 mt-4 mb-2">
+                                    <div className='w-full flex flex-col md:flex-row md:gap-x-4 md:items-center'>
+                                        <span className="text-white font-bold">{t.profile.myRequests.status}:</span>
+                                        <span>{request.isDelivered ? t.profile.myRequests.statusValues.delivered : request.isPickedUp ? t.profile.myRequests.statusValues.pickedUp : t.profile.myRequests.statusValues.awaiting}</span>
+                                        
+                                        <button
+                                            className="bg-blue-500 text-white px-3 py-1 mb-4 md:mb-0 rounded-lg font-bold disabled:bg-gray-600"
+                                            disabled={request.isPickedUp || !request.isAccepted}
+                                            onClick={async () => {
+                                                setLoading(true);
+                                                await apiPut(`/request/pickup/${request.id}`, {}, {}, session?.accessToken || '');
+                                                await fetchRequests(currentPage);
+                                            }}
+                                            >
+                                            {t.profile.myRequests.pickedUp}
+                                        </button>
+                                        <button
+                                            className="bg-green-600 text-white px-3 py-1 rounded-lg font-bold disabled:bg-gray-600"
+                                            disabled={!request.isPickedUp || request.isDelivered}
+                                            onClick={async () => {
+                                                setLoading(true);
+                                                await apiPut(`/request/deliver/${request.id}`, {}, {}, session?.accessToken || '');
+                                                await fetchRequests(currentPage);
+                                            }}
+                                            >
+                                            {t.profile.myRequests.delivered}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="w-full flex flex-col gap-2 mt-4 mb-4">
-                                    <div className="text-white font-bold">{t.profile.myRequests.driverOffers}</div>
+                                <div className="w-full flex flex-col gap-2 p-8 md:p-0 mt-4 mb-4">
+                                    <div className="w-full text-white font-bold">{t.profile.myRequests.driverOffers}</div>
                                     {request.offers && request.offers.length ? (
                                         request.offers.map(offer => (
                                             <div key={offer.id} className={`w-full bg-[#1a093a] rounded-lg p-2 md:p-4 mt-2 flex flex-col md:flex-row md:items-center gap-4 ${offer.id === request.deliveryOfferID ? 'border-2 border-green-400' : ''}`}>
@@ -176,13 +180,22 @@ const MyRequests: React.FC<MyReviewsProps> = ({ id }) => {
                                                             </button>
                                                         </>
                                                     )}
-                                                    {
-                                                        offer.id === request.deliveryOfferID && (
-                                                            <Link href={`/delivery/chat/offer?offerId=${request.deliveryOfferID}`} className="bg-purple-500 text-white px-4 py-2 rounded-lg font-bold">
-                                                                {t.profile.myRequests.goToChat}
-                                                            </Link>
-                                                        )
-                                                    }
+                                                    <div className="flex flex-col gap-2">
+                                                        {
+                                                            request.isDelivered && (
+                                                                <Link href={`/delivery/review/request/${request.id}/?userId=${offer?.driverId}`} className='w-full'>
+                                                                    <button className="bg-white text-[#7c3aed] px-4 py-2 rounded-lg font-bold">{t.profile.myTrips.leaveReview}</button>
+                                                                </Link>
+                                                            )
+                                                        }
+                                                        {
+                                                            offer.id === request.deliveryOfferID && (
+                                                                <Link href={`/delivery/chat/offer?offerId=${request.deliveryOfferID}`} className="bg-purple-500 text-white px-4 py-2 rounded-lg font-bold">
+                                                                    {t.profile.myRequests.goToChat}
+                                                                </Link>
+                                                            )
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))

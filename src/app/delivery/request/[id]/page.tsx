@@ -123,6 +123,9 @@ const DeliveryRequestDetailPage: React.FC = () => {
                     <div className='w-full flex justify-stretch gap-6 flex-col md:flex-row bg-[#2d1857]'>
 						<div className="bg-[#2d1857] rounded-xl p-6 shadow-lg text-white">
 							<div className="text-lg font-bold mb-2">{t.labels.route}</div>
+							<div className='mb-2'>
+								<span className="font-bold">{t.labels.objectName}:</span> {request.objectName}
+							</div>
 							<div className="mb-2">
 								<span className="font-bold">{t.labels.from}:</span> {request.startLocation.address} {request.startLocation.houseNumber}, {request.startLocation.state}, {request.startLocation.city}
 							</div>
