@@ -114,6 +114,7 @@ class AddVehicleForm extends React.Component<AddVehicleProps, AddVehicleState> {
                     stage: 2,
                 });
                 localStorage.setItem("isApplicationSubmitted", "true");
+                localStorage.setItem("userSubmitted", this.props.session.data?.user?.email || "");
             } else {
                 this.setState({ error: response.message || this.props.t.errors.addError, isSubmitting: false });
             }

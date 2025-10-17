@@ -33,11 +33,10 @@ export class ProfileService {
 
   // NOTE: Do NOT prefix with /api here; base URL (NEXT_PUBLIC_API_URL) already includes /api.
   // ApiClient will also de-duplicate if both are present, but we keep paths clean.
-  const response = await apiPut<ApiResponse>('/Account/change-user-data', apiData, {} , token);
+      const response = await apiPut<ApiResponse>('/Account/change-user-data', apiData, {} , token, true);
+
       return response;
     } catch (error: any) {
-      console.error('Error changing user data:', error);
-      
       // Handle different error types
       if (error.response?.data) {
         return error.response.data;
@@ -56,8 +55,6 @@ export class ProfileService {
   const response = await apiGet<ApiResponse<ApplicationUser>>('/Account', {}, token);
       return response;
     } catch (error: any) {
-      console.error('Error fetching user profile:', error);
-      
       return {
         Success: false,
         Message: error.message || 'Помилка при завантаженні профілю',
@@ -83,7 +80,6 @@ export class ProfileService {
 
       return response;
     } catch (error: any) {
-      console.error('Error updating profile image:', error);
       throw error;
     }
   }
@@ -110,7 +106,6 @@ export class ProfileService {
       }, token);
       return response;
     } catch (error: any) {
-      console.error('Error changing password:', error);
       // Return API error response if present, else throw
       if (error.response?.data) return error.response.data;
       throw error;

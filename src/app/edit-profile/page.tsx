@@ -36,7 +36,6 @@ export default function EditProfile(): React.JSX.Element {
     const loadUserData = async () => {
       setLoading(true);
       try {
-
         const url = `${process.env.NEXT_PUBLIC_API_URL}/Account`;
         
         const token = session?.accessToken;
@@ -142,11 +141,10 @@ export default function EditProfile(): React.JSX.Element {
     }
 
     try {
-      console.log(session?.accessToken);
       const response = await ProfileService.changeUserData(formData, session?.accessToken || "");
 
       // Accept only Success key (API returns Success: true)
-      if (response.Success ) {
+      if (!response.Errors ) {
 
         setErrors({});
         
@@ -315,7 +313,7 @@ export default function EditProfile(): React.JSX.Element {
               <Separator className="my-6 bg-[#2c1b48]" />
 
               {/* Action Buttons */}
-              <div className="flex gap-4 justify-end">
+              <div className="flex gap-4 justify-between md:justify-end">
                 <Button
                   type="button"
                   onClick={() => window.history.back()}
