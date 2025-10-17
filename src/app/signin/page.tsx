@@ -34,6 +34,17 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         }
     }
 
+    handleGoogleSignIn = async () => {
+        try {
+            await signIn('google');
+
+            this.props.router?.push('/');
+        } catch (error) {
+            const t = this.props.t;
+            this.setState({ error: t?.signin?.signInFailed ?? 'Sign in failed. Please try again.' });
+        }
+    };
+
     handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const email = e.target.value;
         this.setState({ email });
@@ -159,7 +170,7 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
                                     <span className="font-body-2 text-[#e4e4e4] text-[length:var(--body-2-font-size)] tracking-[var(--body-2-letter-spacing)] leading-[var(--body-2-line-height)]">
                                     {t?.signin?.loginWith ?? 'Login with:'}
                                     </span>
-                                    <Button onClick={()  => { signIn('google').then( () => this.props.router?.push('/')) }} text='' className="p-0 h-auto">
+                                    <Button onClick={this.handleGoogleSignIn} text='' className="p-0 h-auto hover:cursor-pointer">
                                         <Image src='/google-icon-logo-svgrepo-com.svg' alt="Google" width={32} height={32}/>
                                     </Button>
                                 </div>
