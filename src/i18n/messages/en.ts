@@ -1162,6 +1162,7 @@ const messages = {
     notFound: "Request not found",
     heroTitle: "Delivery request details",
     labels: {
+      objectName: "Object name",
       departureShort: "Departure",
       deliveryShort: "Delivery",
       route: "Route",

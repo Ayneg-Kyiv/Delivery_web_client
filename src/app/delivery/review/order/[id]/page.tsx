@@ -40,7 +40,7 @@ const ReviewOrderPage: React.FC = () => {
                 setError(res.message || 'Помилка при створенні відгуку');
             } else {
                 setSuccess(true);
-                setTimeout(() => router.push('/' + id), 1500);
+                setTimeout(() => router.push('/'), 1500);
             }
         } catch {
             setError('Помилка мережі');
