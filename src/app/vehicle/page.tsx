@@ -87,7 +87,8 @@ class AddVehiclePage extends React.Component<VehicleProps, VehicleState> {
             if (!this.props.session.data.user.roles.includes('Driver') 
                 && !localStorage.getItem("isApplicationSubmitted")) {
                 this.setState({ stage: 0 });
-            } else if (localStorage.getItem("isApplicationSubmitted") === "true") {
+            } else if (localStorage.getItem("isApplicationSubmitted") === "true" 
+                        && localStorage.getItem("userSubmitted") === this.props.session.data?.user?.email) {
                 this.setState({ stage: 2 });
             } else {
                 this.setState({ stage: 2 });

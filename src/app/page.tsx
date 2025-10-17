@@ -101,10 +101,9 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
 
     const weightKg = parseFloat(this.state.weight.replace(',', '.')) || 0;
     const dims = this.parseDims(this.state.dims);
-  const transferType = this.state.transferType.toLowerCase();
+    const transferType = this.state.transferType.toLowerCase();
 
     this.setState({ isCalculating: true });
-
 
     let distanceKm = 0;
     let timeMinutes = 0;
@@ -206,7 +205,6 @@ class PageTemplate extends Component<{ t: Messages; language: 'en'|'uk' }> {
 
   fetchLastNews = async () => {
     const data = await apiGet<any>('/article/list?pageSize=2');
-    console.log('Fetched news items:', data); 
     this.setState({ newsItems: data.data.data });
   };
 
