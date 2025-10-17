@@ -49,7 +49,7 @@ const ReviewRequestPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center">
+        <div className="flex flex-col w-full min-h-screen bg-[#1a093a] justify-center items-center px-6">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-6 text-[#2d1857] text-center">{tr.title}</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
