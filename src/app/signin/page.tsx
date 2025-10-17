@@ -42,6 +42,8 @@ class SignInPage extends React.Component<SignInPageProps, SignInPageState> {
         } catch (error) {
             const t = this.props.t;
             this.setState({ error: t?.signin?.signInFailed ?? 'Sign in failed. Please try again.' });
+        } finally {
+            this.props.router?.push('/');
         }
     };
 
